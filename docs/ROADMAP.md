@@ -34,7 +34,6 @@
 > stdlib-only) runtime dependencies — and consumes the public artifacts; none
 > touch the pipeline or the canonical file.
 
-- 💭 **T10** (deps: —) **Python client library** — a stdlib-only (`urllib`) pip package with typed `dataclass` models and the same load/filter/cache surface, so Python consumers get the catalog without adding `requests`. → §VI
 - 💭 **T11** (deps: —) **Java client library** — a minimal JDK-`HttpClient` artifact (records + the same filter API) that generalizes the ad-hoc fetch Turing already does, publishable for other JVM consumers. → §VI
 
 ## Non-goals

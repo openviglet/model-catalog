@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Keep the GitHub Actions used by publish.yml / regen.yml current.
+  # This repo is deliberately zero-dependency (Node built-ins only), so the
+  # Actions themselves are the only third-party code that needs watching.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - github-actions
+    groups:
+      actions:
+        patterns:
+          - "*"

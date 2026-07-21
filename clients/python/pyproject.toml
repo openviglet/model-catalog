@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openviglet-models-catalog-client"
+version = "1.0.0"
+description = "Zero-dependency client for the open, community catalog of AI models: a vendor-neutral list of LLMs, embeddings, rerankers and multimodal models with typed dataclass entries + by_kind/by_vendor filters + in-memory caching. Stdlib urllib only."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "Apache-2.0" }
+keywords = ["llm", "models", "catalog", "embedding", "rerank", "openai", "anthropic", "gemini", "ai"]
+authors = [{ name = "Viglet" }]
+dependencies = []
+
+[project.urls]
+Homepage = "https://openviglet.github.io/models-catalog"
+Repository = "https://github.com/openviglet/models-catalog"
+
+[tool.setuptools]
+packages = ["models_catalog_client"]

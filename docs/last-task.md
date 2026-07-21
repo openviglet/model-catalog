@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T10 SHIPPED** (Block B — Python client: stdlib-only `urllib` pip pkg `openviglet-models-catalog-client`, typed dataclass + `.extra`, shared surface, 10 unittest units) — 2026-07-21.
 - **T9 SHIPPED** (Block B — JS/TS client: zero-dep npm `@openviglet/models-catalog-client`, shared surface + faceted-slice loaders, ESM + hand-written .d.ts, 10 node:test units) — 2026-07-21.
 - **T4 SHIPPED** (Block A — extended sources: ollama-api/bedrock-api/huggingface-api adapters behind SourceAdapter, opt-in + partial anchoring, hand-rolled SigV4, 3 normalize tests) — 2026-07-21.
 - **T11 CREATED** (💭, Block B §VI — Java client library: JDK HttpClient + records + filter API) — 2026-07-21.

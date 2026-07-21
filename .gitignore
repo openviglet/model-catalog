@@ -15,6 +15,13 @@ public/by-vendor/
 #   pipeline/sources/  (raw per-source snapshot cache)
 #   pipeline/out/      (proposed envelope + diff report)
 
+# Python client build/cache artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
 # OS / editor noise
 .DS_Store
 Thumbs.db

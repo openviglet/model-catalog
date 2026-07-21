@@ -15,10 +15,10 @@ name. Add a `public/CNAME`, set `CATALOG_SOURCE_URL` at emit time so the envelop
 consumers may pin it, keep the old Pages URL resolving (redirect) for a deprecation
 window.
 
-## §VI Client libraries / SDKs (T10 Python · T11 Java)
+## §VI Client libraries / SDKs (T11 Java)
 
-> T9 (JS/TS) shipped — see [CHANGELOG.md](CHANGELOG.md) → Block B. The shared design
-> below still governs the remaining two languages.
+> T9 (JS/TS) and T10 (Python) shipped — see [CHANGELOG.md](CHANGELOG.md) → Block B.
+> The shared design below still governs the remaining Java client.
 
 The catalog is "just JSON over HTTPS", so any consumer *can* fetch it directly — but
 each one then re-invents the same boilerplate: URL selection (rolling vs pinned
