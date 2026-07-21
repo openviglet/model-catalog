@@ -52,9 +52,11 @@ for (const adapter of ADAPTERS) {
   }
   sources.push({ sourceId: adapter.id, drafts });
   if (adapter.vendor !== null) {
-    anchoringSources.add(adapter.id); // vendor-scoped = live API
-    // A non-empty live listing is the authority for which ids that vendor still serves.
-    if (drafts.length) liveIdsByVendor.set(adapter.vendor, new Set(drafts.map((d) => d.id)));
+    anchoringSources.add(adapter.id); // vendor-scoped = may introduce new ids
+    // A non-empty listing is the authority for which ids that vendor still serves —
+    // but only a FULL listing. A `partial` source (local/region-scoped/bounded)
+    // anchors ids without being evidence to remove others (T4).
+    if (drafts.length && !adapter.partial) liveIdsByVendor.set(adapter.vendor, new Set(drafts.map((d) => d.id)));
   }
   log(`${adapter.id}: ${drafts.length} drafts${result.fromCache ? " (cache)" : ""}`);
 }

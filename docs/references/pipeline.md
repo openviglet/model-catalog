@@ -50,8 +50,16 @@ npm test                      # pipeline unit tests
 | `gemini-api` | gemini | `models.list` | `GEMINI_API_KEY` | **Richest**: `supportedGenerationMethods` → kind, `inputTokenLimit`/`outputTokenLimit`. |
 | `cohere-api` | cohere | `GET /v1/models` | `COHERE_API_KEY` | `endpoints[]` → kind, `context_length`. |
 | `mistral-api` | mistral | `GET /v1/models` | `MISTRAL_API_KEY` | `capabilities{}` → tools/vision, `max_context_length`. |
+| `ollama-api` | ollama | `GET /api/tags` on `$OLLAMA_HOST` | `OLLAMA_HOST` | Self-hosted; locally-pulled refs, heuristic kind. **`partial`** (see below). |
+| `bedrock-api` | bedrock | `ListFoundationModels` | `AWS_ACCESS_KEY_ID` (+`AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) | SigV4-signed (hand-rolled, zero-dep); modalities → kind, `modelName` label, lifecycle → status. **`partial`** (region-scoped). |
+| `huggingface-api` | huggingface | Hub `GET /api/models` (sentence-transformers) | `HUGGINGFACE_API_TOKEN` | Local ONNX embedding models; `pipeline_tag` → kind. **`partial`** (bounded query). |
 | `litellm` | all | LiteLLM `model_prices_and_context_window.json` | _(none — public)_ | Vendor-agnostic enrichment. **Non-pricing fields only** (STRATEGY §I). |
 | `overrides` | any | `pipeline/overrides.json` | _(local)_ | Human-curated pins. |
+
+The self-hosted / aggregator sources (`ollama-api`, `bedrock-api`, `huggingface-api`)
+are **opt-in** — each is gated on its own env var and, when it is unset, skipped
+exactly like a missing cloud key. They exist so the non-cloud vendor rows stop
+depending on LiteLLM alone for anchoring (T4).
 
 **A missing API key skips that source with a warning — the run never hard-fails
 because one credential is absent.** Every live fetch is cached as a raw snapshot
@@ -65,7 +73,7 @@ source that supplies a value wins; provenance is recorded per field and
 disagreements are flagged as conflicts in the report.
 
 ```
-pinned override (100) > live vendor API (50) > override (30) > committed catalog (15) > LiteLLM (10)
+pinned override (100) > live vendor API (50) > override (30) > self-hosted/aggregator (20) > committed catalog (15) > LiteLLM (10)
 ```
 
 - **Scalar fields** (`kind`, `contextWindow`, `maxOutputTokens`, `label`, …) →
@@ -79,11 +87,16 @@ Two safety rules keep a noisy/partial run from poisoning the reference:
   low-priority source, so every existing entry is preserved + enriched. A run with
   only some API keys never silently drops the vendors it didn't fetch.
 - **Positive-evidence removal.** An id is dropped only when its vendor's own live
-  API ran and did not list it (and it isn't override-pinned). LiteLLM or a missing
-  key can never cause a removal.
-- **Anchoring rule.** A *new* id is admitted only if a live vendor API or an
-  override vouches for it. LiteLLM enriches existing/vendor-confirmed ids but can
-  never introduce a brand-new id. Skipped LiteLLM-only ids are listed in the report.
+  API ran and did not list it (and it isn't override-pinned). LiteLLM, a missing
+  key, or a **`partial`** source can never cause a removal.
+- **Anchoring rule.** A *new* id is admitted only if a live vendor API, a
+  self-hosted/aggregator source, or an override vouches for it. LiteLLM enriches
+  existing/vendor-confirmed ids but can never introduce a brand-new id. Skipped
+  LiteLLM-only ids are listed in the report.
+- **`partial` sources.** A self-hosted/aggregator source (`ollama-api`,
+  `bedrock-api`, `huggingface-api`) sees only an environment-scoped/bounded slice
+  (one host's pulls, one region, a capped query), so it *anchors* the ids it returns
+  but is **never** removal evidence — it can't drop an id it simply didn't see.
 
 `overrides.json` is a claim you stand behind: set `"__pin": true` on an entry to
 force its fields above **everything**; otherwise a pin sits above LiteLLM and

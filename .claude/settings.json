@@ -6,7 +6,8 @@
       "Bash(npm test *)",
       "Bash(git check-ignore *)",
       "Bash(run-commit.cmd -m \"feat: emit compact index.json endpoint \\(T7\\)\")",
-      "Bash(run-commit.cmd -m \"feat: emit faceted by-kind/by-vendor slices + endpoints.json manifest \\(T8\\)\")"
+      "Bash(run-commit.cmd -m \"feat: emit faceted by-kind/by-vendor slices + endpoints.json manifest \\(T8\\)\")",
+      "Bash(run-commit.cmd -m \"feat: add opt-in Ollama/Bedrock/HuggingFace source adapters \\(T4\\)\")"
     ]
   }
 }

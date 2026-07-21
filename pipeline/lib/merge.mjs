@@ -6,7 +6,7 @@
  *
  * Precedence (higher wins per field):
  *   pinned override (100) > live vendor API (50) > override (30)
- *   > committed catalog (15) > LiteLLM (10)
+ *   > self-hosted/aggregator source (20) > committed catalog (15) > LiteLLM (10)
  *
  * Two safety rules keep a noisy/partial run from poisoning the reference:
  *
@@ -26,6 +26,9 @@
 import { KINDS, compact } from "./util.mjs";
 
 const LIVE_PRIORITY = 50;
+// Self-hosted / aggregator sources (T4): heuristic/environment-scoped metadata, so
+// they enrich beyond the committed catalog + LiteLLM but stay below curated overrides.
+const AGGREGATOR_PRIORITY = 20;
 const PRIORITY = {
   "openai-api": LIVE_PRIORITY,
   "anthropic-api": LIVE_PRIORITY,
@@ -33,6 +36,9 @@ const PRIORITY = {
   "cohere-api": LIVE_PRIORITY,
   "mistral-api": LIVE_PRIORITY,
   overrides: 30,
+  "ollama-api": AGGREGATOR_PRIORITY,
+  "bedrock-api": AGGREGATOR_PRIORITY,
+  "huggingface-api": AGGREGATOR_PRIORITY,
   committed: 15,
   litellm: 10,
 };

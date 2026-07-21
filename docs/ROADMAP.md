@@ -24,7 +24,6 @@
 > migrated from Viglet Turing ES). The remaining bets extend source coverage and
 > automate the review-gated refresh:
 
-- 💭 **T4** (deps: —) **Extended self-hosted / aggregator sources** — add the Ollama library + local `ollama list`, Bedrock `ListFoundationModels`, and HuggingFace (for local ONNX embedding models) behind the shipped `SourceAdapter` contract, so the non-cloud vendor rows (`ollama`, `bedrock`, `vertex-ai`) stop depending on LiteLLM alone for anchoring. → §I
 - 💭 **T6** (deps: —) **Branded custom domain for the endpoint** — front the GitHub Pages endpoint with a custom domain (e.g. `models.viglet.org`) via `CNAME` + `CATALOG_SOURCE_URL`, and update consumers (Turing's `turing.models-catalog.url`) + the docs. → §III
 
 ## Block B — Client libraries / SDKs

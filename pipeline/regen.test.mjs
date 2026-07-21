@@ -10,6 +10,9 @@ import assert from "node:assert/strict";
 import { merge } from "./lib/merge.mjs";
 import { validateEnvelope, diffReport } from "./lib/validate.mjs";
 import litellm from "./adapters/litellm.mjs";
+import ollama from "./adapters/ollama.mjs";
+import bedrock from "./adapters/bedrock.mjs";
+import huggingface from "./adapters/huggingface.mjs";
 
 const WHEN = "2026-07-21";
 const ANCHORS = new Set(["openai-api", "anthropic-api", "gemini-api", "cohere-api", "mistral-api", "overrides"]);
@@ -47,6 +50,72 @@ test("litellm normalize: maps mode→kind, strips prefix, drops pricing + wildca
   assert.equal(byId["anthropic/claude-x"].id, "claude-x", "provider/ prefix stripped");
   assert.equal(byId["cohere/embed-y"].kind, "EMBEDDING");
   assert.equal(byId["cohere/embed-y"].embeddingDimensions, 1024);
+});
+
+test("ollama normalize: uses ref as id, heuristic kind, is a partial anchor", () => {
+  assert.equal(ollama.vendor, "ollama");
+  assert.equal(ollama.partial, true, "local pulls are not removal evidence");
+  const drafts = ollama.normalize({
+    models: [
+      { name: "llama3:8b", model: "llama3:8b" },
+      { name: "nomic-embed-text:latest", model: "nomic-embed-text:latest" },
+      { model: "" }, // dropped: empty ref
+      {}, // dropped: no ref
+    ],
+  });
+  assert.equal(drafts.length, 2);
+  assert.deepEqual(drafts[0], { vendor: "ollama", id: "llama3:8b", kind: "CHAT" });
+  assert.equal(drafts[1].kind, "EMBEDDING", "embed in the name → EMBEDDING");
+  assert.equal(drafts[0].label, undefined, "no guessed label");
+});
+
+test("huggingface normalize: maps pipeline_tag→kind, defaults to EMBEDDING, partial anchor", () => {
+  assert.equal(huggingface.vendor, "huggingface");
+  assert.equal(huggingface.partial, true);
+  const drafts = huggingface.normalize([
+    { id: "sentence-transformers/all-MiniLM-L6-v2", pipeline_tag: "sentence-similarity" },
+    { modelId: "some/generator", pipeline_tag: "text-generation" },
+    { id: "sentence-transformers/no-tag" }, // no tag → EMBEDDING default
+    { pipeline_tag: "feature-extraction" }, // dropped: no id
+  ]);
+  assert.equal(drafts.length, 3);
+  assert.equal(drafts[0].kind, "EMBEDDING");
+  assert.equal(drafts[1].kind, "CHAT");
+  assert.equal(drafts[2].kind, "EMBEDDING", "sentence-transformers without a tag → EMBEDDING");
+  assert.equal(drafts[0].vendor, "huggingface");
+});
+
+test("bedrock normalize: maps modalities→kind, keeps modelName label + status, partial anchor", () => {
+  assert.equal(bedrock.vendor, "bedrock");
+  assert.equal(bedrock.partial, true, "region-scoped listing is not removal evidence");
+  const drafts = bedrock.normalize({
+    modelSummaries: [
+      {
+        modelId: "anthropic.claude-3-5-sonnet-20240620-v1:0",
+        modelName: "Claude 3.5 Sonnet",
+        inputModalities: ["TEXT", "IMAGE"],
+        outputModalities: ["TEXT"],
+        modelLifecycle: { status: "ACTIVE" },
+      },
+      {
+        modelId: "amazon.titan-embed-text-v2:0",
+        modelName: "Titan Text Embeddings V2",
+        inputModalities: ["TEXT"],
+        outputModalities: ["EMBEDDING"],
+        modelLifecycle: { status: "LEGACY" },
+      },
+      { notAModel: true }, // dropped: no modelId
+    ],
+  });
+  assert.equal(drafts.length, 2);
+  const chat = drafts[0];
+  assert.equal(chat.kind, "CHAT");
+  assert.equal(chat.label, "Claude 3.5 Sonnet", "modelName is a genuine label");
+  assert.equal(chat.status, "GA");
+  assert.deepEqual(chat.modalities, { input: ["text", "image"], output: ["text"] });
+  const embed = drafts[1];
+  assert.equal(embed.kind, "EMBEDDING", "EMBEDDING output → EMBEDDING kind");
+  assert.equal(embed.status, "DEPRECATED", "LEGACY → DEPRECATED");
 });
 
 test("merge carry-forward: committed entries survive a run that never fetched them", () => {

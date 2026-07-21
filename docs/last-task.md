@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T4 SHIPPED** (Block A — extended sources: ollama-api/bedrock-api/huggingface-api adapters behind SourceAdapter, opt-in + partial anchoring, hand-rolled SigV4, 3 normalize tests) — 2026-07-21.
 - **T11 CREATED** (💭, Block B §VI — Java client library: JDK HttpClient + records + filter API) — 2026-07-21.
 - **T10 CREATED** (💭, Block B §VI — Python client library: stdlib urllib + dataclass models) — 2026-07-21.
 - **T9 CREATED** (💭, Block B §VI — JavaScript/TypeScript client library: zero-dep npm, typed models + byKind/byVendor) — 2026-07-21.
