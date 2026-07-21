@@ -1,7 +1,7 @@
-# Last task number — `T6` · next block letter — `B`
+# Last task number — `T8` · next block letter — `B`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T7`; after assigning it, bump the number above and the log line below.
+> `T9`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,8 @@
 
 ## Log (most recent first)
 
+- **T8 CREATED** (📋, Block A §V — faceted static slices by-kind/by-vendor + endpoints.json discovery manifest; deps T7) — 2026-07-21.
+- **T7 CREATED** (📋, Block A §IV — compact index.json endpoint: id/label/kind/vendor only) — 2026-07-21.
 - **T5 SHIPPED** (Block A — regen.yml manual-dispatch workflow: pipeline with secret API keys → apply on throwaway branch → open PR with diff report; never writes main, never auto-merges) — 2026-07-21.
 - **T6 CREATED** (💭, Block A §III — branded custom domain for the endpoint) — 2026-07-21.
 - **T5 CREATED** (💭, Block A §II — opt-in CI regeneration that opens a PR, never auto-merges) — 2026-07-21.

@@ -26,6 +26,8 @@
 
 - 💭 **T4** (deps: —) **Extended self-hosted / aggregator sources** — add the Ollama library + local `ollama list`, Bedrock `ListFoundationModels`, and HuggingFace (for local ONNX embedding models) behind the shipped `SourceAdapter` contract, so the non-cloud vendor rows (`ollama`, `bedrock`, `vertex-ai`) stop depending on LiteLLM alone for anchoring. → §I
 - 💭 **T6** (deps: —) **Branded custom domain for the endpoint** — front the GitHub Pages endpoint with a custom domain (e.g. `models.viglet.org`) via `CNAME` + `CATALOG_SOURCE_URL`, and update consumers (Turing's `turing.models-catalog.url`) + the docs. → §III
+- 📋 **T7** (deps: —) **Compact index endpoint** — emit a slim `index.json` (id + label + kind + vendor only, no numeric/capability metadata) so lightweight model-pickers fetch a fraction of the payload. Additive artifact from `emit.mjs`; canonical file and envelope schema untouched. → §IV
+- 📋 **T8** (deps: T7) **Faceted static slices + discovery manifest** — emit pre-filtered `by-kind/<KIND>.json` and `by-vendor/<vendor>.json` slices plus an `endpoints.json` manifest listing every published static path, so consumers fetch a pre-filtered view without a runtime. Document the surface in `docs/references/api.md`. → §V
 
 ## Non-goals
 

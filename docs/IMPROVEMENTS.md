@@ -32,3 +32,27 @@ name. Add a `public/CNAME`, set `CATALOG_SOURCE_URL` at emit time so the envelop
 `turing.models-catalog.url` default. Because the URL is outward-facing and external
 consumers may pin it, keep the old Pages URL resolving (redirect) for a deprecation
 window.
+
+## §IV Compact index endpoint (T7)
+
+The full `catalog.json` carries every field (context window, modalities, capability
+hints, provenance) for every id — more than a model-picker UI needs to render a
+grouped dropdown. A slim `index.json` holding only `{ vendor, id, label, kind }` per
+entry lets those consumers fetch a much smaller payload and lazy-load the full record
+only when a model is selected. It is emitted by `emit.mjs` from the same canonical
+file (so it never drifts), is purely additive, and does **not** touch the envelope
+schema or `version`. Consumers that want everything keep using `catalog.json`.
+
+## §V Faceted static slices + discovery manifest (T8)
+
+"New REST methods" without a server = **pre-computed static views**. `emit.mjs`
+writes `by-kind/<KIND>.json` (e.g. `by-kind/EMBEDDING.json`) and
+`by-vendor/<vendor>.json` (e.g. `by-vendor/openai.json`), each a filtered slice of the
+canonical catalog, so a consumer fetches exactly the facet it wants — CDN-cached,
+zero runtime — instead of downloading the whole catalog and filtering client-side.
+An `endpoints.json` manifest enumerates every published path (rolling, pinned, schema,
+index, and the available slice keys) so the surface is machine-discoverable rather
+than hard-coded. All slices derive deterministically from the canonical file on each
+publish; nothing is hand-maintained, and the envelope schema is unchanged. This is the
+static-first answer to "more query methods" — a real dynamic query API (arbitrary
+filters via serverless) stays out of scope for GitHub Pages (see STRATEGY / non-goals).
