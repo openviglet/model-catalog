@@ -3,7 +3,9 @@
     "allow": [
       "Bash(*)",
       "Bash(node -e ' *)",
-      "Bash(npm test *)"
+      "Bash(npm test *)",
+      "Bash(git check-ignore *)",
+      "Bash(run-commit.cmd -m \"feat: emit compact index.json endpoint \\(T7\\)\")"
     ]
   }
 }

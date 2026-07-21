@@ -99,6 +99,7 @@
         <p class="meta">
           Rolling latest: <a href="./catalog.json">catalog.json</a> ·
           Pinned v1: <a href="./catalog-v1.json">catalog-v1.json</a> ·
+          Compact index: <a href="./index.json">index.json</a> ·
           Schema: <a href="./catalog.schema.json">catalog.schema.json</a>
         </p>
         <pre><code>curl -s ./catalog-v1.json | jq '.vendors | to_entries[].value[] | select(.kind=="EMBEDDING") | .id'</code></pre>

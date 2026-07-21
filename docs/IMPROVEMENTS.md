@@ -33,16 +33,6 @@ name. Add a `public/CNAME`, set `CATALOG_SOURCE_URL` at emit time so the envelop
 consumers may pin it, keep the old Pages URL resolving (redirect) for a deprecation
 window.
 
-## §IV Compact index endpoint (T7)
-
-The full `catalog.json` carries every field (context window, modalities, capability
-hints, provenance) for every id — more than a model-picker UI needs to render a
-grouped dropdown. A slim `index.json` holding only `{ vendor, id, label, kind }` per
-entry lets those consumers fetch a much smaller payload and lazy-load the full record
-only when a model is selected. It is emitted by `emit.mjs` from the same canonical
-file (so it never drifts), is purely additive, and does **not** touch the envelope
-schema or `version`. Consumers that want everything keep using `catalog.json`.
-
 ## §V Faceted static slices + discovery manifest (T8)
 
 "New REST methods" without a server = **pre-computed static views**. `emit.mjs`
@@ -56,3 +46,30 @@ than hard-coded. All slices derive deterministically from the canonical file on 
 publish; nothing is hand-maintained, and the envelope schema is unchanged. This is the
 static-first answer to "more query methods" — a real dynamic query API (arbitrary
 filters via serverless) stays out of scope for GitHub Pages (see STRATEGY / non-goals).
+
+## §VI Client libraries / SDKs (T9 JS/TS · T10 Python · T11 Java)
+
+The catalog is "just JSON over HTTPS", so any consumer *can* fetch it directly — but
+each one then re-invents the same boilerplate: URL selection (rolling vs pinned
+`catalog-v1.json`), flattening entries with their `vendor`, kind/vendor filtering,
+and caching. A thin per-language client removes that duplication and gives consumers
+a typed surface that tracks the additive schema, without pulling the pipeline in.
+
+Shared design across the three languages, so they stay predictable:
+
+- **Read-only + published-endpoint only.** A client fetches `catalog.json` (or a
+  pinned `catalog-vN.json`) — and, once T7/T8 ship, `index.json` / faceted slices for
+  smaller payloads — over `fetch`/`HttpClient`/`urllib`. It never touches the pipeline
+  or the canonical file, and carries **no pricing** (nothing to expose — the API has none).
+- **Typed models mirroring `ModelEntry`.** TS interfaces, Python `dataclass`, Java
+  `record`; unknown fields tolerated so a schema addition never breaks an old client
+  (matches the additive-schema contract). `version` stays `1`.
+- **Same small surface everywhere:** load/refresh, `all()`, `byKind(kind)`,
+  `byVendor(vendor)`, `get(vendor, id)`, plus in-memory caching with an optional TTL.
+- **Minimal dependencies, matching repo ethos.** JS: zero-dep npm (browser + Node).
+  Python: stdlib `urllib` only (no `requests`). Java: JDK `HttpClient` + a tiny JSON
+  read (or a single well-scoped parser), no heavy framework.
+
+Each is independently versioned/publishable and its own shippable task (one commit
+per language). The Java one generalizes the fetch Turing already hand-rolls for its
+model-picker, so it has a first real consumer.

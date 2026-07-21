@@ -4,8 +4,9 @@
  * source structurally (zero-dep, no ajv), flattens each vendor's entries adding a
  * `vendor` field, and writes the published JSON + a pinned version copy + the
  * JSON Schema into `public/` for GitHub Pages to serve at the site root
- * (`<pages>/catalog.json`, `catalog-v1.json`, `catalog.schema.json`; see
- * .github/workflows/publish.yml). The browsable `public/index.html` sits at `<pages>/`.
+ * (`<pages>/catalog.json`, `catalog-v1.json`, `catalog.schema.json`, plus the
+ * compact `index.json`; see .github/workflows/publish.yml). The browsable
+ * `public/index.html` sits at `<pages>/`.
  *
  *   node scripts/emit.mjs
  */
@@ -70,13 +71,31 @@ const published = {
   vendors,
 };
 
+// Compact index (T7): the same envelope shape, but each entry trimmed to just
+// identity + kind. A model-picker that only renders a grouped dropdown fetches a
+// fraction of the payload and lazy-loads the full record from catalog.json when a
+// model is selected. Trimmed entries remain valid `ModelEntry`s (the dropped
+// fields are all optional), so `index.json` validates against the same schema.
+const index = {
+  version: root.version,
+  lastUpdated: root.lastUpdated,
+  source: SOURCE_URL,
+  vendors: Object.fromEntries(
+    Object.entries(vendors).map(([vendor, entries]) => [
+      vendor,
+      entries.map((e) => ({ vendor, id: e.id, label: e.label, kind: e.kind })),
+    ]),
+  ),
+};
+
 mkdirSync(OUT_DIR, { recursive: true });
 const json = JSON.stringify(published, null, 2) + "\n";
 writeFileSync(resolve(OUT_DIR, "catalog.json"), json, "utf8"); // rolling latest
 writeFileSync(resolve(OUT_DIR, `catalog-v${root.version}.json`), json, "utf8"); // pinned
 writeFileSync(resolve(OUT_DIR, "catalog.schema.json"), readFileSync(SCHEMA_SRC, "utf8"), "utf8");
+writeFileSync(resolve(OUT_DIR, "index.json"), JSON.stringify(index, null, 2) + "\n", "utf8"); // compact
 
 console.log(
-  `emit-model-catalog: wrote catalog.json + catalog-v${root.version}.json + schema ` +
+  `emit-model-catalog: wrote catalog.json + catalog-v${root.version}.json + schema + index.json ` +
     `(${Object.keys(vendors).length} vendors, ${count} models) to ${OUT_DIR}`,
 );

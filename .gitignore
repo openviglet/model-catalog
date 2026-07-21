@@ -6,6 +6,7 @@ node_modules/
 public/catalog.json
 public/catalog-v1.json
 public/catalog.schema.json
+public/index.json
 
 # Pipeline working dirs are handled by their own .gitignore:
 #   pipeline/sources/  (raw per-source snapshot cache)

@@ -1,7 +1,7 @@
-# Last task number — `T8` · next block letter — `B`
+# Last task number — `T11` · next block letter — `C`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T9`; after assigning it, bump the number above and the log line below.
+> `T12`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,10 @@
 
 ## Log (most recent first)
 
+- **T11 CREATED** (💭, Block B §VI — Java client library: JDK HttpClient + records + filter API) — 2026-07-21.
+- **T10 CREATED** (💭, Block B §VI — Python client library: stdlib urllib + dataclass models) — 2026-07-21.
+- **T9 CREATED** (💭, Block B §VI — JavaScript/TypeScript client library: zero-dep npm, typed models + byKind/byVendor) — 2026-07-21.
+- **T7 SHIPPED** (Block A — compact index.json endpoint: same envelope, entries trimmed to vendor/id/label/kind, ~72% smaller) — 2026-07-21.
 - **T8 CREATED** (📋, Block A §V — faceted static slices by-kind/by-vendor + endpoints.json discovery manifest; deps T7) — 2026-07-21.
 - **T7 CREATED** (📋, Block A §IV — compact index.json endpoint: id/label/kind/vendor only) — 2026-07-21.
 - **T5 SHIPPED** (Block A — regen.yml manual-dispatch workflow: pipeline with secret API keys → apply on throwaway branch → open PR with diff report; never writes main, never auto-merges) — 2026-07-21.

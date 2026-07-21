@@ -24,6 +24,7 @@ capability* — **not pricing** (see [STRATEGY.md](../STRATEGY.md) §I).
 |---|---|
 | `…/catalog.json` | Rolling latest — the current schema version. |
 | `…/catalog-v1.json` | Pinned to schema **v1** — safe for external consumers to lock. |
+| `…/index.json` | **Compact index** — the same envelope, each entry trimmed to `{ vendor, id, label, kind }`. A fraction of the payload for model-pickers that only render a grouped list; lazy-load the full record from `catalog.json` on selection. |
 | `…/catalog.schema.json` | The JSON Schema (Draft 2020-12) describing the envelope + entry. |
 | `…/` (repo Pages root) | Human-browsable reference page (`public/index.html`). |
 
