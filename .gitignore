@@ -25,6 +25,9 @@ dist/
 # Java client build output
 target/
 
+# Local Claude Code settings (per-machine; not versioned)
+.claude/settings.json
+
 # OS / editor noise
 .DS_Store
 Thumbs.db
