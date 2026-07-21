@@ -184,7 +184,7 @@
         for (const k of KINDS) if (present.has(k)) f.appendChild(mk(k, KIND_LABEL[k]));
       }
 
-      fetch("./models/catalog.json")
+      fetch("./catalog.json")
         .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
         .then((data) => {
           catalog = data;
