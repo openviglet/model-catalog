@@ -23,6 +23,10 @@ The catalog is open and grows with the community — [contributions welcome](htt
 
 ## Install
 
+The repo is **public**, so nothing below needs authentication.
+
+Once published to Maven Central:
+
 ```xml
 <dependency>
   <groupId>io.github.openviglet</groupId>
@@ -30,6 +34,31 @@ The catalog is open and grows with the community — [contributions welcome](htt
   <version>1.0.0</version>
 </dependency>
 ```
+
+Straight from the public GitHub repo — use [JitPack](https://jitpack.io), which builds
+public repos on demand and serves them as Maven artifacts with **no login**:
+
+```xml
+<repositories>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
+</repositories>
+
+<dependency>
+  <groupId>com.github.openviglet</groupId>
+  <artifactId>models-catalog</artifactId>
+  <version>v1.0.0</version> <!-- a tag, commit SHA, or main-SNAPSHOT -->
+</dependency>
+```
+
+> This client lives in `clients/java/`, so JitPack needs to reach it from the repo
+> root — a small root aggregator `pom.xml` (or a `jitpack.yml` pointing at the module)
+> exposes it; see JitPack's [multi-module guide](https://docs.jitpack.io/building/#multi-module-builds).
+> GitHub Packages also hosts Maven, but consuming even a **public** artifact from it
+> requires an auth token in `settings.xml`, so it isn't truly public — JitPack is the
+> auth-free option.
 
 ## Usage
 

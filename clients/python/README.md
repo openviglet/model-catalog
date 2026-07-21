@@ -20,6 +20,28 @@ The catalog is open and grows with the community — [contributions welcome](htt
 
 ## Install
 
+The repo is **public**, so every option below is **unauthenticated** — no token, no
+login, anyone can install.
+
+Straight from GitHub (works today — `pip` just clones the public repo over HTTPS):
+
+```bash
+pip install "git+https://github.com/openviglet/models-catalog.git#subdirectory=clients/python"
+```
+
+Pin to a tag or commit for reproducible builds:
+
+```bash
+pip install "git+https://github.com/openviglet/models-catalog.git@v1.0.0#subdirectory=clients/python"
+```
+
+> GitHub does **not** host a PyPI-style index (GitHub Packages covers npm, Maven,
+> NuGet, RubyGems and containers, but not `pip`), so there is no "GitHub as a pip
+> registry." The `git+https://` URL above *is* the public, auth-free way to install
+> from GitHub.
+
+Once published to PyPI, the short form will also work:
+
 ```bash
 pip install openviglet-models-catalog-client
 ```

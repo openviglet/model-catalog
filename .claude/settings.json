@@ -2,23 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(*)",
-      "Bash(node -e ' *)",
-      "Bash(npm test *)",
-      "Bash(git check-ignore *)",
-      "Bash(run-commit.cmd -m \"feat: emit compact index.json endpoint \\(T7\\)\")",
-      "Bash(run-commit.cmd -m \"feat: emit faceted by-kind/by-vendor slices + endpoints.json manifest \\(T8\\)\")",
-      "Bash(run-commit.cmd -m \"feat: add opt-in Ollama/Bedrock/HuggingFace source adapters \\(T4\\)\")",
-      "Bash(run-commit.cmd -m \"docs: document the new REST endpoints \\(index/slices/manifest\\) on the public page\")",
-      "Bash(node --test)",
-      "Bash(run-commit.cmd -m \"feat: add zero-dep JavaScript/TypeScript client library \\(T9\\)\")",
-      "Bash(python -m unittest discover -s tests -v)",
-      "Bash(run-commit.cmd -m \"feat: add stdlib-only Python client library \\(T10\\)\")",
-      "Bash(git commit *)",
-      "Bash(java -version)",
-      "Bash(javac -version)",
-      "Bash(mvn -version)",
-      "Bash(mvn -q test)",
-      "Bash(run-commit.cmd -m \"feat: add no-runtime-dep Java client library \\(T11\\)\")"
+      "Bash(git commit *)"
     ]
   }
 }

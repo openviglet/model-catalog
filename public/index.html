@@ -147,6 +147,48 @@ curl -s ./by-kind/EMBEDDING.json | jq '.vendors | to_entries[].value[].id'
 curl -s ./endpoints.json | jq</code></pre>
       </section>
 
+      <section class="api">
+        <h2>Client SDKs</h2>
+        <p class="meta">
+          Zero-dependency, read-only clients that wrap the endpoints above —
+          URL selection (rolling / pinned / compact), <code>vendors</code>-map flattening,
+          <code>byKind</code>/<code>byVendor</code>/<code>get</code> filters and in-memory caching.
+          All open, Apache-2.0. The repo is public, so every install below is <strong>unauthenticated</strong> — no token, anyone can.
+        </p>
+        <table class="endpoints">
+          <thead>
+            <tr><th>SDK</th><th>Install (public repo, no auth)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="https://github.com/openviglet/models-catalog/tree/main/clients/python">Python</a>
+                <div class="meta">stdlib <code>urllib</code> only · 3.8+</div>
+              </td>
+              <td><code>pip install "git+https://github.com/openviglet/models-catalog.git#subdirectory=clients/python"</code></td>
+            </tr>
+            <tr>
+              <td>
+                <a href="https://github.com/openviglet/models-catalog/tree/main/clients/js">JS / TS</a>
+                <div class="meta">ESM · Node 18+ &amp; browser</div>
+              </td>
+              <td>Two zero-dep files (<code>index.js</code> + <code>index.d.ts</code>) — vendor them or install a release tarball. Once published: <code>npm i @openviglet/models-catalog-client</code></td>
+            </tr>
+            <tr>
+              <td>
+                <a href="https://github.com/openviglet/models-catalog/tree/main/clients/java">Java</a>
+                <div class="meta">JDK <code>HttpClient</code> · 17+</div>
+              </td>
+              <td>Via <a href="https://jitpack.io">JitPack</a> (public, no login), or Maven Central once published: <code>io.github.openviglet:models-catalog-client</code></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="meta">
+          Each README covers the full install matrix and auth notes.
+          GitHub does not host a <code>pip</code> index, and GitHub Packages (npm/Maven) needs a token even for public packages — the per-SDK docs point at the genuinely auth-free path.
+        </p>
+      </section>
+
       <div class="controls">
         <input id="q" type="search" placeholder="Search id, label, or vendor…" autocomplete="off" />
         <div class="filters" id="filters"></div>
