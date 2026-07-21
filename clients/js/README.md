@@ -21,28 +21,14 @@ The catalog is open and grows with the community — [contributions welcome](htt
 
 The repo is **public**, so nothing below needs authentication.
 
-Once published to npm:
+From npm — public, no auth:
 
 ```bash
 npm install @openviglet/models-catalog-client
 ```
 
-Straight from the public GitHub repo — the client is just two zero-dependency files
-(`index.js` + `index.d.ts`), so the auth-free options are:
-
-```bash
-# from a tagged release tarball (no login, anyone can)
-npm install "https://github.com/openviglet/models-catalog/releases/download/js-v1.0.0/openviglet-models-catalog-client-1.0.0.tgz"
-```
-
-…or simply copy `clients/js/index.js` + `index.d.ts` into your project and import
-them — there are no dependencies to resolve.
-
-> `npm install git+https://…` can't target a subdirectory of a monorepo, so it won't
-> pick up this package from the repo root. GitHub Packages *does* host npm, but
-> installing even a **public** package from it still requires an auth token in
-> `.npmrc` — so it isn't truly public. The tarball (or vendoring the two files) is the
-> genuinely unauthenticated path.
+Or, with no registry at all, simply copy `clients/js/index.js` + `index.d.ts` into
+your project and import them — there are no dependencies to resolve.
 
 ## Usage
 

@@ -40,7 +40,7 @@ pip install "git+https://github.com/openviglet/models-catalog.git@v1.0.0#subdire
 > registry." The `git+https://` URL above *is* the public, auth-free way to install
 > from GitHub.
 
-Once published to PyPI, the short form will also work:
+From PyPI — public, no auth:
 
 ```bash
 pip install openviglet-models-catalog-client

@@ -1,15 +1,19 @@
 name: Publish Java client
 
-# Manually publishes the no-runtime-dep Java client as an auth-free GitHub Release —
-# no Maven Central, no token. The unauthenticated install path is JitPack building
-# the tag this job creates (root jitpack.yml pins the clients/java module to it):
+# Manually publishes the no-runtime-dep Java client to Maven Central via the Central
+# Portal (https://central.sonatype.com), coordinate
+# io.github.openviglet:models-catalog-client. Every run auto-increments the patch in
+# clients/java/pom.xml, commits + tags the bump, runs `mvn verify` as a gate, then
+# `mvn -P release deploy` (signs sources+javadoc+jar with GPG and publishes). The
+# version is derived, never typed; Central rejects a re-published release anyway.
 #
-#   com.github.openviglet.models-catalog:models-catalog-client:java-v<version>
-#
-# Every run auto-increments the patch in clients/java/pom.xml, commits the bump back,
-# then (after `mvn verify` passes) creates that `java-v<version>` tag via the Release
-# and attaches the built jar for direct download. No inputs — just dispatch it; the
-# version is derived, never typed.
+# ── Required repo secrets ─────────────────────────────────────────────────────
+#   MAVEN_CENTRAL_USERNAME / MAVEN_CENTRAL_PASSWORD — a Central Portal user token
+#       (central.sonatype.com → Account → Generate User Token). The io.github.openviglet
+#       namespace is auto-verified for the openviglet GitHub org.
+#   MAVEN_GPG_PRIVATE_KEY — an ASCII-armored GPG private key whose public key is on a
+#       public keyserver (Central requires signed artifacts).
+#   MAVEN_GPG_PASSPHRASE — that key's passphrase.
 
 on:
   workflow_dispatch:
@@ -31,6 +35,13 @@ jobs:
           distribution: temurin
           java-version: 17
           cache: maven
+          # Writes ~/.m2/settings.xml with a `central` server whose credentials are
+          # read from these env vars at deploy time, and imports the signing key.
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Configure Git
         run: |
@@ -53,23 +64,20 @@ jobs:
         working-directory: clients/java
         run: mvn -B verify
 
-      - name: Commit version bump
+      # Record the bump before publishing: a burned version number (if publish
+      # later fails) is harmless; re-using one already on Central is a hard failure.
+      - name: Commit + tag version bump
         run: |
           set -euo pipefail
           git add clients/java/pom.xml
           git commit -m "chore(release): java client v${NEW_VERSION} [skip ci]"
-          git push
+          git tag "java-v${NEW_VERSION}"
+          git push --follow-tags
 
-      - name: Create Release + attach jar
+      - name: Publish to Maven Central
         working-directory: clients/java
+        run: mvn -B -P release -DskipTests deploy
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          TAG="java-v${NEW_VERSION}"
-          gh release create "$TAG" ./target/models-catalog-client-*.jar \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$(git rev-parse HEAD)" \
-            --title "Java client ${TAG#java-}" \
-            --notes "No-runtime-dep \`io.github.openviglet:models-catalog-client\`. Public, no auth — depend on \`com.github.openviglet.models-catalog:models-catalog-client:$TAG\` via JitPack, or download the attached jar." \
-          || gh release upload "$TAG" ./target/models-catalog-client-*.jar --repo "$GITHUB_REPOSITORY" --clobber
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}

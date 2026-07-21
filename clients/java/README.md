@@ -25,7 +25,7 @@ The catalog is open and grows with the community — [contributions welcome](htt
 
 The repo is **public**, so nothing below needs authentication.
 
-Once published to Maven Central:
+From Maven Central — public, no auth:
 
 ```xml
 <dependency>

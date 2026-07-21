@@ -1,15 +1,14 @@
 name: Publish Python client
 
-# Manually publishes the stdlib-only Python client as an auth-free GitHub Release —
-# no PyPI, no token. GitHub hosts no pip index, so the unauthenticated install path
-# is the tag itself:
+# Manually publishes the stdlib-only Python client to PyPI
+# (https://pypi.org/project/openviglet-models-catalog-client/). Every run
+# auto-increments the patch in clients/python/pyproject.toml, commits + tags the
+# bump, builds an sdist + wheel, then uploads them with twine. The version is
+# derived, never typed; PyPI rejects a re-uploaded version anyway.
 #
-#   pip install "git+https://github.com/openviglet/models-catalog.git@py-v<version>#subdirectory=clients/python"
-#
-# Every run auto-increments the patch in clients/python/pyproject.toml, commits the
-# bump back, then creates that `py-v<version>` tag (via the Release) and attaches a
-# built sdist + wheel for offline/mirror installs. No inputs — just dispatch it; the
-# version is derived, never typed.
+# ── Required repo secret ──────────────────────────────────────────────────────
+#   PYPI_API_TOKEN — a PyPI API token scoped to this project (pypi.org → Account
+#   settings → API tokens). Used as the password with the __token__ username.
 
 on:
   workflow_dispatch:
@@ -47,7 +46,7 @@ jobs:
           echo "NEW_VERSION=$NEW" >> "$GITHUB_ENV"
           echo "Bumped Python client to $NEW"
 
-      # Client runtime is stdlib-only; `build` is a CI-only tool, never a client dep.
+      # Client runtime is stdlib-only; build/twine are CI-only tools, never deps.
       - name: Test (publish gate)
         working-directory: clients/python
         run: python -m unittest discover -s tests
@@ -58,23 +57,21 @@ jobs:
           python -m pip install --upgrade build
           python -m build
 
-      - name: Commit version bump
+      # Record the bump before publishing: a burned version number (if publish
+      # later fails) is harmless; re-using one already on PyPI is a hard failure.
+      - name: Commit + tag version bump
         run: |
           set -euo pipefail
           git add clients/python/pyproject.toml
           git commit -m "chore(release): python client v${NEW_VERSION} [skip ci]"
-          git push
+          git tag "py-v${NEW_VERSION}"
+          git push --follow-tags
 
-      - name: Create Release + attach dist
+      - name: Publish to PyPI
         working-directory: clients/python
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
-          TAG="py-v${NEW_VERSION}"
-          gh release create "$TAG" ./dist/* \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$(git rev-parse HEAD)" \
-            --title "Python client ${TAG#py-}" \
-            --notes "Stdlib-only \`openviglet-models-catalog-client\`. Public, no auth — \`pip install \"git+https://github.com/openviglet/models-catalog.git@$TAG#subdirectory=clients/python\"\` (or install an attached wheel)." \
-          || gh release upload "$TAG" ./dist/* --repo "$GITHUB_REPOSITORY" --clobber
+          python -m pip install --upgrade twine
+          python -m twine upload dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}

@@ -1,15 +1,14 @@
 name: Publish JS client
 
-# Manually publishes the zero-dependency JS/TS client as an auth-free GitHub
-# Release asset — no npm registry, no token. Every run auto-increments the patch in
-# clients/js/package.json, commits the bump back, then packs
-# openviglet-models-catalog-client-<version>.tgz and attaches it to a `js-v<version>`
-# Release, so anyone can install it straight from the public repo:
+# Manually publishes the zero-dependency JS/TS client to npm
+# (https://www.npmjs.com/package/@openviglet/models-catalog-client). Every run
+# auto-increments the patch in clients/js/package.json, commits + tags the bump,
+# then runs `npm publish`. The version is derived, never typed, so it can never
+# drift from package.json, and npm rejects a re-published version anyway.
 #
-#   npm install https://github.com/openviglet/models-catalog/releases/download/js-v<version>/openviglet-models-catalog-client-<version>.tgz
-#
-# No inputs — just dispatch it. The version is derived, never typed, so the tag and
-# asset URL can never drift from package.json.
+# ── Required repo secret ──────────────────────────────────────────────────────
+#   NPM_TOKEN — an npm automation token with publish rights on the @openviglet
+#   scope (npmjs.com → Access Tokens → Generate → Automation).
 
 on:
   workflow_dispatch:
@@ -29,6 +28,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: 20
+          registry-url: "https://registry.npmjs.org"
+          scope: "@openviglet"
 
       - name: Configure Git
         run: |
@@ -44,32 +45,23 @@ jobs:
           echo "NEW_VERSION=$NEW" >> "$GITHUB_ENV"
           echo "Bumped JS client to $NEW"
 
-      # Zero-dependency: no `npm ci` — tests and `npm pack` need nothing installed.
+      # Zero-dependency: no `npm ci` — tests need nothing installed.
       - name: Test (publish gate)
         working-directory: clients/js
         run: node --test
 
-      - name: Pack tarball
-        working-directory: clients/js
-        run: npm pack
-
-      - name: Commit version bump
+      # Record the bump before publishing: a burned version number (if publish
+      # later fails) is harmless; re-using one already on npm is a hard failure.
+      - name: Commit + tag version bump
         run: |
           set -euo pipefail
           git add clients/js/package.json
           git commit -m "chore(release): js client v${NEW_VERSION} [skip ci]"
-          git push
+          git tag "js-v${NEW_VERSION}"
+          git push --follow-tags
 
-      - name: Create Release + attach tarball
+      - name: Publish to npm
         working-directory: clients/js
+        run: npm publish --access public
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -euo pipefail
-          TAG="js-v${NEW_VERSION}"
-          gh release create "$TAG" ./*.tgz \
-            --repo "$GITHUB_REPOSITORY" \
-            --target "$(git rev-parse HEAD)" \
-            --title "JS/TS client ${TAG#js-}" \
-            --notes "Zero-dependency \`@openviglet/models-catalog-client\` tarball. Public, no auth — \`npm install <this asset's URL>\`." \
-          || gh release upload "$TAG" ./*.tgz --repo "$GITHUB_REPOSITORY" --clobber
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
