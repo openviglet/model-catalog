@@ -89,11 +89,7 @@
         font-weight: 800; font-size: 1.02rem; color: var(--text); letter-spacing: -.02em;
       }
       .brand:hover { text-decoration: none; }
-      .brand .mark {
-        width: 1.65rem; height: 1.65rem; border-radius: .5rem; display: grid; place-items: center;
-        background: linear-gradient(135deg, var(--brand-2), var(--brand-3));
-        color: #fff; font-size: .95rem; box-shadow: 0 2px 8px -1px rgba(194,65,12,.5);
-      }
+      .brand .brand-logo { width: 1.9rem; height: 1.9rem; display: block; flex-shrink: 0; }
       .brand .sub { color: var(--muted); font-weight: 500; font-size: .82rem; font-family: var(--sans); }
       .nav-links { display: flex; align-items: center; gap: .35rem; margin-left: auto; }
       .nav-links a {
@@ -364,9 +360,8 @@
     <nav>
       <div class="wrap nav-inner">
         <a class="brand" href="#top">
-          <span class="mark">◈</span>
+          <img class="brand-logo" src="viglet-logo.png" alt="Viglet" width="30" height="30" />
           Model Catalog
-          <span class="sub nav-hide-sm">· Viglet</span>
         </a>
         <div class="nav-links">
           <a href="#browse" class="nav-hide-sm">Browse</a>
