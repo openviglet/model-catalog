@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Model Catalog — Viglet Turing ES</title>
+    <title>Model Catalog</title>
     <meta
       name="description"
       content="A vendor-neutral, kind-aware catalog of LLM / embedding / rerank / media models. Free, unauthenticated, versioned JSON — a public reference for the AI community."
     />
-    <meta property="og:title" content="Model Catalog — Viglet Turing ES" />
+    <meta property="og:title" content="Model Catalog" />
     <meta
       property="og:description"
       content="Which model ids exist per vendor, and for each: its kind, context window and capabilities. Free, unauthenticated, versioned JSON."
@@ -196,6 +196,7 @@
 
       /* Feature cards */
       .grid { display: grid; gap: 1.1rem; }
+      .grid > * { min-width: 0; }
       .grid-4 { grid-template-columns: repeat(4, 1fr); }
       .grid-3 { grid-template-columns: repeat(3, 1fr); }
       @media (max-width: 900px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } .grid-3 { grid-template-columns: 1fr; } }
@@ -303,6 +304,7 @@
         padding: 1rem 1.1rem; border-radius: .7rem; font-size: .86rem; line-height: 1.65;
         border: 1px solid var(--border-strong);
       }
+      .codeblock pre { padding-right: 4.2rem; }
       [data-theme="dark"] pre { background: #0c0906; }
       pre .cm { color: #8a7a6a; }
       pre .tk { color: #fdba74; }
@@ -313,13 +315,35 @@
       }
       .copy:hover { background: rgba(255,255,255,.16); }
 
-      .sdk .ic-lang {
-        width: 2.4rem; height: 2.4rem; border-radius: .6rem; display: grid; place-items: center;
-        font-family: var(--brand-font); font-weight: 800; font-size: .85rem; color: #fff; margin-bottom: .9rem;
+      /* One row per SDK: language identity on the left, single-line install on the right. */
+      .sdk-list { display: flex; flex-direction: column; gap: 1rem; }
+      .sdk-row {
+        display: grid; grid-template-columns: 18rem 1fr; align-items: center; gap: 1.4rem;
       }
-      .sdk code { font-size: .8rem; background: var(--bg-alt); padding: .1rem .35rem; border-radius: .35rem;
-        border: 1px solid var(--border); }
-      .sdk .install { margin-top: .8rem; }
+      .sdk-row .sdk-id { display: flex; align-items: flex-start; gap: .9rem; }
+      .sdk-row .ic-lang {
+        width: 2.4rem; height: 2.4rem; border-radius: .6rem; display: grid; place-items: center;
+        font-family: var(--brand-font); font-weight: 800; font-size: .85rem; color: #fff; flex-shrink: 0;
+      }
+      .sdk-row .sdk-meta h3 { margin: 0 0 .2rem; font-size: 1.08rem; }
+      .sdk-row .sdk-meta .meta { margin: 0; }
+      .sdk-row .sdk-meta code { font-size: .82rem; background: var(--bg-alt); padding: .05rem .3rem;
+        border-radius: .35rem; border: 1px solid var(--border); }
+      .sdk-row .install { margin: 0; min-width: 0; }
+      @media (max-width: 760px) {
+        .sdk-row { grid-template-columns: 1fr; gap: .7rem; }
+      }
+      /* Java build-tool tabs */
+      .tabbed .tabs { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .5rem; }
+      .tabbed .tab {
+        font-family: var(--sans); font-size: .78rem; font-weight: 600; cursor: pointer;
+        padding: .28rem .6rem; border-radius: .45rem; color: var(--muted);
+        background: transparent; border: 1px solid var(--border-strong);
+      }
+      .tabbed .tab:hover { color: var(--text); border-color: var(--brand); }
+      .tabbed .tab.active { color: #fff; background: var(--brand); border-color: var(--brand); }
+      .tabbed .panel { display: none; position: relative; }
+      .tabbed .panel.active { display: block; }
 
       /* ── Footer ──────────────────────────────────────── */
       footer { border-top: 1px solid var(--border); background: var(--bg-alt); }
@@ -342,7 +366,7 @@
         <a class="brand" href="#top">
           <span class="mark">◈</span>
           Model Catalog
-          <span class="sub nav-hide-sm">· Viglet Turing ES</span>
+          <span class="sub nav-hide-sm">· Viglet</span>
         </a>
         <div class="nav-links">
           <a href="#browse" class="nav-hide-sm">Browse</a>
@@ -488,36 +512,69 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
           <h2>Read the catalog in one line</h2>
           <p>Zero-dependency, read-only clients — URL selection (rolling / pinned / compact), <code>vendors</code>-map flattening, <code>byKind</code>/<code>byVendor</code>/<code>get</code> filters and in-memory caching. All Apache-2.0, all unauthenticated.</p>
         </div>
-        <div class="grid grid-3">
-          <div class="feat sdk">
-            <div class="ic-lang" style="background:linear-gradient(135deg,#3776ab,#4b8bbe)">Py</div>
-            <h3>Python</h3>
-            <p class="meta">stdlib <code>urllib</code> only · 3.8+</p>
+        <div class="sdk-list">
+          <div class="feat sdk-row">
+            <div class="sdk-id">
+              <div class="ic-lang" style="background:linear-gradient(135deg,#3776ab,#4b8bbe)">Py</div>
+              <div class="sdk-meta">
+                <h3>Python</h3>
+                <p class="meta">stdlib <code>urllib</code> only · 3.8+ · On <a href="https://pypi.org/project/openviglet-models-catalog-client/">PyPI</a> · <a href="https://github.com/openviglet/models-catalog/tree/main/clients/python">Docs ↗</a></p>
+              </div>
+            </div>
             <div class="install codeblock">
               <button class="copy" data-copy>Copy</button>
               <pre><code>pip install <span class="tk">openviglet-models-catalog-client</span></code></pre>
             </div>
-            <p class="meta" style="margin-top:.7rem">On <a href="https://pypi.org/project/openviglet-models-catalog-client/">PyPI</a>. <a href="https://github.com/openviglet/models-catalog/tree/main/clients/python">Docs ↗</a></p>
           </div>
-          <div class="feat sdk">
-            <div class="ic-lang" style="background:linear-gradient(135deg,#f7df1e,#e0b400);color:#1a1512">JS</div>
-            <h3>JavaScript / TS</h3>
-            <p class="meta">ESM · Node 18+ &amp; browser</p>
+          <div class="feat sdk-row">
+            <div class="sdk-id">
+              <div class="ic-lang" style="background:linear-gradient(135deg,#f7df1e,#e0b400);color:#1a1512">JS</div>
+              <div class="sdk-meta">
+                <h3>JavaScript / TS</h3>
+                <p class="meta">ESM · Node 18+ &amp; browser · <a href="https://www.npmjs.com/package/@openviglet/models-catalog-client">npm</a> · <a href="https://github.com/openviglet/models-catalog/tree/main/clients/js">Docs ↗</a></p>
+              </div>
+            </div>
             <div class="install codeblock">
               <button class="copy" data-copy>Copy</button>
               <pre><code>npm i <span class="tk">@openviglet/models-catalog-client</span></code></pre>
             </div>
-            <p class="meta" style="margin-top:.7rem">Or vendor two zero-dep files. <a href="https://github.com/openviglet/models-catalog/tree/main/clients/js">Docs ↗</a></p>
           </div>
-          <div class="feat sdk">
-            <div class="ic-lang" style="background:linear-gradient(135deg,#f89820,#e76f00)">Jv</div>
-            <h3>Java</h3>
-            <p class="meta">JDK <code>HttpClient</code> · 17+</p>
-            <div class="install codeblock">
-              <button class="copy" data-copy>Copy</button>
-              <pre><code>io.github.openviglet:<span class="tk">models-catalog-client:1.0.2</span></code></pre>
+          <div class="feat sdk-row">
+            <div class="sdk-id">
+              <div class="ic-lang" style="background:linear-gradient(135deg,#f89820,#e76f00)">Jv</div>
+              <div class="sdk-meta">
+                <h3>Java</h3>
+                <p class="meta">JDK <code>HttpClient</code> · 17+ · On <a href="https://central.sonatype.com/artifact/io.github.openviglet/models-catalog-client">Maven Central</a> · <a href="https://github.com/openviglet/models-catalog/tree/main/clients/java">Docs ↗</a></p>
+              </div>
             </div>
-            <p class="meta" style="margin-top:.7rem">On <a href="https://central.sonatype.com/artifact/io.github.openviglet/models-catalog-client">Maven Central</a>. <a href="https://github.com/openviglet/models-catalog/tree/main/clients/java">Docs ↗</a></p>
+            <div class="install codeblock tabbed">
+              <div class="tabs" role="tablist">
+                <button type="button" role="tab" class="tab active" data-tab>Maven</button>
+                <button type="button" role="tab" class="tab" data-tab>Gradle</button>
+                <button type="button" role="tab" class="tab" data-tab>Gradle (Kotlin)</button>
+                <button type="button" role="tab" class="tab" data-tab>sbt</button>
+              </div>
+              <div class="panel active">
+                <button type="button" class="copy" data-copy>Copy</button>
+                <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;<span class="tk">io.github.openviglet</span>&lt;/groupId&gt;
+  &lt;artifactId&gt;<span class="tk">models-catalog-client</span>&lt;/artifactId&gt;
+  &lt;version&gt;<span class="tk">1.0.2</span>&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+              </div>
+              <div class="panel">
+                <button type="button" class="copy" data-copy>Copy</button>
+                <pre><code>implementation <span class="tk">'io.github.openviglet:models-catalog-client:1.0.2'</span></code></pre>
+              </div>
+              <div class="panel">
+                <button type="button" class="copy" data-copy>Copy</button>
+                <pre><code>implementation(<span class="tk">"io.github.openviglet:models-catalog-client:1.0.2"</span>)</code></pre>
+              </div>
+              <div class="panel">
+                <button type="button" class="copy" data-copy>Copy</button>
+                <pre><code>libraryDependencies += <span class="tk">"io.github.openviglet"</span> % <span class="tk">"models-catalog-client"</span> % <span class="tk">"1.0.2"</span></code></pre>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -529,7 +586,7 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
         <div>
           <strong style="font-family:var(--brand-font);color:var(--text)">Model Catalog</strong>
           <span id="footmeta"></span><br />
-          Part of <a href="https://www.viglet.org">Viglet Turing ES</a> · Apache-2.0
+          By <a href="https://www.viglet.org">Viglet</a> · Apache-2.0
         </div>
         <div class="foot-links">
           <a href="https://github.com/openviglet/models-catalog">GitHub</a>
@@ -700,6 +757,20 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
           document.getElementById("status").innerHTML =
             "Could not load catalog.json (" + e.message + "). Run <code>npm run emit</code> locally, or wait for the published site.";
         });
+
+      /* ── Install tabs (per build tool) ─────────────── */
+      document.querySelectorAll(".tabbed").forEach((box) => {
+        const tabs = [...box.querySelectorAll(".tab")];
+        const panels = [...box.querySelectorAll(".panel")];
+        tabs.forEach((tab, i) => {
+          tab.onclick = () => {
+            tabs.forEach((t) => t.classList.remove("active"));
+            panels.forEach((p) => p.classList.remove("active"));
+            tab.classList.add("active");
+            panels[i].classList.add("active");
+          };
+        });
+      });
 
       /* ── Copy buttons ──────────────────────────────── */
       document.addEventListener("click", (e) => {
