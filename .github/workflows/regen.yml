@@ -39,7 +39,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet -- catalog/models-catalog.json; then
+          if git diff --quiet -- catalog/model-catalog.json; then
             echo "No catalog changes — nothing to propose."
             exit 0
           fi
@@ -47,7 +47,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add catalog/models-catalog.json
+          git add catalog/model-catalog.json
           git commit -m "chore: regenerate model catalog (automated proposal)"
           git push -u origin "$BRANCH"
           BODY_FILE=pipeline/out/diff-report.txt

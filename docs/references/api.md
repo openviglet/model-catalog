@@ -2,7 +2,7 @@
 
 > The catalog is published as an open, CORS-enabled, versioned JSON artifact via
 > GitHub Pages from this repo (`.github/workflows/publish.yml`). Base URL:
-> `https://openviglet.github.io/models-catalog` — the endpoint intentionally stays on
+> `https://openviglet.github.io/model-catalog` — the endpoint intentionally stays on
 > its public GitHub Pages host, so it reads as a community-owned resource rather than a
 > brand asset. (The emitted URLs are still overridable via `CATALOG_SOURCE_URL` at emit
 > time if a deployment ever needs a different host.)
@@ -46,16 +46,16 @@ capability* — **not pricing** (see [STRATEGY.md](../STRATEGY.md) §I).
 header config needed. Cache is host-managed. Breaking schema changes bump the
 pinned path (`catalog-v2.json`); `catalog.json` always tracks the newest. The files
 are regenerated deterministically from the canonical source
-(`catalog/models-catalog.json`) on every publish, so they never drift.
+(`catalog/model-catalog.json`) on every publish, so they never drift.
 
 ## Envelope
 
 ```jsonc
 {
-  "$schema": "https://openviglet.github.io/models-catalog/catalog.schema.json",
+  "$schema": "https://openviglet.github.io/model-catalog/catalog.schema.json",
   "version": 1,                 // schema major version (integer)
   "lastUpdated": "2026-07-21",  // ISO-8601 date the catalog was regenerated
-  "source": "https://openviglet.github.io/models-catalog",
+  "source": "https://openviglet.github.io/model-catalog",
   "vendors": {
     "openai":    [ /* ModelEntry, ... */ ],
     "anthropic": [ /* ModelEntry, ... */ ],
@@ -94,14 +94,14 @@ are regenerated deterministically from the canonical source
 
 ```bash
 # every embedding model across all vendors
-curl -s https://openviglet.github.io/models-catalog/catalog-v1.json \
+curl -s https://openviglet.github.io/model-catalog/catalog-v1.json \
   | jq '.vendors | to_entries[].value[] | select(.kind=="EMBEDDING") | .id'
 ```
 
 ```js
 // browser / Node — kind lookup for an arbitrary id
 const { vendors } = await (await fetch(
-  "https://openviglet.github.io/models-catalog/catalog-v1.json",
+  "https://openviglet.github.io/model-catalog/catalog-v1.json",
 )).json()
 const all = Object.values(vendors).flat()
 const kindOf = (id) => all.find((m) => m.id === id)?.kind ?? "UNKNOWN"
@@ -110,14 +110,14 @@ const kindOf = (id) => all.find((m) => m.id === id)?.kind ?? "UNKNOWN"
 ## How consumers use it
 
 Any tool can fetch the endpoint directly. **Viglet Turing ES** fetches
-`turing.models-catalog.url` (default the rolling endpoint) with an ETag/TTL cache
+`turing.model-catalog.url` (default the rolling endpoint) with an ETag/TTL cache
 as its model-picker catalog. The live per-vendor `/v1/models` listing path and
 Turing's metadata-first kind classification are unchanged — the public catalog only
 provides the static reference.
 
 ## Relationship to other artifacts
 
-- **Source of truth:** `catalog/models-catalog.json` in this repo; this doc is its
+- **Source of truth:** `catalog/model-catalog.json` in this repo; this doc is its
   published contract.
 - **Regeneration:** [pipeline.md](./pipeline.md) — the multi-source, propose-and-review pipeline.
 - **Positioning:** [STRATEGY.md](../STRATEGY.md) §I (why this is a discoverability asset).

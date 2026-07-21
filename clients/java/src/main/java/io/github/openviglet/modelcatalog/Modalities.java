@@ -1,4 +1,4 @@
-package io.github.openviglet.modelscatalog;
+package io.github.openviglet.modelcatalog;
 
 import java.util.List;
 

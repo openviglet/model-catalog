@@ -2,7 +2,7 @@ name: Publish model catalog (GitHub Pages)
 
 # Publishes the public catalog artifacts + browsable page to GitHub Pages.
 # Runs on every push to the default branch and on manual dispatch. The catalog
-# JSON is emitted deterministically from catalog/models-catalog.json — it never
+# JSON is emitted deterministically from catalog/model-catalog.json — it never
 # regenerates from upstream here (that is the propose-and-review pipeline, run
 # locally with `npm run regen`; a bad upstream must never auto-publish).
 

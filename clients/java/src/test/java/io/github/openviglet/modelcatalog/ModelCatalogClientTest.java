@@ -1,4 +1,4 @@
-package io.github.openviglet.modelscatalog;
+package io.github.openviglet.modelcatalog;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

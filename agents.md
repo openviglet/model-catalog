@@ -27,7 +27,7 @@ workflow).
 
 ## Structure
 
-- **`catalog/`** — `models-catalog.json` (single source of truth) + `models-catalog.schema.json` (Draft 2020-12).
+- **`catalog/`** — `model-catalog.json` (single source of truth) + `model-catalog.schema.json` (Draft 2020-12).
 - **`pipeline/`** — the regeneration pipeline: `regen.mjs` orchestrator, `adapters/` (per-source), `lib/` (util/merge/validate), `overrides.json` (curated pins), `regen.test.mjs`. `sources/` (raw snapshot cache) and `out/` (proposed envelope + report) are gitignored.
 - **`scripts/emit.mjs`** — builds the public artifacts (`public/models/*`) from the canonical file.
 - **`public/`** — `index.html` browsable page (committed); `models/*` emitted (gitignored).
@@ -56,6 +56,6 @@ npm test                    # pipeline unit tests (node:test)
 ## Relationship to Viglet Turing ES
 
 Turing consumes the published endpoint as its model-picker reference (remote fetch,
-`turing.models-catalog.url`), but does not own the catalog. This repo versions,
+`turing.model-catalog.url`), but does not own the catalog. This repo versions,
 publishes and evolves independently. User-facing text says **Viglet Turing ES**;
-the public repo is `openviglet/models-catalog`.
+the public repo is `openviglet/model-catalog`.

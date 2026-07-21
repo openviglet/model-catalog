@@ -10,9 +10,9 @@ from typing import Any, Callable, Dict, List, Optional
 from .models import ModelEntry
 
 #: Default public endpoint (GitHub Pages, CORS-open).
-DEFAULT_BASE_URL = "https://openviglet.github.io/models-catalog"
+DEFAULT_BASE_URL = "https://openviglet.github.io/model-catalog"
 
-_USER_AGENT = "openviglet-models-catalog-client/1.0 (+https://github.com/openviglet/models-catalog)"
+_USER_AGENT = "openviglet-model-catalog-client/1.0 (+https://github.com/openviglet/model-catalog)"
 
 FetchFn = Callable[[str], Dict[str, Any]]
 

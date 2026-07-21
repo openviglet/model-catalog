@@ -1,6 +1,6 @@
 /**
  * Emits the PUBLIC model catalog artifacts from this repo's single source of
- * truth — `catalog/models-catalog.json` (the enriched envelope). Validates the
+ * truth — `catalog/model-catalog.json` (the enriched envelope). Validates the
  * source structurally (zero-dep, no ajv), flattens each vendor's entries adding a
  * `vendor` field, and writes the published JSON + a pinned version copy + the
  * JSON Schema into `public/` for GitHub Pages to serve at the site root
@@ -17,13 +17,13 @@ import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(here, "..");
-const SRC = resolve(REPO_ROOT, "catalog/models-catalog.json");
-const SCHEMA_SRC = resolve(REPO_ROOT, "catalog/models-catalog.schema.json");
+const SRC = resolve(REPO_ROOT, "catalog/model-catalog.json");
+const SCHEMA_SRC = resolve(REPO_ROOT, "catalog/model-catalog.schema.json");
 const OUT_DIR = resolve(REPO_ROOT, "public");
 // Public base URL — the GitHub Pages site for this repo. The endpoint intentionally
 // stays on this public host (a community-owned home, not a brand asset); the
 // CATALOG_SOURCE_URL env only exists so an alternate deployment can override it.
-const SOURCE_URL = process.env.CATALOG_SOURCE_URL || "https://openviglet.github.io/models-catalog";
+const SOURCE_URL = process.env.CATALOG_SOURCE_URL || "https://openviglet.github.io/model-catalog";
 
 const KINDS = new Set([
   "CHAT", "EMBEDDING", "RERANK", "IMAGE",

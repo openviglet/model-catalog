@@ -1,7 +1,7 @@
-# Last task number — `T14` · next block letter — `C`
+# Last task number — `T15` · next block letter — `C`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T15`; after assigning it, bump the number above and the log line below.
+> `T16`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,13 +18,14 @@
 
 ## Log (most recent first)
 
+- **T15 SHIPPED** (Block A — renamed slug plural→singular everywhere `models-catalog`→`model-catalog`: git-mv'd data/schema files, Python `model_catalog_client/` + Java `modelcatalog/` package dirs; npm/PyPI/Maven package ids + endpoint URL; Turing consumer `turing.models-catalog.url` still to be repointed; no tags published; all tests green) — 2026-07-21.
 - **T14 SHIPPED** (Block A — new frontier vendor rows DeepSeek/xAI/MiniMax/Z.ai(GLM): mapped the four native litellm_providers + seeded curated overrides ids, 11 CHAT models enriched by LiteLLM; fixed the stale overrides.json anchoring comment; 14 vendors / 194 models) — 2026-07-21.
 - **T13 SHIPPED** (Block B — manual publish workflows: three input-free `workflow_dispatch` publishers `publish-{java,js,python}-client.yml`, each auto-incrementing the manifest patch + committing/tagging the bump, test-gated, then publishing to the public registry — npm / PyPI / Maven Central (Central Portal, GPG-signed `release` profile); token-secret auth; jitpack.yml kept as a Java fallback) — 2026-07-21.
 - **T12 SHIPPED** (Block B — auth-free GitHub distribution: root `jitpack.yml` for the Java client via JitPack + `release-js-client.yml` attaching the JS `.tgz` to `js-v*` releases; per-ecosystem no-auth install docs + site Client SDKs section) — 2026-07-21.
 - **T6 DROPPED** (Block A — branded custom domain: won't do; the endpoint stays on the public `openviglet.github.io` URL so it reads as a community resource, not a brand asset. §III removed from IMPROVEMENTS. T6 not reused.) — 2026-07-21.
-- **T11 SHIPPED** (Block B — Java client: no-runtime-dep Maven `io.github.openviglet:models-catalog-client`, JDK HttpClient + hand-rolled zero-dep JSON reader, records + Kind enum + `.extra()`, Builder, 11 JUnit units) — 2026-07-21.
-- **T10 SHIPPED** (Block B — Python client: stdlib-only `urllib` pip pkg `openviglet-models-catalog-client`, typed dataclass + `.extra`, shared surface, 10 unittest units) — 2026-07-21.
-- **T9 SHIPPED** (Block B — JS/TS client: zero-dep npm `@openviglet/models-catalog-client`, shared surface + faceted-slice loaders, ESM + hand-written .d.ts, 10 node:test units) — 2026-07-21.
+- **T11 SHIPPED** (Block B — Java client: no-runtime-dep Maven `io.github.openviglet:model-catalog-client`, JDK HttpClient + hand-rolled zero-dep JSON reader, records + Kind enum + `.extra()`, Builder, 11 JUnit units) — 2026-07-21.
+- **T10 SHIPPED** (Block B — Python client: stdlib-only `urllib` pip pkg `openviglet-model-catalog-client`, typed dataclass + `.extra`, shared surface, 10 unittest units) — 2026-07-21.
+- **T9 SHIPPED** (Block B — JS/TS client: zero-dep npm `@openviglet/model-catalog-client`, shared surface + faceted-slice loaders, ESM + hand-written .d.ts, 10 node:test units) — 2026-07-21.
 - **T4 SHIPPED** (Block A — extended sources: ollama-api/bedrock-api/huggingface-api adapters behind SourceAdapter, opt-in + partial anchoring, hand-rolled SigV4, 3 normalize tests) — 2026-07-21.
 - **T11 CREATED** (💭, Block B §VI — Java client library: JDK HttpClient + records + filter API) — 2026-07-21.
 - **T10 CREATED** (💭, Block B §VI — Python client library: stdlib urllib + dataclass models) — 2026-07-21.
@@ -37,6 +38,6 @@
 - **T6 CREATED** (💭, Block A §III — branded custom domain for the endpoint) — 2026-07-21.
 - **T5 CREATED** (💭, Block A §II — opt-in CI regeneration that opens a PR, never auto-merges) — 2026-07-21.
 - **T4 CREATED** (💭, Block A §I — extended self-hosted/aggregator sources Ollama/Bedrock/HuggingFace behind SourceAdapter) — 2026-07-21.
-- **T3 SHIPPED** (Block A — repo extraction: standalone openviglet/models-catalog, Pages publish workflow, reference docs, roadmap set + roadmap-docs skill, README/agents/CLAUDE/LICENSE; Turing switched to remote-only consumption) — 2026-07-21.
+- **T3 SHIPPED** (Block A — repo extraction: standalone openviglet/model-catalog, Pages publish workflow, reference docs, roadmap set + roadmap-docs skill, README/agents/CLAUDE/LICENSE; Turing switched to remote-only consumption) — 2026-07-21.
 - **T2 SHIPPED** (Block A — multi-source regeneration pipeline: SourceAdapter + offline cache + merge/reconciliation + validation/diff review gate + npm run regen + 10 node:test; orig. Turing BD T764-T770) — 2026-07-21.
 - **T1 SHIPPED** (Block A — canonical catalog + JSON Schema + emit + public CORS-open JSON API; orig. Turing BC T759-T763) — 2026-07-21.

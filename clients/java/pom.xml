@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.openviglet</groupId>
-    <artifactId>models-catalog-client</artifactId>
+    <artifactId>model-catalog-client</artifactId>
     <version>1.0.2</version>
     <packaging>jar</packaging>
 
-    <name>models-catalog-client</name>
+    <name>model-catalog-client</name>
     <description>Zero-dependency client for the open, community catalog of AI models: a vendor-neutral list
         of LLMs, embeddings, rerankers and multimodal models with typed record entries + byKind/byVendor
         filters + in-memory caching. JDK HttpClient only, no runtime dependencies.</description>
-    <url>https://openviglet.github.io/models-catalog</url>
+    <url>https://openviglet.github.io/model-catalog</url>
 
     <licenses>
         <license>
@@ -23,9 +23,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/openviglet/models-catalog</url>
-        <connection>scm:git:https://github.com/openviglet/models-catalog.git</connection>
-        <developerConnection>scm:git:https://github.com/openviglet/models-catalog.git</developerConnection>
+        <url>https://github.com/openviglet/model-catalog</url>
+        <connection>scm:git:https://github.com/openviglet/model-catalog.git</connection>
+        <developerConnection>scm:git:https://github.com/openviglet/model-catalog.git</developerConnection>
     </scm>
 
     <!-- Maven Central requires a developer entry. -->

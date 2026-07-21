@@ -2,7 +2,7 @@ name: Publish Java client
 
 # Manually publishes the no-runtime-dep Java client to Maven Central via the Central
 # Portal (https://central.sonatype.com), coordinate
-# io.github.openviglet:models-catalog-client. Follows the Viglet Turing publish
+# io.github.openviglet:model-catalog-client. Follows the Viglet Turing publish
 # pattern. Every run auto-increments the patch in clients/java/pom.xml, commits + tags
 # the bump, runs `mvn verify` as a gate, then `mvn -P release deploy` (signs
 # sources+javadoc+jar with GPG and publishes). The version is derived, never typed;

@@ -1,5 +1,5 @@
 /**
- * Type declarations for @openviglet/models-catalog-client. Hand-written (the package
+ * Type declarations for @openviglet/model-catalog-client. Hand-written (the package
  * ships plain ESM — zero build step, matching the repo's zero-dependency ethos).
  * Mirrors the published `ModelEntry` contract; unknown fields are tolerated via the
  * index signature so a future additive-schema field never breaks type-checking.

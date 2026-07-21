@@ -1,7 +1,7 @@
 name: Publish JS client
 
 # Manually publishes the zero-dependency JS/TS client to npm
-# (https://www.npmjs.com/package/@openviglet/models-catalog-client). Every run
+# (https://www.npmjs.com/package/@openviglet/model-catalog-client). Every run
 # auto-increments the patch in clients/js/package.json, commits + tags the bump,
 # then runs `npm publish`. The version is derived, never typed, so it can never
 # drift from package.json, and npm rejects a re-published version anyway.

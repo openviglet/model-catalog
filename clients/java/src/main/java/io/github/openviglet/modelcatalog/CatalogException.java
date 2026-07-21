@@ -1,4 +1,4 @@
-package io.github.openviglet.modelscatalog;
+package io.github.openviglet.modelcatalog;
 
 /** Unchecked wrapper for any failure fetching or parsing the catalog. */
 public class CatalogException extends RuntimeException {

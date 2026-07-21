@@ -8,7 +8,7 @@ an injected monotonic clock drives the TTL assertions without sleeping.
 
 import unittest
 
-from models_catalog_client import KINDS, ModelCatalogClient, ModelEntry
+from model_catalog_client import KINDS, ModelCatalogClient, ModelEntry
 
 BASE = "https://example.test/models"
 

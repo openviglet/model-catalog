@@ -14,16 +14,16 @@ Published as a free, unauthenticated, CORS-open, versioned JSON artifact. Part o
 
 | URL | Meaning |
 |---|---|
-| `https://openviglet.github.io/models-catalog/catalog.json` | Rolling latest |
-| `https://openviglet.github.io/models-catalog/catalog-v1.json` | Pinned to schema v1 |
-| `https://openviglet.github.io/models-catalog/catalog.schema.json` | JSON Schema (Draft 2020-12) |
-| `https://openviglet.github.io/models-catalog/` | Browsable reference page |
+| `https://openviglet.github.io/model-catalog/catalog.json` | Rolling latest |
+| `https://openviglet.github.io/model-catalog/catalog-v1.json` | Pinned to schema v1 |
+| `https://openviglet.github.io/model-catalog/catalog.schema.json` | JSON Schema (Draft 2020-12) |
+| `https://openviglet.github.io/model-catalog/` | Browsable reference page |
 
 Full contract → [docs/references/api.md](docs/references/api.md).
 
 ```bash
 # every embedding model across all vendors
-curl -s https://openviglet.github.io/models-catalog/catalog-v1.json \
+curl -s https://openviglet.github.io/model-catalog/catalog-v1.json \
   | jq '.vendors | to_entries[].value[] | select(.kind=="EMBEDDING") | .id'
 ```
 
@@ -35,14 +35,14 @@ Apache-2.0, published to their public registries — nothing below needs auth:
 
 | SDK | Install |
 |---|---|
-| **Java** (JDK `HttpClient`, 17+) | Maven Central — `io.github.openviglet:models-catalog-client` |
-| **JS / TS** (ESM, Node 18+ & browser) | npm — `npm i @openviglet/models-catalog-client` |
-| **Python** (stdlib `urllib`, 3.8+) | PyPI — `pip install openviglet-models-catalog-client` |
+| **Java** (JDK `HttpClient`, 17+) | Maven Central — `io.github.openviglet:model-catalog-client` |
+| **JS / TS** (ESM, Node 18+ & browser) | npm — `npm i @openviglet/model-catalog-client` |
+| **Python** (stdlib `urllib`, 3.8+) | PyPI — `pip install openviglet-model-catalog-client` |
 
 ```xml
 <dependency>
   <groupId>io.github.openviglet</groupId>
-  <artifactId>models-catalog-client</artifactId>
+  <artifactId>model-catalog-client</artifactId>
   <version>1.0.2</version>
 </dependency>
 ```
@@ -52,7 +52,7 @@ Per-SDK docs: [Java](clients/java/README.md) · [JS/TS](clients/js/README.md) ·
 ## Layout
 
 ```
-catalog/     canonical models-catalog.json + JSON Schema  (single source of truth)
+catalog/     canonical model-catalog.json + JSON Schema  (single source of truth)
 pipeline/    zero-dep multi-source regeneration pipeline  (propose-and-review)
 scripts/     emit.mjs — builds the public artifacts from the canonical file
 public/      index.html (browsable page); models/* is emitted (gitignored)

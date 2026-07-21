@@ -20,8 +20,8 @@ export const OVERRIDES_FILE = resolve(CATALOG_ROOT, "overrides.json");
 /** Proposed envelope + human-readable report land here (never the canonical file). */
 export const OUT_DIR = resolve(CATALOG_ROOT, "out");
 /** The single source of truth — this repo owns it; the emit step publishes it. */
-export const CANONICAL = resolve(REPO_ROOT, "catalog/models-catalog.json");
-export const SCHEMA_FILE = resolve(REPO_ROOT, "catalog/models-catalog.schema.json");
+export const CANONICAL = resolve(REPO_ROOT, "catalog/model-catalog.json");
+export const SCHEMA_FILE = resolve(REPO_ROOT, "catalog/model-catalog.schema.json");
 
 /** Model kinds — the TurLlmModelKind taxonomy (Block BB / T750). */
 export const KINDS = new Set([

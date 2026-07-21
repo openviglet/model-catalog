@@ -1,7 +1,7 @@
 name: Publish Python client
 
 # Manually publishes the stdlib-only Python client to PyPI
-# (https://pypi.org/project/openviglet-models-catalog-client/). Every run
+# (https://pypi.org/project/openviglet-model-catalog-client/). Every run
 # auto-increments the patch in clients/python/pyproject.toml, commits + tags the
 # bump, builds an sdist + wheel, then uploads them with twine. The version is
 # derived, never typed; PyPI rejects a re-uploaded version anyway.

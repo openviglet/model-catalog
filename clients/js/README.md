@@ -1,7 +1,7 @@
-# @openviglet/models-catalog-client
+# @openviglet/model-catalog-client
 
 Zero-dependency, read-only JavaScript / TypeScript client for the
-[open model catalog](https://openviglet.github.io/models-catalog) — a free,
+[open model catalog](https://openviglet.github.io/model-catalog) — a free,
 community-maintained, vendor-neutral list of AI models (LLMs, embeddings, rerankers
 and multimodal), with each model's kind, context window, capabilities and more.
 
@@ -11,7 +11,7 @@ compact `index.json`), flattening the `vendors` map into entries that carry thei
 `vendor`, `byKind`/`byVendor`/`get` filtering, and in-memory caching with an optional
 TTL. It carries **no pricing** — identity, kind and capability only.
 
-The catalog is open and grows with the community — [contributions welcome](https://github.com/openviglet/models-catalog).
+The catalog is open and grows with the community — [contributions welcome](https://github.com/openviglet/model-catalog).
 
 - **Zero dependencies.** Plain ESM + a hand-written `.d.ts`; nothing to transpile.
 - **Browser + Node (≥ 18).** Uses the global `fetch`; inject your own for older Node or tests.
@@ -24,7 +24,7 @@ The repo is **public**, so nothing below needs authentication.
 From npm — public, no auth:
 
 ```bash
-npm install @openviglet/models-catalog-client
+npm install @openviglet/model-catalog-client
 ```
 
 Or, with no registry at all, simply copy `clients/js/index.js` + `index.d.ts` into
@@ -33,7 +33,7 @@ your project and import them — there are no dependencies to resolve.
 ## Usage
 
 ```js
-import { ModelCatalogClient } from "@openviglet/models-catalog-client";
+import { ModelCatalogClient } from "@openviglet/model-catalog-client";
 
 const catalog = new ModelCatalogClient();
 
@@ -85,4 +85,4 @@ node --test
 
 ## License
 
-Apache-2.0. An open, community project — [openviglet/models-catalog](https://github.com/openviglet/models-catalog).
+Apache-2.0. An open, community project — [openviglet/model-catalog](https://github.com/openviglet/model-catalog).

@@ -1,7 +1,7 @@
-# openviglet-models-catalog-client (Python)
+# openviglet-model-catalog-client (Python)
 
 Zero-dependency, read-only Python client for the
-[open model catalog](https://openviglet.github.io/models-catalog) — a free,
+[open model catalog](https://openviglet.github.io/model-catalog) — a free,
 community-maintained, vendor-neutral list of AI models (LLMs, embeddings, rerankers
 and multimodal), with each model's kind, context window, capabilities and more.
 
@@ -16,7 +16,7 @@ optional TTL. It carries **no pricing** — identity, kind and capability only.
   so a future additive-schema field never breaks your code.
 - **Python ≥ 3.8.**
 
-The catalog is open and grows with the community — [contributions welcome](https://github.com/openviglet/models-catalog).
+The catalog is open and grows with the community — [contributions welcome](https://github.com/openviglet/model-catalog).
 
 ## Install
 
@@ -26,13 +26,13 @@ login, anyone can install.
 Straight from GitHub (works today — `pip` just clones the public repo over HTTPS):
 
 ```bash
-pip install "git+https://github.com/openviglet/models-catalog.git#subdirectory=clients/python"
+pip install "git+https://github.com/openviglet/model-catalog.git#subdirectory=clients/python"
 ```
 
 Pin to a tag or commit for reproducible builds:
 
 ```bash
-pip install "git+https://github.com/openviglet/models-catalog.git@v1.0.0#subdirectory=clients/python"
+pip install "git+https://github.com/openviglet/model-catalog.git@v1.0.0#subdirectory=clients/python"
 ```
 
 > GitHub does **not** host a PyPI-style index (GitHub Packages covers npm, Maven,
@@ -43,13 +43,13 @@ pip install "git+https://github.com/openviglet/models-catalog.git@v1.0.0#subdire
 From PyPI — public, no auth:
 
 ```bash
-pip install openviglet-models-catalog-client
+pip install openviglet-model-catalog-client
 ```
 
 ## Usage
 
 ```python
-from models_catalog_client import ModelCatalogClient
+from model_catalog_client import ModelCatalogClient
 
 catalog = ModelCatalogClient()
 
@@ -96,4 +96,4 @@ python -m unittest discover -s tests
 
 ## License
 
-Apache-2.0. An open, community project — [openviglet/models-catalog](https://github.com/openviglet/models-catalog).
+Apache-2.0. An open, community project — [openviglet/model-catalog](https://github.com/openviglet/model-catalog).

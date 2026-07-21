@@ -1,5 +1,5 @@
 /**
- * Unit tests for @openviglet/models-catalog-client (node:test, zero-dep).
+ * Unit tests for @openviglet/model-catalog-client (node:test, zero-dep).
  * A fake fetch serves a tiny in-memory catalog so the tests are fully offline and
  * deterministic; an injected clock drives the TTL assertions without sleeping.
  *

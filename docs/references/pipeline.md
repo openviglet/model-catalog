@@ -1,7 +1,7 @@
 # Model-catalog regeneration pipeline — maintainer reference
 
 > **What it is.** A **local, zero-dependency Node** pipeline that regenerates this
-> repo's canonical `catalog/models-catalog.json` (the single source of truth behind
+> repo's canonical `catalog/model-catalog.json` (the single source of truth behind
 > the published public catalog API) from **multiple trustworthy sources per
 > vendor**, so every model carries provenance-tracked detail instead of a hand
 > guess.
@@ -16,7 +16,7 @@ poison it. So the pipeline follows a strict propose-and-review discipline:
 - A plain run is **read-only** — it fetches, merges, validates, and writes a
   *proposed* envelope + a diff report into `pipeline/out/`, then prints the
   report. **The canonical file is never touched.**
-- Only `--apply` writes `catalog/models-catalog.json` (bumping `lastUpdated`).
+- Only `--apply` writes `catalog/model-catalog.json` (bumping `lastUpdated`).
 - The (planned) CI workflow that runs the fetch would open a **PR**, never
   auto-merge — the review gate stays human.
 
@@ -35,7 +35,7 @@ npm test                      # pipeline unit tests
 | Flag | Effect |
 |---|---|
 | _(none)_ | Dry-run. Fetch live, write `pipeline/out/proposed-catalog.json` + `diff-report.txt`, print report. Canonical untouched. |
-| `--apply` | Write the canonical `catalog/models-catalog.json`. The **only** path that overwrites it. |
+| `--apply` | Write the canonical `catalog/model-catalog.json`. The **only** path that overwrites it. |
 | `--offline` | Skip the network; replay `pipeline/sources/<source>.json` snapshots. |
 | `--only=a,b` | Restrict to the named source ids (see table below). |
 | `--date=YYYY-MM-DD` | Stamp `lastUpdated`/`lastVerified` deterministically (tests). |
@@ -126,7 +126,7 @@ populate: `maxOutputTokens`, `modalities`, `knowledgeCutoff`, `releaseDate`,
 2. Read `pipeline/out/diff-report.txt` — check ADD/REMOVE/CHANGE and any `⚠ conflict`.
 3. Wrong upstream value? Pin the correct one in `pipeline/overrides.json` and re-run.
 4. Satisfied → `npm run regen -- --apply`, then `npm run emit` to republish.
-5. Commit `catalog/models-catalog.json` (+ any `overrides.json` change). `pipeline/sources/`
+5. Commit `catalog/model-catalog.json` (+ any `overrides.json` change). `pipeline/sources/`
    and `pipeline/out/` are gitignored.
 
 ## Non-goals

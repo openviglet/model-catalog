@@ -14,7 +14,7 @@
       content="Which model ids exist per vendor, and for each: its kind, context window and capabilities. Free, unauthenticated, versioned JSON."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://openviglet.github.io/models-catalog/" />
+    <meta property="og:url" content="https://openviglet.github.io/model-catalog/" />
     <link rel="icon" type="image/png" href="viglet-logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -368,7 +368,7 @@
           <a href="#api" class="nav-hide-sm">API</a>
           <a href="#sdks" class="nav-hide-sm">SDKs</a>
           <button class="icon-btn" id="theme" title="Toggle theme" aria-label="Toggle theme">◐</button>
-          <a class="btn-gh" href="https://github.com/openviglet/models-catalog" target="_blank" rel="noopener">
+          <a class="btn-gh" href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
             <span class="nav-hide-sm">Star</span>
           </a>
@@ -488,11 +488,11 @@
             <div class="codeblock">
               <button class="copy" data-copy>Copy</button>
               <pre><code><span class="cm"># every embedding model, from the pre-filtered slice</span>
-curl -s https://openviglet.github.io/models-catalog/<span class="tk">by-kind/EMBEDDING.json</span> \
+curl -s https://openviglet.github.io/model-catalog/<span class="tk">by-kind/EMBEDDING.json</span> \
   | jq <span class="tk">'.vendors | to_entries[].value[].id'</span>
 
 <span class="cm"># discover the whole surface</span>
-curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.json</span> | jq</code></pre>
+curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.json</span> | jq</code></pre>
             </div>
           </div>
         </div>
@@ -513,12 +513,12 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
               <div class="ic-lang" style="background:linear-gradient(135deg,#3776ab,#4b8bbe)">Py</div>
               <div class="sdk-meta">
                 <h3>Python</h3>
-                <p class="meta">stdlib <code>urllib</code> only · 3.8+ · On <a href="https://pypi.org/project/openviglet-models-catalog-client/">PyPI</a> · <a href="https://github.com/openviglet/models-catalog/tree/main/clients/python">Docs ↗</a></p>
+                <p class="meta">stdlib <code>urllib</code> only · 3.8+ · On <a href="https://pypi.org/project/openviglet-model-catalog-client/">PyPI</a> · <a href="https://github.com/openviglet/model-catalog/tree/main/clients/python">Docs ↗</a></p>
               </div>
             </div>
             <div class="install codeblock">
               <button class="copy" data-copy>Copy</button>
-              <pre><code>pip install <span class="tk">openviglet-models-catalog-client</span></code></pre>
+              <pre><code>pip install <span class="tk">openviglet-model-catalog-client</span></code></pre>
             </div>
           </div>
           <div class="feat sdk-row">
@@ -526,12 +526,12 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
               <div class="ic-lang" style="background:linear-gradient(135deg,#f7df1e,#e0b400);color:#1a1512">JS</div>
               <div class="sdk-meta">
                 <h3>JavaScript / TS</h3>
-                <p class="meta">ESM · Node 18+ &amp; browser · <a href="https://www.npmjs.com/package/@openviglet/models-catalog-client">npm</a> · <a href="https://github.com/openviglet/models-catalog/tree/main/clients/js">Docs ↗</a></p>
+                <p class="meta">ESM · Node 18+ &amp; browser · <a href="https://www.npmjs.com/package/@openviglet/model-catalog-client">npm</a> · <a href="https://github.com/openviglet/model-catalog/tree/main/clients/js">Docs ↗</a></p>
               </div>
             </div>
             <div class="install codeblock">
               <button class="copy" data-copy>Copy</button>
-              <pre><code>npm i <span class="tk">@openviglet/models-catalog-client</span></code></pre>
+              <pre><code>npm i <span class="tk">@openviglet/model-catalog-client</span></code></pre>
             </div>
           </div>
           <div class="feat sdk-row">
@@ -539,7 +539,7 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
               <div class="ic-lang" style="background:linear-gradient(135deg,#f89820,#e76f00)">Jv</div>
               <div class="sdk-meta">
                 <h3>Java</h3>
-                <p class="meta">JDK <code>HttpClient</code> · 17+ · On <a href="https://central.sonatype.com/artifact/io.github.openviglet/models-catalog-client">Maven Central</a> · <a href="https://github.com/openviglet/models-catalog/tree/main/clients/java">Docs ↗</a></p>
+                <p class="meta">JDK <code>HttpClient</code> · 17+ · On <a href="https://central.sonatype.com/artifact/io.github.openviglet/model-catalog-client">Maven Central</a> · <a href="https://github.com/openviglet/model-catalog/tree/main/clients/java">Docs ↗</a></p>
               </div>
             </div>
             <div class="install codeblock tabbed">
@@ -553,21 +553,21 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
                 <button type="button" class="copy" data-copy>Copy</button>
                 <pre><code>&lt;dependency&gt;
   &lt;groupId&gt;<span class="tk">io.github.openviglet</span>&lt;/groupId&gt;
-  &lt;artifactId&gt;<span class="tk">models-catalog-client</span>&lt;/artifactId&gt;
+  &lt;artifactId&gt;<span class="tk">model-catalog-client</span>&lt;/artifactId&gt;
   &lt;version&gt;<span class="tk">1.0.2</span>&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
               </div>
               <div class="panel">
                 <button type="button" class="copy" data-copy>Copy</button>
-                <pre><code>implementation <span class="tk">'io.github.openviglet:models-catalog-client:1.0.2'</span></code></pre>
+                <pre><code>implementation <span class="tk">'io.github.openviglet:model-catalog-client:1.0.2'</span></code></pre>
               </div>
               <div class="panel">
                 <button type="button" class="copy" data-copy>Copy</button>
-                <pre><code>implementation(<span class="tk">"io.github.openviglet:models-catalog-client:1.0.2"</span>)</code></pre>
+                <pre><code>implementation(<span class="tk">"io.github.openviglet:model-catalog-client:1.0.2"</span>)</code></pre>
               </div>
               <div class="panel">
                 <button type="button" class="copy" data-copy>Copy</button>
-                <pre><code>libraryDependencies += <span class="tk">"io.github.openviglet"</span> % <span class="tk">"models-catalog-client"</span> % <span class="tk">"1.0.2"</span></code></pre>
+                <pre><code>libraryDependencies += <span class="tk">"io.github.openviglet"</span> % <span class="tk">"model-catalog-client"</span> % <span class="tk">"1.0.2"</span></code></pre>
               </div>
             </div>
           </div>
@@ -584,7 +584,7 @@ curl -s https://openviglet.github.io/models-catalog/<span class="tk">endpoints.j
           By <a href="https://www.viglet.org">Viglet</a> · Apache-2.0
         </div>
         <div class="foot-links">
-          <a href="https://github.com/openviglet/models-catalog">GitHub</a>
+          <a href="https://github.com/openviglet/model-catalog">GitHub</a>
           <a href="./catalog.json">catalog.json</a>
           <a href="./endpoints.json">endpoints.json</a>
           <a href="./catalog.schema.json">Schema</a>

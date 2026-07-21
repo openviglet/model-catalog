@@ -1,7 +1,7 @@
-# models-catalog-client (Java)
+# model-catalog-client (Java)
 
 Zero-dependency, read-only Java client for the
-[open model catalog](https://openviglet.github.io/models-catalog) — a free,
+[open model catalog](https://openviglet.github.io/model-catalog) — a free,
 community-maintained, vendor-neutral list of AI models (LLMs, embeddings, rerankers
 and multimodal), with each model's kind, context window, capabilities and more.
 
@@ -19,7 +19,7 @@ an optional TTL. It carries **no pricing** — identity, kind and capability onl
   `ModelEntry.extra()` so a future additive-schema field never breaks your code.
 - **Java 17+.**
 
-The catalog is open and grows with the community — [contributions welcome](https://github.com/openviglet/models-catalog).
+The catalog is open and grows with the community — [contributions welcome](https://github.com/openviglet/model-catalog).
 
 ## Install
 
@@ -30,7 +30,7 @@ From Maven Central — public, no auth:
 ```xml
 <dependency>
   <groupId>io.github.openviglet</groupId>
-  <artifactId>models-catalog-client</artifactId>
+  <artifactId>model-catalog-client</artifactId>
   <version>1.0.2</version>
 </dependency>
 ```
@@ -49,8 +49,8 @@ public repos on demand and serves them as Maven artifacts with **no login**:
 <dependency>
   <!-- group = com.github.<user>.<repo>; the client lives in a subdirectory, so
        it resolves as a module by its own artifactId -->
-  <groupId>com.github.openviglet.models-catalog</groupId>
-  <artifactId>models-catalog-client</artifactId>
+  <groupId>com.github.openviglet.model-catalog</groupId>
+  <artifactId>model-catalog-client</artifactId>
   <version>java-v1.0.0</version> <!-- any tag, commit SHA, or main-SNAPSHOT -->
 </dependency>
 ```
@@ -66,7 +66,7 @@ no root aggregator pom needed.
 ## Usage
 
 ```java
-import io.github.openviglet.modelscatalog.*;
+import io.github.openviglet.modelcatalog.*;
 import java.util.List;
 
 var catalog = ModelCatalogClient.create();
@@ -116,4 +116,4 @@ mvn test
 
 ## License
 
-Apache-2.0. An open, community project — [openviglet/models-catalog](https://github.com/openviglet/models-catalog).
+Apache-2.0. An open, community project — [openviglet/model-catalog](https://github.com/openviglet/model-catalog).

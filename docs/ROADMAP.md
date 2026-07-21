@@ -25,7 +25,7 @@
 > [CHANGELOG.md](CHANGELOG.md) → Block B.
 
 _No active backlog. The endpoint intentionally stays on its public GitHub Pages URL
-(`openviglet.github.io/models-catalog`) — an unbranded, community-owned home signals
+(`openviglet.github.io/model-catalog`) — an unbranded, community-owned home signals
 it is a public resource, not a brand asset._
 
 ## Non-goals

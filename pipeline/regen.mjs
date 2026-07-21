@@ -2,7 +2,7 @@
  * Model-catalog regeneration orchestrator (Block BD / T765 + T770).
  *
  * Chains fetch → merge → validate → report and, ONLY on explicit `--apply`,
- * writes the canonical `models-catalog.json` (bumping `lastUpdated`). Without
+ * writes the canonical `model-catalog.json` (bumping `lastUpdated`). Without
  * `--apply` it is read-only: it writes the *proposed* envelope + diff report into
  * scripts/catalog/out/ and prints the report — a bad upstream fetch can never
  * silently poison the public reference (the T387/T667 propose-and-review rule).

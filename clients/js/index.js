@@ -1,7 +1,7 @@
 /**
- * @openviglet/models-catalog-client — a zero-dependency, read-only client for the
+ * @openviglet/model-catalog-client — a zero-dependency, read-only client for the
  * open, community-maintained catalog of AI models
- * (https://openviglet.github.io/models-catalog): a vendor-neutral, kind-aware list of
+ * (https://openviglet.github.io/model-catalog): a vendor-neutral, kind-aware list of
  * LLMs, embeddings, rerankers and multimodal models, free for anyone to use.
  *
  * The catalog is "just JSON over HTTPS"; this client removes the boilerplate every
@@ -15,13 +15,13 @@
  * custom `fetch` for older Node or for tests. Unknown ModelEntry fields are tolerated
  * so a future additive-schema field never breaks an old client.
  *
- *   import { ModelCatalogClient } from "@openviglet/models-catalog-client";
+ *   import { ModelCatalogClient } from "@openviglet/model-catalog-client";
  *   const catalog = new ModelCatalogClient();
  *   const embeddings = await catalog.byKind("EMBEDDING");
  */
 
 /** Default public endpoint (GitHub Pages, CORS-open). */
-export const DEFAULT_BASE_URL = "https://openviglet.github.io/models-catalog";
+export const DEFAULT_BASE_URL = "https://openviglet.github.io/model-catalog";
 
 /** The `kind` taxonomy, as published in the schema enum. */
 export const KINDS = Object.freeze([
