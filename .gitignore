@@ -22,6 +22,9 @@ __pycache__/
 build/
 dist/
 
+# Java client build output
+target/
+
 # OS / editor noise
 .DS_Store
 Thumbs.db

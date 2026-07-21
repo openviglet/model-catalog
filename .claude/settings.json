@@ -13,7 +13,12 @@
       "Bash(run-commit.cmd -m \"feat: add zero-dep JavaScript/TypeScript client library \\(T9\\)\")",
       "Bash(python -m unittest discover -s tests -v)",
       "Bash(run-commit.cmd -m \"feat: add stdlib-only Python client library \\(T10\\)\")",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(java -version)",
+      "Bash(javac -version)",
+      "Bash(mvn -version)",
+      "Bash(mvn -q test)",
+      "Bash(run-commit.cmd -m \"feat: add no-runtime-dep Java client library \\(T11\\)\")"
     ]
   }
 }

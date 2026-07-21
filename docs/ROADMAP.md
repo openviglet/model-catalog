@@ -26,15 +26,8 @@
 
 - 💭 **T6** (deps: —) **Branded custom domain for the endpoint** — front the GitHub Pages endpoint with a custom domain (e.g. `models.viglet.org`) via `CNAME` + `CATALOG_SOURCE_URL`, and update consumers (Turing's `turing.models-catalog.url`) + the docs. → §III
 
-## Block B — Client libraries / SDKs
-
-> Thin, read-only client libraries that wrap the published endpoint (fetch +
-> typed models + `by kind`/`by vendor` filters + caching) so consumers don't
-> hand-roll HTTP against the JSON. Each mirrors the repo ethos — zero (or minimal
-> stdlib-only) runtime dependencies — and consumes the public artifacts; none
-> touch the pipeline or the canonical file.
-
-- 💭 **T11** (deps: —) **Java client library** — a minimal JDK-`HttpClient` artifact (records + the same filter API) that generalizes the ad-hoc fetch Turing already does, publishable for other JVM consumers. → §VI
+> **Block B — Client libraries / SDKs** shipped in full (JS/TS · Python · Java) — see
+> [CHANGELOG.md](CHANGELOG.md) → Block B.
 
 ## Non-goals
 

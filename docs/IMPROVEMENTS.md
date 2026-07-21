@@ -14,33 +14,3 @@ name. Add a `public/CNAME`, set `CATALOG_SOURCE_URL` at emit time so the envelop
 `turing.models-catalog.url` default. Because the URL is outward-facing and external
 consumers may pin it, keep the old Pages URL resolving (redirect) for a deprecation
 window.
-
-## §VI Client libraries / SDKs (T11 Java)
-
-> T9 (JS/TS) and T10 (Python) shipped — see [CHANGELOG.md](CHANGELOG.md) → Block B.
-> The shared design below still governs the remaining Java client.
-
-The catalog is "just JSON over HTTPS", so any consumer *can* fetch it directly — but
-each one then re-invents the same boilerplate: URL selection (rolling vs pinned
-`catalog-v1.json`), flattening entries with their `vendor`, kind/vendor filtering,
-and caching. A thin per-language client removes that duplication and gives consumers
-a typed surface that tracks the additive schema, without pulling the pipeline in.
-
-Shared design across the three languages, so they stay predictable:
-
-- **Read-only + published-endpoint only.** A client fetches `catalog.json` (or a
-  pinned `catalog-vN.json`) — and, once T7/T8 ship, `index.json` / faceted slices for
-  smaller payloads — over `fetch`/`HttpClient`/`urllib`. It never touches the pipeline
-  or the canonical file, and carries **no pricing** (nothing to expose — the API has none).
-- **Typed models mirroring `ModelEntry`.** TS interfaces, Python `dataclass`, Java
-  `record`; unknown fields tolerated so a schema addition never breaks an old client
-  (matches the additive-schema contract). `version` stays `1`.
-- **Same small surface everywhere:** load/refresh, `all()`, `byKind(kind)`,
-  `byVendor(vendor)`, `get(vendor, id)`, plus in-memory caching with an optional TTL.
-- **Minimal dependencies, matching repo ethos.** JS: zero-dep npm (browser + Node).
-  Python: stdlib `urllib` only (no `requests`). Java: JDK `HttpClient` + a tiny JSON
-  read (or a single well-scoped parser), no heavy framework.
-
-Each is independently versioned/publishable and its own shippable task (one commit
-per language). The Java one generalizes the fetch Turing already hand-rolls for its
-model-picker, so it has a first real consumer.
