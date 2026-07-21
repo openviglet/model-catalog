@@ -6,7 +6,7 @@
 
     <groupId>io.github.openviglet</groupId>
     <artifactId>models-catalog-client</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>models-catalog-client</name>
