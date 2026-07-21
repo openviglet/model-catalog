@@ -46,6 +46,24 @@ const MODE_TO_KIND = {
   moderations: "MODERATION",
 };
 
+/**
+ * A schema-valid numeric field is a positive integer. LiteLLM reports `0` for
+ * inapplicable fields (e.g. moderation models carry `max_output_tokens: 0` —
+ * they emit no tokens), which violates the schema's `minimum: 1`. Treat any
+ * non-positive value as absent so the field is omitted rather than emitted invalid.
+ */
+function posInt(v) {
+  return Number.isInteger(v) && v >= 1 ? v : undefined;
+}
+
+function capabilitiesFrom(spec) {
+  const caps = [];
+  if (spec.supports_function_calling) caps.push("tools");
+  if (spec.supports_vision) caps.push("vision");
+  if (spec.supports_reasoning) caps.push("reasoning");
+  return caps;
+}
+
 function modalitiesFrom(spec) {
   const input = new Set(["text"]);
   const output = new Set();
@@ -81,24 +99,16 @@ export default {
       if (!vendor) continue; // provider we don't track
       // Bare model id sent to the vendor (drop any "provider/" prefix).
       const id = key.includes("/") ? key.slice(key.indexOf("/") + 1) : key;
-      const capabilities = [];
-      if (spec.supports_function_calling) capabilities.push("tools");
-      if (spec.supports_vision) capabilities.push("vision");
-      if (spec.supports_reasoning) capabilities.push("reasoning");
       drafts.push(
         compact({
           vendor,
           id,
           // No label from litellm — it is keyed by id; leave label to vendor/overrides.
           kind: MODE_TO_KIND[spec.mode] || undefined,
-          contextWindow: Number.isInteger(spec.max_input_tokens)
-            ? spec.max_input_tokens
-            : Number.isInteger(spec.max_tokens)
-              ? spec.max_tokens
-              : undefined,
-          maxOutputTokens: Number.isInteger(spec.max_output_tokens) ? spec.max_output_tokens : undefined,
-          embeddingDimensions: Number.isInteger(spec.output_vector_size) ? spec.output_vector_size : undefined,
-          capabilities,
+          contextWindow: posInt(spec.max_input_tokens) ?? posInt(spec.max_tokens),
+          maxOutputTokens: posInt(spec.max_output_tokens),
+          embeddingDimensions: posInt(spec.output_vector_size),
+          capabilities: capabilitiesFrom(spec),
           modalities: modalitiesFrom(spec),
         }),
       );

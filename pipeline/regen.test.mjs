@@ -32,11 +32,14 @@ test("litellm normalize: maps mode→kind, strips prefix, drops pricing + wildca
     "gpt-4.1": { litellm_provider: "openai", mode: "chat", max_input_tokens: 1000, max_output_tokens: 200, supports_vision: true, input_cost_per_token: 0.01 },
     "anthropic/claude-x": { litellm_provider: "anthropic", mode: "chat", max_input_tokens: 200000 },
     "embed-y": { litellm_provider: "cohere", mode: "embedding", output_vector_size: 1024 },
+    "omni-moderation": { litellm_provider: "openai", mode: "moderation", max_input_tokens: 32768, max_output_tokens: 0 },
     "openai/gpt-4o-*": { litellm_provider: "openai", mode: "chat" },
     "unknown-vendor-model": { litellm_provider: "someone-else", mode: "chat" },
   });
   const byId = Object.fromEntries(drafts.map((d) => [`${d.vendor}/${d.id}`, d]));
-  assert.equal(drafts.length, 3, "sample_spec + wildcard + untracked vendor dropped");
+  assert.equal(drafts.length, 4, "sample_spec + wildcard + untracked vendor dropped");
+  assert.equal(byId["openai/omni-moderation"].maxOutputTokens, undefined, "non-positive max_output_tokens omitted, not emitted as invalid 0");
+  assert.equal(byId["openai/omni-moderation"].contextWindow, 32768);
   assert.equal(byId["openai/gpt-4.1"].kind, "CHAT");
   assert.equal(byId["openai/gpt-4.1"].maxOutputTokens, 200);
   assert.ok(byId["openai/gpt-4.1"].capabilities.includes("vision"));
