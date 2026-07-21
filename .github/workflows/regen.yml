@@ -1,0 +1,59 @@
+name: Regenerate catalog (open PR)
+
+# Manual-dispatch regeneration. Runs the multi-source pipeline with API keys from
+# repo secrets, applies the result **on a throwaway branch**, and opens a PR with
+# the diff report as the body. It NEVER writes to main and NEVER auto-merges — a
+# human reviews the diff (adds / removes / conflicts) and merges. This is the only
+# safe way to let CI help refresh the catalog (propose-and-review, never auto-poison).
+#
+# Set whichever of these repo secrets you have (missing ones simply skip that
+# source; LiteLLM needs no key but can only enrich, never add new ids):
+#   OPENAI_API_KEY · ANTHROPIC_API_KEY · GEMINI_API_KEY · COHERE_API_KEY · MISTRAL_API_KEY
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Regenerate + apply on a working branch
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          COHERE_API_KEY: ${{ secrets.COHERE_API_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: node pipeline/regen.mjs --apply
+
+      - name: Open PR if the catalog changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet -- catalog/models-catalog.json; then
+            echo "No catalog changes — nothing to propose."
+            exit 0
+          fi
+          BRANCH="catalog-regen/${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add catalog/models-catalog.json
+          git commit -m "chore: regenerate model catalog (automated proposal)"
+          git push -u origin "$BRANCH"
+          BODY_FILE=pipeline/out/diff-report.txt
+          [ -f "$BODY_FILE" ] || echo "(no diff report produced)" > "$BODY_FILE"
+          gh pr create \
+            --title "Regenerate model catalog (automated proposal)" \
+            --body-file "$BODY_FILE" \
+            --base main \
+            --head "$BRANCH"

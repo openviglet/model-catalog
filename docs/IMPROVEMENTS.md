@@ -22,18 +22,6 @@ sources behind the existing `SourceAdapter` contract:
 Each is opt-in and key/credential-gated exactly like the cloud adapters (missing
 credential → skip, never fail). This closes the anchoring gap for self-hosted rows.
 
-## §II Opt-in CI regeneration → PR (T5)
-
-A manual-dispatch GitHub Actions workflow that runs `npm run regen` with API keys
-from CI secrets and **opens a pull request** carrying the regenerated
-`catalog/models-catalog.json` + the diff report as the PR body. This automates the
-*fetch*, not the *decision*: the workflow never runs `--apply` on `main` and never
-auto-merges — a human reviews the diff (conflicts, removals, adds) and merges. This
-preserves the propose-and-review discipline (a bad upstream fetch can only ever
-become a reviewable PR, never a silent publish). Distinct from the existing
-**Publish** workflow, which only emits the *already-committed* canonical file to
-Pages and never touches upstream.
-
 ## §III Branded custom domain for the endpoint (T6)
 
 The endpoint currently lives at the GitHub Pages default

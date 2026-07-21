@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T5 SHIPPED** (Block A — regen.yml manual-dispatch workflow: pipeline with secret API keys → apply on throwaway branch → open PR with diff report; never writes main, never auto-merges) — 2026-07-21.
 - **T6 CREATED** (💭, Block A §III — branded custom domain for the endpoint) — 2026-07-21.
 - **T5 CREATED** (💭, Block A §II — opt-in CI regeneration that opens a PR, never auto-merges) — 2026-07-21.
 - **T4 CREATED** (💭, Block A §I — extended self-hosted/aggregator sources Ollama/Bedrock/HuggingFace behind SourceAdapter) — 2026-07-21.

@@ -25,7 +25,6 @@
 > automate the review-gated refresh:
 
 - 💭 **T4** (deps: —) **Extended self-hosted / aggregator sources** — add the Ollama library + local `ollama list`, Bedrock `ListFoundationModels`, and HuggingFace (for local ONNX embedding models) behind the shipped `SourceAdapter` contract, so the non-cloud vendor rows (`ollama`, `bedrock`, `vertex-ai`) stop depending on LiteLLM alone for anchoring. → §I
-- 💭 **T5** (deps: T4) **Opt-in CI regeneration → PR** — a manual-dispatch GitHub Actions workflow that runs `npm run regen` with keys from CI secrets and **opens a PR** with the regenerated catalog + the diff report as the PR body. Never auto-merges — the human review gate stays. → §II
 - 💭 **T6** (deps: —) **Branded custom domain for the endpoint** — front the GitHub Pages endpoint with a custom domain (e.g. `models.viglet.org`) via `CNAME` + `CATALOG_SOURCE_URL`, and update consumers (Turing's `turing.models-catalog.url`) + the docs. → §III
 
 ## Non-goals
