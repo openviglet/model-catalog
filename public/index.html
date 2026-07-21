@@ -80,6 +80,9 @@
         padding: .7rem .8rem; border-radius: .5rem; margin: .5rem 0 0;
       }
       .api a { color: var(--brand); }
+      .endpoints { margin: .3rem 0 .2rem; }
+      .endpoints td:first-child { white-space: nowrap; }
+      .endpoints th:first-child { width: 14rem; }
       footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 2rem 1rem; }
       .meta { color: var(--muted); font-size: .82rem; }
     </style>
@@ -95,14 +98,53 @@
     </header>
     <main>
       <section class="api">
-        <h2>Public API</h2>
+        <h2>Public REST API</h2>
         <p class="meta">
-          Rolling latest: <a href="./catalog.json">catalog.json</a> ·
-          Pinned v1: <a href="./catalog-v1.json">catalog-v1.json</a> ·
-          Compact index: <a href="./index.json">index.json</a> ·
-          Schema: <a href="./catalog.schema.json">catalog.schema.json</a>
+          Static, CORS-open, versioned JSON — no key, no server. Every path below is a plain <code>GET</code>.
         </p>
-        <pre><code>curl -s ./catalog-v1.json | jq '.vendors | to_entries[].value[] | select(.kind=="EMBEDDING") | .id'</code></pre>
+        <table class="endpoints">
+          <thead>
+            <tr><th>Endpoint</th><th>What you get</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="./catalog.json"><code>catalog.json</code></a></td>
+              <td>Full catalog — every vendor, every field. Rolling latest.</td>
+            </tr>
+            <tr>
+              <td><a href="./catalog-v1.json"><code>catalog-v1.json</code></a></td>
+              <td>Same, pinned to schema <strong>v1</strong> — safe for consumers to lock onto.</td>
+            </tr>
+            <tr>
+              <td><a href="./index.json"><code>index.json</code></a></td>
+              <td>Compact index — each model trimmed to <code>{ vendor, id, label, kind }</code>. ~70% smaller; ideal for model-pickers that lazy-load the full record on selection.</td>
+            </tr>
+            <tr>
+              <td><code>by-kind/&lt;KIND&gt;.json</code></td>
+              <td>Catalog filtered to one kind — e.g. <a href="./by-kind/EMBEDDING.json"><code>by-kind/EMBEDDING.json</code></a>, <a href="./by-kind/CHAT.json"><code>CHAT</code></a>.</td>
+            </tr>
+            <tr>
+              <td><code>by-vendor/&lt;vendor&gt;.json</code></td>
+              <td>Catalog filtered to one vendor — e.g. <a href="./by-vendor/openai.json"><code>by-vendor/openai.json</code></a>.</td>
+            </tr>
+            <tr>
+              <td><a href="./endpoints.json"><code>endpoints.json</code></a></td>
+              <td>Discovery manifest — absolute URLs for every path above, including the available <code>byKind</code> / <code>byVendor</code> slice keys. Read this instead of hard-coding paths.</td>
+            </tr>
+            <tr>
+              <td><a href="./catalog.schema.json"><code>catalog.schema.json</code></a></td>
+              <td>JSON Schema (Draft 2020-12) describing the envelope + entry.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="meta">
+          Faceted slices are <strong>pre-computed at publish time</strong>, not a live query API — GitHub Pages serves static assets only. Every response (full, index, or slice) shares the same <code>vendors</code>-map envelope, so one parser reads them all.
+        </p>
+        <pre><code># every embedding model, straight from the pre-filtered slice
+curl -s ./by-kind/EMBEDDING.json | jq '.vendors | to_entries[].value[].id'
+
+# discover the whole surface
+curl -s ./endpoints.json | jq</code></pre>
       </section>
 
       <div class="controls">
