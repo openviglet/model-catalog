@@ -2,18 +2,19 @@ name: Publish Java client
 
 # Manually publishes the no-runtime-dep Java client to Maven Central via the Central
 # Portal (https://central.sonatype.com), coordinate
-# io.github.openviglet:models-catalog-client. Every run auto-increments the patch in
-# clients/java/pom.xml, commits + tags the bump, runs `mvn verify` as a gate, then
-# `mvn -P release deploy` (signs sources+javadoc+jar with GPG and publishes). The
-# version is derived, never typed; Central rejects a re-published release anyway.
+# io.github.openviglet:models-catalog-client. Follows the Viglet Turing publish
+# pattern. Every run auto-increments the patch in clients/java/pom.xml, commits + tags
+# the bump, runs `mvn verify` as a gate, then `mvn -P release deploy` (signs
+# sources+javadoc+jar with GPG and publishes). The version is derived, never typed;
+# Central rejects a re-published release anyway.
 #
-# ── Required repo secrets ─────────────────────────────────────────────────────
-#   MAVEN_CENTRAL_USERNAME / MAVEN_CENTRAL_PASSWORD — a Central Portal user token
-#       (central.sonatype.com → Account → Generate User Token). The io.github.openviglet
-#       namespace is auto-verified for the openviglet GitHub org.
-#   MAVEN_GPG_PRIVATE_KEY — an ASCII-armored GPG private key whose public key is on a
-#       public keyserver (Central requires signed artifacts).
-#   MAVEN_GPG_PASSPHRASE — that key's passphrase.
+# ── Required repo secrets (same names as Turing) ──────────────────────────────
+#   OSSRH_USERNAME / OSSRH_TOKEN — Central Portal user token (central.sonatype.com →
+#       Account → Generate User Token). The io.github.openviglet namespace is
+#       auto-verified for the openviglet GitHub org.
+#   GPG_PRIVATE_KEY — ASCII-armored GPG private key (public key on a keyserver;
+#       Central requires signed artifacts).
+#   GPG_PASSPHRASE — that key's passphrase.
 
 on:
   workflow_dispatch:
@@ -30,23 +31,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-java@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
         with:
+          java-version: "17"
           distribution: temurin
-          java-version: 17
           cache: maven
-          # Writes ~/.m2/settings.xml with a `central` server whose credentials are
-          # read from these env vars at deploy time, and imports the signing key.
-          server-id: central
-          server-username: MAVEN_CENTRAL_USERNAME
-          server-password: MAVEN_CENTRAL_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Import GPG key
+        run: |
+          echo "$GPG_PRIVATE_KEY" > private.key
+          gpg --batch --import private.key
+          gpg --list-secret-keys
+          echo "GPG_TTY=$(tty)" >> "$GITHUB_ENV"
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
 
       # Bump the patch in the working tree; commit only after the gate passes below.
       - name: Bump patch version
@@ -74,10 +79,18 @@ jobs:
           git tag "java-v${NEW_VERSION}"
           git push --follow-tags
 
+      - name: Configure Maven settings (central server credentials)
+        uses: s4u/maven-settings-action@894661b3ddae382f1ae8edbeab60987e08cf0788 # v4.0.0
+        with:
+          servers: |
+            [{
+              "id": "central",
+              "username": "${{ secrets.OSSRH_USERNAME }}",
+              "password": "${{ secrets.OSSRH_TOKEN }}"
+            }]
+
       - name: Publish to Maven Central
         working-directory: clients/java
         run: mvn -B -P release -DskipTests deploy
         env:
-          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
