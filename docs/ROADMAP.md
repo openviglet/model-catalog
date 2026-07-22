@@ -38,7 +38,6 @@
 > Lower the barrier for the community to *contribute* and to trust the data's completeness.
 > Design rationale → §E.
 
-- **T28** 📋 **"Propose a model" contribution flow** — a GitHub issue-form template for proposing/correcting a model, a `CONTRIBUTING.md` explaining the `overrides.json` + propose-and-review path, and a site button that deep-links to the prefilled issue. Turns passive readers into contributors. deps: — → §E1
 - **T29** 💭 **Coverage & gaps transparency** — a `coverage.json` (per-vendor/per-field fill rate) and a site section that surfaces what's incomplete, so gaps are visible and become an open invitation to contribute rather than a hidden weakness. deps: T24 → §E2
 
 > The endpoint intentionally stays on its public GitHub Pages URL

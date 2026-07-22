@@ -1,0 +1,135 @@
+name: Propose or correct a model
+description: Suggest a new model, or correct/deprecate an existing one, in the public catalog.
+title: "[model] <vendor>/<id>"
+labels: ["model-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep the catalog accurate — it's a community-owned reference.
+
+        A maintainer turns your proposal into a curated pin in
+        [`pipeline/overrides.json`](https://github.com/openviglet/model-catalog/blob/main/pipeline/overrides.json),
+        re-runs the propose-and-review pipeline and opens a PR — see
+        [CONTRIBUTING.md](https://github.com/openviglet/model-catalog/blob/main/CONTRIBUTING.md).
+        Nothing is auto-published.
+
+        **Identity + kind + capability only — never pricing.** Fill in what you're sure of;
+        leave the rest blank (a missing field beats a wrong one). Cite a source for anything
+        non-obvious so it can be verified.
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Type of change
+      options:
+        - Add a new model
+        - Correct a field on an existing model
+        - Remove / mark deprecated
+    validations:
+      required: true
+  - type: input
+    id: vendor
+    attributes:
+      label: Vendor
+      description: The lower-case catalog vendor key (e.g. `openai`, `anthropic`, `gemini`, `mistral`).
+      placeholder: openai
+    validations:
+      required: true
+  - type: input
+    id: model-id
+    attributes:
+      label: Model id
+      description: The exact provider model id, as the vendor's API returns it.
+      placeholder: gpt-4o-mini
+    validations:
+      required: true
+  - type: input
+    id: label
+    attributes:
+      label: Display label
+      description: Human-friendly name. Defaults to the id if omitted.
+      placeholder: GPT-4o mini
+    validations:
+      required: false
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      description: The model's primary function.
+      options:
+        - CHAT
+        - EMBEDDING
+        - RERANK
+        - IMAGE
+        - TRANSCRIPTION
+        - SPEECH
+        - VIDEO
+        - MODERATION
+        - UNKNOWN
+    validations:
+      required: false
+  - type: input
+    id: context-window
+    attributes:
+      label: Context window (tokens)
+      description: Max input context, as an integer. Leave blank if unknown.
+      placeholder: "128000"
+    validations:
+      required: false
+  - type: input
+    id: max-output-tokens
+    attributes:
+      label: Max output tokens
+      description: Max tokens the model can emit in one response, as an integer.
+      placeholder: "16384"
+    validations:
+      required: false
+  - type: input
+    id: embedding-dimensions
+    attributes:
+      label: Embedding dimensions
+      description: For EMBEDDING models — the output vector size.
+      placeholder: "1536"
+    validations:
+      required: false
+  - type: input
+    id: capabilities
+    attributes:
+      label: Capabilities
+      description: Comma-separated (e.g. `reasoning, vision, tools, multimodal`).
+      placeholder: reasoning, tools
+    validations:
+      required: false
+  - type: input
+    id: modalities
+    attributes:
+      label: Modalities
+      description: "Input → output, e.g. `text, image → text`. Leave blank if plain text-in/text-out."
+      placeholder: text, image → text
+    validations:
+      required: false
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: Link the provider docs / model card / API response backing the facts above. Provenance is first-class here.
+      placeholder: |
+        - https://platform.openai.com/docs/models/gpt-4o-mini
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: Context for a correction, deprecation date, alias ids, etc.
+    validations:
+      required: false
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Before submitting
+      options:
+        - label: This is about model **identity/kind/capability**, not pricing (the catalog is non-pricing by design).
+          required: true
+        - label: I searched existing issues and the model isn't already proposed.
+          required: true

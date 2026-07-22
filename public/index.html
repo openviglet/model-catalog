@@ -412,7 +412,8 @@
         font-size: .8rem; font-weight: 600; cursor: pointer; padding: .42rem .7rem; border-radius: .5rem;
         border: 1px solid var(--border-strong); background: var(--bg-alt); color: var(--text);
       }
-      .mini-btn:hover { border-color: var(--brand); color: var(--brand-3); }
+      .mini-btn:hover { border-color: var(--brand); color: var(--brand-3); text-decoration: none; }
+      a.mini-btn:hover { text-decoration: none; }
       .dl { display: grid; grid-template-columns: max-content 1fr; gap: .55rem 1rem; margin: 0 0 1.4rem; }
       .dl dt { color: var(--muted); font-size: .82rem; font-weight: 600; }
       .dl dd { margin: 0; font-size: .9rem; }
@@ -577,6 +578,7 @@
           <a href="#browse" class="nav-hide-sm">Browse</a>
           <a href="#api" class="nav-hide-sm">API</a>
           <a href="#sdks" class="nav-hide-sm">SDKs</a>
+          <a href="#contribute" class="nav-hide-sm">Contribute</a>
           <button type="button" class="icon-btn" id="palbtn" title="Command palette (Ctrl / ⌘ K)" aria-label="Open command palette">⌘K</button>
           <button class="icon-btn" id="theme" title="Toggle theme" aria-label="Toggle theme">◐</button>
           <a class="btn-gh" href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">
@@ -819,6 +821,38 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       </div>
     </section>
 
+    <!-- ── Contribute (T28) ────────────────────────────── -->
+    <section class="block" id="contribute">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="kicker">Community</div>
+          <h2>Spotted a missing or wrong model?</h2>
+          <p>This is a community-owned reference — it gets better when you correct it. Propose a model in a structured issue; a maintainer verifies it and folds it in through the propose-and-review pipeline. No auto-publish, ever.</p>
+        </div>
+        <div class="cta" style="margin-bottom:2.5rem">
+          <a class="btn btn-primary" href="https://github.com/openviglet/model-catalog/issues/new?template=propose-model.yml" target="_blank" rel="noopener">Propose / correct a model ↗</a>
+          <a class="btn btn-ghost" href="https://github.com/openviglet/model-catalog/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">How it works</a>
+        </div>
+        <div class="grid grid-3">
+          <div class="feat">
+            <div class="ic">✎</div>
+            <h3>1 · Propose</h3>
+            <p>Open the issue form with the vendor, id, kind and whatever facts you're sure of — plus a source. Every model's detail panel deep-links here, pre-filled.</p>
+          </div>
+          <div class="feat">
+            <div class="ic">◑</div>
+            <h3>2 · Review</h3>
+            <p>A maintainer pins the verified fact in <code>overrides.json</code> and runs the pipeline read-only — fetch, merge, validate, diff report. Nothing is written yet.</p>
+          </div>
+          <div class="feat">
+            <div class="ic">↥</div>
+            <h3>3 · Publish</h3>
+            <p><code>regen --apply</code> writes the canonical file and a PR opens for review. Identity + kind + capability only — never pricing.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Footer ──────────────────────────────────────── -->
     <footer>
       <div class="wrap foot">
@@ -829,6 +863,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         </div>
         <div class="foot-links">
           <a href="https://github.com/openviglet/model-catalog">GitHub</a>
+          <a href="https://github.com/openviglet/model-catalog/blob/main/CONTRIBUTING.md">Contribute</a>
           <a href="./catalog.json">catalog.json</a>
           <a href="./endpoints.json">endpoints.json</a>
           <a href="./catalog.schema.json">Schema</a>
@@ -1103,6 +1138,18 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         hideDrawer();
         writeCurrentState();
       }
+      // Deep-link to the "Propose or correct a model" issue form, pre-filled with
+      // this model's vendor + id (query params match the form field ids). T28.
+      const ISSUE_NEW = "https://github.com/openviglet/model-catalog/issues/new";
+      function correctionUrl(m) {
+        const p = new URLSearchParams({
+          template: "propose-model.yml",
+          "change-type": "Correct a field on an existing model",
+          vendor: m.vendor,
+          "model-id": m.id,
+        });
+        return `${ISSUE_NEW}?${p.toString()}`;
+      }
       function renderDetail(m) {
         const rows = [];
         const add = (dt, dd) => { if (dd || dd === 0) rows.push(`<dt>${dt}</dt><dd>${dd}</dd>`); };
@@ -1133,6 +1180,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
             <button type="button" class="mini-btn" data-copy-id>⧉ Copy id</button>
             <button type="button" class="mini-btn" data-copy-json>{ } Copy JSON</button>
             <button type="button" class="mini-btn" data-pin-drawer aria-pressed="${cmpOn}">${cmpOn ? "✓ Comparing" : "⇄ Compare"}</button>
+            <a class="mini-btn" href="${correctionUrl(m)}" target="_blank" rel="noopener" title="Propose a correction to this model">✎ Correct</a>
           </div>
           <dl class="dl">${rows.join("")}</dl>
           ${caps}

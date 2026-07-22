@@ -16,14 +16,6 @@ Adoption isn't just consumption; a reference the community *owns* is one it can 
 and extend. These lower the barrier to contributing and make the data's completeness
 honest and visible.
 
-### §E1 — T28 · "Propose a model" contribution flow
-Right now contributing means knowing about `overrides.json` and the propose-and-review
-pipeline. Add a GitHub **issue-form** template (structured fields: vendor, id, kind,
-context window, sources) + a `CONTRIBUTING.md` that maps a proposal to the
-`overrides.json` → `regen --apply` → PR path, and a site "Propose / correct a model"
-button that deep-links to the prefilled issue. Converts readers into contributors while
-keeping the propose-and-review guarantee intact (no auto-write).
-
 ### §E2 — T29 · Coverage & gaps transparency
 Trust grows when gaps are visible, not hidden. Emit a `coverage.json` (per-vendor,
 per-field fill rate — e.g. "context window known for 82% of vendor X") and surface it in
