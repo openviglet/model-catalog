@@ -1046,7 +1046,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       const activeCaps = new Set();        // capability filter chips (AND) — T20
       const activeInMods = new Set();      // input-modality filter chips (AND) — T20
       const activeOutMods = new Set();     // output-modality filter chips (AND) — T20
-      let sortKey = null, sortDir = 1;     // within-vendor column sort — T20
+      const activeTags = new Set();        // use-case tag chips (AND) — T44
+      const activeTiers = new Set();       // price-tier band chips (OR — one tier per model) — T44
+      let sortKey = null, sortDir = 1;     // within-vendor column sort — T20/T44
+      const TIER_ORDER = ["Frontier", "High", "Mid", "Light"]; // T38 tiers, high→low
+      const tierRank = (t) => { const i = TIER_ORDER.indexOf(t); return i < 0 ? 0 : TIER_ORDER.length - i; };
 
       function render() {
         const q = document.getElementById("q").value.trim().toLowerCase();
@@ -1062,6 +1066,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
             for (const x of activeInMods) if (!im.includes(x)) return false;
             const om = (m.modalities && m.modalities.output) || [];
             for (const x of activeOutMods) if (!om.includes(x)) return false;
+            if (activeTags.size || activeTiers.size) {
+              const cl = classify(m);
+              for (const t of activeTags) if (!cl.tags.includes(t)) return false; // AND
+              if (activeTiers.size && !activeTiers.has(cl.tier)) return false;     // OR (one tier per model)
+            }
             if (!q) return true;
             return (m.id + " " + (m.label || "") + " " + vendor).toLowerCase().includes(q);
           });
@@ -1119,6 +1128,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (activeCaps.size) p.set("cap", [...activeCaps].join(","));
         if (activeInMods.size) p.set("in", [...activeInMods].join(","));
         if (activeOutMods.size) p.set("out", [...activeOutMods].join(","));
+        if (activeTags.size) p.set("tag", [...activeTags].join(","));
+        if (activeTiers.size) p.set("tier", [...activeTiers].join(","));
         if (sortKey) p.set("sort", sortKey + ":" + sortDir);
         const hash = p.toString();
         // replaceState: no history entry per keystroke, and never re-fires hashchange
@@ -1128,9 +1139,10 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       function resetFilters() {
         document.getElementById("q").value = ""; activeKind = null;
         activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
+        activeTags.clear(); activeTiers.clear();
         sortKey = null; sortDir = 1;
       }
-      // Route the hash: explorer state (#q=…&kind=…&cap=…&in=…&out=…&sort=…),
+      // Route the hash: explorer state (#q=…&kind=…&cap=…&in=…&out=…&tag=…&tier=…&sort=…),
       // model permalink (#vendor/id), or a bare section anchor / empty → baseline.
       function applyHash() {
         const rawEnc = location.hash.slice(1);
@@ -1148,6 +1160,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           setFromParam(activeCaps, p.get("cap"));
           setFromParam(activeInMods, p.get("in"));
           setFromParam(activeOutMods, p.get("out"));
+          setFromParam(activeTags, p.get("tag"));
+          setFromParam(activeTiers, p.get("tier"));
           const srt = p.get("sort");
           if (srt) { const [k, d] = srt.split(":"); sortKey = k; sortDir = +d || 1; } else { sortKey = null; sortDir = 1; }
           buildFilters(); buildFacets(); render();
@@ -1766,6 +1780,10 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         const caps = [...new Set(all.flatMap((m) => m.capabilities || []))].sort();
         const insM = [...new Set(all.flatMap((m) => (m.modalities && m.modalities.input) || []))].sort();
         const outM = [...new Set(all.flatMap((m) => (m.modalities && m.modalities.output) || []))].sort();
+        // Derived classification facets (T44): use-case tags + price-tier bands, from
+        // the same client-side classify() the table shows — factual, no new data.
+        const tags = [...new Set(all.flatMap((m) => classify(m).tags))].sort();
+        const tiers = TIER_ORDER.filter((t) => all.some((m) => classify(m).tier === t));
         const chip = (set, value) => {
           const b = document.createElement("button");
           b.type = "button"; b.textContent = value;
@@ -1783,7 +1801,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         };
         const host = document.getElementById("facets");
         host.innerHTML = "";
-        [group("Capability", caps, activeCaps), group("Input", insM, activeInMods), group("Output", outM, activeOutMods)]
+        [group("Use case", tags, activeTags), group("Tier", tiers, activeTiers),
+         group("Capability", caps, activeCaps), group("Input", insM, activeInMods), group("Output", outM, activeOutMods)]
           .forEach((g) => { if (g) host.appendChild(g); });
       }
 
@@ -1793,6 +1812,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         const val = (m) =>
           sortKey === "id" ? m.id.toLowerCase()
           : sortKey === "kind" ? (KIND_LABEL[m.kind] || m.kind).toLowerCase()
+          : sortKey === "tier" ? tierRank(classify(m).tier)
           : sortKey === "context" ? (m.contextWindow || 0)
           : sortKey === "output" ? (m.maxOutputTokens || 0)
           : 0;
@@ -1806,17 +1826,18 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       function headLabel(col) {
         const arrow = sortDir === 1 ? " ▲" : " ▼";
         if (col === "model") return "Model" + (sortKey === "id" ? arrow : "");
-        if (col === "kind") return "Kind" + (sortKey === "kind" ? arrow : "");
+        if (col === "kind") return (sortKey === "tier" ? "Tier" + arrow : "Kind" + (sortKey === "kind" ? arrow : ""));
         if (sortKey === "context") return "Context" + arrow;
         if (sortKey === "output") return "Max output" + arrow;
         return "Details";
       }
       function sortTh(col) {
         const active = (col === "model" && sortKey === "id")
-          || (col === "kind" && sortKey === "kind")
+          || (col === "kind" && (sortKey === "kind" || sortKey === "tier"))
           || (col === "details" && (sortKey === "context" || sortKey === "output"));
         const aria = active ? (sortDir === 1 ? "ascending" : "descending") : "none";
-        const title = col === "details" ? ' title="Sort by context window / max output"' : "";
+        const title = col === "kind" ? ' title="Sort by kind, then by price tier"'
+          : col === "details" ? ' title="Sort by context window / max output"' : "";
         return `<th class="sortable" data-col="${col}" role="button" tabindex="0" aria-sort="${aria}"${title}>${headLabel(col)}</th>`;
       }
       // Cycle a column's sort states (last state clears the sort).
@@ -1830,7 +1851,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       }
       function headerClick(col) {
         if (col === "model") stepSort(["id:1", "id:-1"]);
-        else if (col === "kind") stepSort(["kind:1", "kind:-1"]);
+        else if (col === "kind") stepSort(["kind:1", "kind:-1", "tier:-1", "tier:1"]);
         else stepSort(["context:-1", "context:1", "output:-1", "output:1"]);
       }
 

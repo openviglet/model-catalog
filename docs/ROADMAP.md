@@ -47,6 +47,12 @@
 > pricing-source registry (providers.json) and onboarding 8 new provider vendors
 > (Groq, Together, Fireworks, Cerebras, Qwen, Azure + the OpenRouter/Vercel gateways
 > with a curated cap) → 22 vendors / 240 models (see [CHANGELOG.md](CHANGELOG.md) → Block H).
+>
+> **Block I — Model classification & discovery** shipped in full — factual fields
+> (`openWeights` + `parameters`), the cited `benchmarks` object + per-domain scores and
+> its curated-snapshot source adapter, the cited `performance` (speed) axis + derived
+> cost-efficiency view, and page filter/sort by use-case tag + price tier (see
+> [CHANGELOG.md](CHANGELOG.md) → Block I).
 
 ## Block G — Static-site expansion & indexing
 
@@ -56,14 +62,6 @@
 > problem `emit.mjs` already solves. Design rationale → §G.
 
 - **T34** 📋 **More static landing pages + sitemap** — extend `scripts/emit.mjs` (the T26 page generator) with per-capability / per-modality / per-kind static landing pages and a `sitemap.xml` (+ `robots.txt`) so segmented content is individually indexable by search engines and assistants. Zero-dep, derived-at-emit, no framework. deps: — (T26 shipped) → §G1
-
-## Block I — Model classification & discovery
-
-> Help a reader tell what a model is *for* and roughly how capable it is. The derived
-> page classification (T38) shipped; the next tasks add the *factual* inputs that make
-> a stronger, non-opinionated capability signal possible. Design rationale → §I.
-
-- **T44** 📋 **Filter & sort by tier + use-case** — turn the T38 derived classification into interactive discovery: filter chips (use-case tags, tier bands) and sort, mirroring the existing capability/modality filters (T20), serialized into the URL hash. Page-only, factual, zero-dep. deps: — (T38 shipped) → §I7
 
 > The endpoint intentionally stays on its public GitHub Pages URL
 > (`openviglet.github.io/model-catalog`) — an unbranded, community-owned home signals

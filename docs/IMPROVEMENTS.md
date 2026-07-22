@@ -25,19 +25,3 @@ Extend `emit.mjs` with per-capability / per-modality / per-kind landing pages an
 `sitemap.xml` (+ `robots.txt`), so faceted slices become crawlable URLs and the catalog is
 easier for search engines and assistants to index and cite. Derived-at-emit like every
 other artifact, so it can't drift; zero-dep, no framework.
-
-## §I — Model classification & discovery
-
-Readers want to tell, quickly, what a model is *for* and roughly how capable it is. The hard
-constraint: the catalog publishes **facts with provenance, never an invented quality
-verdict** — so a subjective "intelligent / less intelligent" label is out (it would be
-opinion, decay fast, and erode trust). T38 (shipped) delivered a purely *derived* page view
-(use-case tags from kind/capabilities; a tier bucketed from the vendor's own list price — a
-transparent market proxy, honestly labelled). The remaining tasks add the *factual inputs*
-that a stronger, still-non-opinionated signal needs.
-
-### §I7 — T44 · Filter & sort by tier + use-case
-The T38 classification is display-only; make it a discovery tool. Add filter chips (use-case
-tags, tier bands) and sorting on the browsable page, reusing the T20 capability/modality filter
-machinery and serializing the state into the URL hash (T16), so "show me Frontier reasoning
-models" is one click and a shareable link. Page-only, zero-dep, derived from facts already loaded.

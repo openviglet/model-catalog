@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T44 SHIPPED** (Block I §I7 — page filter/sort by tier + use-case: Use case (tags, AND) + Tier (bands, OR) chip groups in the T20 facet bar, Kind header cycles into a tier sort (tierRank), state in T16 hash (tag/tier/sort); classify()-driven so chips match table; page-only zero-dep. **Block I shipped in full.**) — 2026-07-22.
 - **T43 SHIPPED** (Block I §I6 — speed & cost-efficiency axis: cited `performance` object {throughputTps?, latencyTtftSec?, indicative, source, lastVerified}; shared citedCoreErrors() validator + OBJECT_FIELDS merge loop; adapter emits performance from snapshot; emit coverage/CSV/facts; page Speed row + DERIVED cost-per-capability (index÷price); 2 tests) — 2026-07-22.
 - **T42 SHIPPED** (Block I §I5 — per-domain cited scores: benchmarks.scores map {domain:{value,source?,lastVerified?}} recommended reasoning/coding/math; schema/validate/adapter(scoresFrom)/emit(line+3 CSV cols)/page cell; merge unchanged (atomic object); 2 tests) — 2026-07-22.
 - **T41 SHIPPED** (Block I §I4 — benchmark SourceAdapter adapters/benchmarks.mjs reading curated pipeline/benchmarks.json snapshot → provenance-stamped benchmarks drafts; non-anchoring/fail-safe (drops uncatalogued ids), merge priority 25 (above committed for freshness, below overrides); snapshot ships models:[] [maintainer refreshes with verified figures]; 3 tests) — 2026-07-22.
