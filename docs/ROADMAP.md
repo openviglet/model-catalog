@@ -30,7 +30,6 @@
 > link to. Every item is inline, zero-dep, static-hosting-safe (no build step, no runtime).
 > Design rationale → [IMPROVEMENTS.md](IMPROVEMENTS.md) §C.
 
-- **T17** 📋 **Model detail drawer** — click a row to open a panel showing the *full* record (every field: modalities, knowledgeCutoff, releaseDate, aliases, status, `sources`/`lastVerified` provenance), with copy-as-JSON and a copy-the-id action. The table only shows 3 columns today; the richest data is invisible. deps: — → §C2
 - **T18** 📋 **Model comparison view** — select 2–4 models and see them side-by-side (context/output windows, modalities, capabilities, lifecycle) to answer "gpt-4o vs claude vs gemini" without leaving the page. deps: T17 → §C3
 - **T19** 💭 **Command palette (⌘K / Ctrl-K)** — fuzzy quick-jump to any model, vendor or kind; keyboard-first navigation the developer audience expects. deps: T16 → §C4
 - **T20** 📋 **Capability & modality filters + sortable columns** — filter beyond kind (`vision`/`tools`/`reasoning`, input/output modality) and sort by context window / output / release date. deps: — → §C5

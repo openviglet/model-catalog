@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T17 SHIPPED** (Block C §C2 — model detail drawer: click row / permalink opens right-side panel with full record + input/output modalities + conditional status/cutoff/release/aliases, provenance foregrounded, copy-id + copy-as-JSON; wired through the T16 hash router, ✕/Esc/backdrop close) — 2026-07-22.
 - **T16 SHIPPED** (Block C §C1 — URL-addressable explorer state: hash sync of search+kind via replaceState + citable model permalinks `#vendor/id` with hover-copy, hashchange router, scroll+flash on deep link) — 2026-07-22.
 - **T29 CREATED** (💭, Block E §E2 — coverage & gaps transparency: coverage.json + site section; deps T24) — 2026-07-22.
 - **T28 CREATED** (📋, Block E §E1 — "propose a model" flow: GH issue-form + CONTRIBUTING + prefilled deep link) — 2026-07-22.

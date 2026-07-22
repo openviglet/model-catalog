@@ -18,13 +18,6 @@ filtering. For a *reference*, shareability and depth are the whole point — you
 reference by linking to it. This block makes the page linkable, deep, and pleasant to
 explore, without adding a single dependency.
 
-### §C2 — T17 · Model detail drawer
-The schema carries `modalities`, `knowledgeCutoff`, `releaseDate`, `aliases`, `status`
-and first-class provenance (`sources` / `lastVerified`) — none of it is visible in the
-table. A click-to-open side drawer renders the full record, foregrounds provenance (the
-trust story from STRATEGY), and offers **copy-as-JSON** + **copy-id**. It's read-only,
-purely presentational, and unlocks the comparison view.
-
 ### §C3 — T18 · Model comparison view
 "Which of these should I use" is the question a model catalog should answer. Let the user
 pin 2–4 models and render them in a side-by-side column layout (context/output windows,

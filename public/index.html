@@ -375,6 +375,58 @@
         opacity: 0; pointer-events: none; transition: opacity .18s ease, transform .18s ease; z-index: 200;
       }
       #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+      /* ── Model detail drawer (T17) ───────────────────── */
+      tbody tr[data-key] { cursor: pointer; }
+      #dbackdrop {
+        position: fixed; inset: 0; background: rgba(0,0,0,.38); -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity .2s ease; z-index: 90;
+      }
+      #dbackdrop.show { opacity: 1; pointer-events: auto; }
+      #drawer {
+        position: fixed; top: 0; right: 0; height: 100%; width: min(31rem, 93vw);
+        background: var(--card); border-left: 1px solid var(--border-strong);
+        box-shadow: -18px 0 50px -24px rgba(0,0,0,.5); z-index: 100;
+        transform: translateX(100%); transition: transform .24s cubic-bezier(.4,0,.2,1);
+        display: flex; flex-direction: column; outline: none;
+      }
+      #drawer.open { transform: translateX(0); }
+      @media (prefers-reduced-motion: reduce) { #drawer { transition: none; } }
+      .drawer-head {
+        display: flex; align-items: flex-start; gap: .8rem; padding: 1.3rem 1.4rem 1rem;
+        border-bottom: 1px solid var(--border);
+      }
+      .drawer-head .avatar { width: 2.6rem; height: 2.6rem; border-radius: .6rem; font-size: .95rem; }
+      .drawer-title { min-width: 0; flex: 1; }
+      .drawer-title h3 { margin: 0 0 .25rem; font-size: 1.15rem; line-height: 1.2; }
+      .drawer-title code { font-family: var(--mono); font-size: .82rem; color: var(--muted); word-break: break-all; }
+      .drawer-close {
+        flex: none; width: 2rem; height: 2rem; border-radius: .5rem; border: 1px solid var(--border-strong);
+        background: var(--card); color: var(--muted); cursor: pointer; font-size: .95rem; line-height: 1;
+      }
+      .drawer-close:hover { color: var(--text); border-color: var(--brand); }
+      .drawer-body { padding: 1.2rem 1.4rem 2rem; overflow-y: auto; flex: 1; }
+      .drawer-actions { display: flex; gap: .5rem; margin-bottom: 1.3rem; flex-wrap: wrap; }
+      .mini-btn {
+        display: inline-flex; align-items: center; gap: .35rem; font-family: var(--sans);
+        font-size: .8rem; font-weight: 600; cursor: pointer; padding: .42rem .7rem; border-radius: .5rem;
+        border: 1px solid var(--border-strong); background: var(--bg-alt); color: var(--text);
+      }
+      .mini-btn:hover { border-color: var(--brand); color: var(--brand-3); }
+      .dl { display: grid; grid-template-columns: max-content 1fr; gap: .55rem 1rem; margin: 0 0 1.4rem; }
+      .dl dt { color: var(--muted); font-size: .82rem; font-weight: 600; }
+      .dl dd { margin: 0; font-size: .9rem; }
+      .dl dd .mono { font-family: var(--mono); }
+      .dsection-label { font-size: .74rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+        font-weight: 700; margin: 0 0 .5rem; }
+      .prov {
+        background: var(--brand-wash); border: 1px solid color-mix(in srgb, var(--brand) 22%, transparent);
+        border-radius: .7rem; padding: .9rem 1rem;
+      }
+      .prov h4 { margin: 0 0 .55rem; font-size: .74rem; text-transform: uppercase; letter-spacing: .06em;
+        color: var(--brand-ink); font-family: var(--brand-font); }
+      .prov .src { display: inline-block; margin: 0 .3rem .3rem 0; padding: .12rem .5rem; border-radius: .4rem;
+        font-size: .74rem; font-weight: 600; background: var(--card); border: 1px solid var(--border-strong); }
     </style>
   </head>
   <body>
@@ -617,6 +669,20 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
 
     <output id="toast" aria-live="polite"></output>
 
+    <!-- ── Model detail drawer (T17) ───────────────────── -->
+    <div id="dbackdrop"></div>
+    <aside id="drawer" aria-hidden="true" aria-label="Model details" tabindex="-1">
+      <div class="drawer-head">
+        <span class="avatar" id="drawer-avatar"></span>
+        <div class="drawer-title">
+          <h3 id="drawer-name"></h3>
+          <code id="drawer-id"></code>
+        </div>
+        <button type="button" class="drawer-close" id="drawer-close" aria-label="Close details" title="Close (Esc)">✕</button>
+      </div>
+      <div class="drawer-body" id="drawer-body"></div>
+    </aside>
+
     <script>
       /* ── Theme ─────────────────────────────────────── */
       (function () {
@@ -678,6 +744,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       }
 
       let catalog = null, activeKind = null;
+      let byKey = new Map();               // "vendor/id" -> full model record (T17 drawer lookup)
+      let drawerModel = null;              // record currently shown in the detail drawer
       const collapsed = new Set();
 
       function render() {
@@ -744,25 +812,12 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         // replaceState: no history entry per keystroke, and never re-fires hashchange
         history.replaceState(null, "", hash ? "#" + hash : location.pathname + location.search);
       }
-      function focusModel(key) {
-        const slash = key.indexOf("/");
-        if (slash < 0) return;
-        // reveal the row: drop filters/search that could hide it, expand its vendor
-        activeKind = null;
-        document.getElementById("q").value = "";
-        collapsed.delete(key.slice(0, slash));
-        buildFilters();
-        render();
-        const el = document.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
-        if (!el) return;
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-        el.classList.remove("row-hl"); el.getBoundingClientRect(); el.classList.add("row-hl");
-      }
       // Route the hash: explorer state (#q=…&kind=…), model permalink (#vendor/id),
       // or a bare section anchor (#browse) / empty → baseline view + native scroll.
       function applyHash() {
         const rawEnc = location.hash.slice(1);
         if (rawEnc.includes("=")) {
+          hideDrawer();
           const p = new URLSearchParams(rawEnc);
           document.getElementById("q").value = p.get("q") || "";
           const kind = p.get("kind");
@@ -771,9 +826,85 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           return;
         }
         const raw = decodeURIComponent(rawEnc);
-        if (raw.includes("/")) { focusModel(raw); return; }
+        if (raw.includes("/")) {
+          // model permalink → make sure the table exists to scroll to, then open the drawer
+          if (!document.getElementById("list").children.length) { buildFilters(); render(); }
+          openModel(raw);
+          return;
+        }
+        hideDrawer();
         document.getElementById("q").value = ""; activeKind = null;
         buildFilters(); render();
+      }
+
+      /* ── Detail drawer (T17) ───────────────────────── */
+      function openModel(key) {
+        const m = byKey.get(key);
+        if (!m) return;
+        drawerModel = m;
+        const av = document.getElementById("drawer-avatar");
+        av.textContent = initials(m.vendor);
+        av.style.background = vendorColor(m.vendor);
+        document.getElementById("drawer-name").textContent =
+          m.label && m.label !== m.id ? m.label : vendorLabel(m.vendor);
+        document.getElementById("drawer-id").textContent = m.id;
+        document.getElementById("drawer-body").innerHTML = renderDetail(m);
+        const d = document.getElementById("drawer");
+        d.classList.add("open"); d.setAttribute("aria-hidden", "false");
+        document.getElementById("dbackdrop").classList.add("show");
+        d.focus();
+        const el = document.querySelector(`tr[data-key="${CSS.escape(key)}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.classList.remove("row-hl"); el.getBoundingClientRect(); el.classList.add("row-hl");
+        }
+      }
+      function hideDrawer() {
+        const d = document.getElementById("drawer");
+        if (!d.classList.contains("open")) return;
+        d.classList.remove("open"); d.setAttribute("aria-hidden", "true");
+        document.getElementById("dbackdrop").classList.remove("show");
+        drawerModel = null;
+      }
+      // Explicit user close (✕ / Esc / backdrop): also strip #vendor/id back to the
+      // list state so the same row can be reopened and the URL reflects the list.
+      function closeDrawerByUser() {
+        if (!document.getElementById("drawer").classList.contains("open")) return;
+        hideDrawer();
+        writeCurrentState();
+      }
+      function renderDetail(m) {
+        const rows = [];
+        const add = (dt, dd) => { if (dd || dd === 0) rows.push(`<dt>${dt}</dt><dd>${dd}</dd>`); };
+        const chips = (xs) => xs.map((x) => `<span class="chip">${x}</span>`).join(" ");
+        const kc = KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN;
+        add("Vendor", `${vendorLabel(m.vendor)} <span class="lbl">${m.vendor}</span>`);
+        add("Kind", `<span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span>`);
+        if (m.contextWindow) add("Context window", `<span class="mono">${m.contextWindow.toLocaleString("en-US")}</span> tokens <span class="lbl">(${fmtTokens(m.contextWindow)})</span>`);
+        if (m.maxOutputTokens) add("Max output", `<span class="mono">${m.maxOutputTokens.toLocaleString("en-US")}</span> tokens <span class="lbl">(${fmtTokens(m.maxOutputTokens)})</span>`);
+        if (m.embeddingDimensions) add("Embedding dims", `<span class="mono">${m.embeddingDimensions}</span>`);
+        if (m.status) add("Status", m.status);
+        if (m.knowledgeCutoff) add("Knowledge cutoff", m.knowledgeCutoff);
+        if (m.releaseDate) add("Release date", m.releaseDate);
+        if (m.modalities && m.modalities.input && m.modalities.input.length) add("Input", chips(m.modalities.input));
+        if (m.modalities && m.modalities.output && m.modalities.output.length) add("Output", chips(m.modalities.output));
+        if (m.aliases && m.aliases.length) add("Aliases", chips(m.aliases));
+        const caps = (m.capabilities || []).length
+          ? `<div class="dsection-label">Capabilities</div><div style="margin-bottom:1.4rem">${chips(m.capabilities)}</div>`
+          : "";
+        const srcs = (m.sources || []).map((s) => `<span class="src">${s}</span>`).join("");
+        const prov = `<div class="prov">
+            <h4>Provenance</h4>
+            <div style="margin-bottom:.5rem">${srcs || '<span class="lbl">—</span>'}</div>
+            <div class="lbl">Last verified: ${m.lastVerified || "unknown"}</div>
+          </div>`;
+        return `<div class="drawer-actions">
+            <button type="button" class="mini-btn" data-copy-id>⧉ Copy id</button>
+            <button type="button" class="mini-btn" data-copy-json>{ } Copy JSON</button>
+          </div>
+          <dl class="dl">${rows.join("")}</dl>
+          ${caps}
+          ${prov}`;
       }
 
       function buildFilters() {
@@ -806,6 +937,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
         .then((data) => {
           catalog = data;
+          byKey = new Map();
+          for (const [v, ms] of Object.entries(data.vendors)) for (const m of ms) byKey.set(v + "/" + m.id, m);
           const all = Object.values(data.vendors).flat();
           const kinds = new Set(all.map((m) => m.kind));
           countUp(document.querySelector('[data-stat="models"]'), all.length);
@@ -816,6 +949,13 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
             ` · schema v${data.version} · updated ${data.lastUpdated} · ${all.length} models`;
           document.getElementById("q").addEventListener("input", () => { render(); writeCurrentState(); });
           window.addEventListener("hashchange", applyHash);
+          // Row click → navigate to the model permalink (hashchange opens the drawer).
+          // Skip clicks on the permalink anchor (handled separately) and vendor headers.
+          document.getElementById("list").addEventListener("click", (e) => {
+            if (e.target.closest(".permalink") || e.target.closest(".vendor-head")) return;
+            const tr = e.target.closest("tr[data-key]");
+            if (tr) location.hash = "#" + encodeURI(tr.dataset.key);
+          });
           applyHash(); // build filters + render, honoring any deep-linked state/permalink
         })
         .catch((e) => {
@@ -858,12 +998,25 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => el.classList.remove("show"), 1600);
       }
-      // A permalink click both navigates (→ hashchange → scroll+highlight) and copies the citable URL.
+      // A permalink click both navigates (→ hashchange → open drawer) and copies the citable URL.
       document.addEventListener("click", (e) => {
         const pl = e.target.closest(".permalink");
         if (!pl) return;
         const url = location.origin + location.pathname + location.search + pl.getAttribute("href");
         if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => toast("Permalink copied ✓")).catch(() => {});
+      });
+
+      /* ── Drawer close + copy actions (T17) ─────────── */
+      document.getElementById("drawer-close").onclick = closeDrawerByUser;
+      document.getElementById("dbackdrop").onclick = closeDrawerByUser;
+      document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDrawerByUser(); });
+      document.addEventListener("click", (e) => {
+        if (!drawerModel) return;
+        if (e.target.closest("[data-copy-id]")) {
+          navigator.clipboard && navigator.clipboard.writeText(drawerModel.id).then(() => toast("Model id copied ✓"));
+        } else if (e.target.closest("[data-copy-json]")) {
+          navigator.clipboard && navigator.clipboard.writeText(JSON.stringify(drawerModel, null, 2)).then(() => toast("Model JSON copied ✓"));
+        }
       });
     </script>
   </body>
