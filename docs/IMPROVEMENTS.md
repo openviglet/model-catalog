@@ -18,12 +18,6 @@ filtering. For a *reference*, shareability and depth are the whole point — you
 reference by linking to it. This block makes the page linkable, deep, and pleasant to
 explore, without adding a single dependency.
 
-### §C4 — T19 · Command palette (⌘K / Ctrl-K)
-A fuzzy quick-switcher over models/vendors/kinds — the keyboard-first affordance
-developer tools are now expected to have. Selecting an entry navigates to its permalink
-(T16), so the palette is a thin UI over state that already exists. Kept an *idea* until
-T16 lands.
-
 ### §C5 — T20 · Capability & modality filters + sortable columns
 Kind is one axis; "show me everything with `vision` and image input, sorted by context
 window" is the query people actually have. Add capability/modality filter chips (derived

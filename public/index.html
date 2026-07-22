@@ -499,6 +499,44 @@
       .cmp-model code { display: block; font-family: var(--mono); font-size: .72rem; color: var(--muted); word-break: break-all; }
       .cmp-remove { border: none; background: none; cursor: pointer; color: var(--muted); font-size: .9rem; margin-left: auto; padding: 0 .2rem; }
       .cmp-remove:hover { color: var(--brand-3); }
+
+      /* ── Command palette (T19) ───────────────────────── */
+      #palbtn { width: auto; padding: 0 .6rem; font-size: .78rem; font-weight: 600; font-family: var(--sans); letter-spacing: .02em; }
+      #pbackdrop {
+        position: fixed; inset: 0; background: rgba(0,0,0,.4); -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity .16s ease; z-index: 130;
+      }
+      #pbackdrop.show { opacity: 1; pointer-events: auto; }
+      #palette {
+        position: fixed; top: 12vh; left: 50%; transform: translateX(-50%) translateY(-.5rem) scale(.98);
+        width: min(38rem, 94vw); max-height: 68vh; display: flex; flex-direction: column; overflow: hidden;
+        background: var(--card); border: 1px solid var(--border-strong); border-radius: .9rem;
+        box-shadow: var(--shadow-hover); z-index: 140; opacity: 0; pointer-events: none;
+        transition: opacity .16s ease, transform .16s ease;
+      }
+      #palette.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0) scale(1); }
+      @media (prefers-reduced-motion: reduce) { #palette { transition: opacity .16s ease; } }
+      .pal-input { display: flex; align-items: center; gap: .6rem; padding: .9rem 1rem; border-bottom: 1px solid var(--border); }
+      .pal-input svg { width: 1.1rem; height: 1.1rem; color: var(--muted); flex: none; }
+      .pal-input input { flex: 1; border: none; background: none; outline: none; font-family: var(--sans); font-size: 1rem; color: var(--text); }
+      #pal-results { list-style: none; margin: 0; padding: .4rem; overflow-y: auto; flex: 1; }
+      .pal-item { display: flex; align-items: center; gap: .7rem; padding: .55rem .6rem; border-radius: .55rem; cursor: pointer; }
+      .pal-item.active, .pal-item:hover { background: var(--brand-wash); }
+      .pal-ic {
+        width: 1.9rem; height: 1.9rem; border-radius: .45rem; display: grid; place-items: center; flex: none;
+        font-size: .8rem; font-weight: 800; color: #fff; font-family: var(--brand-font);
+      }
+      .pal-ic.kind, .pal-ic.model { background: var(--bg-alt); color: var(--brand-3); border: 1px solid var(--border); font-family: var(--sans); }
+      .pal-main { min-width: 0; display: flex; flex-direction: column; }
+      .pal-title { font-weight: 600; font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .pal-sub { color: var(--muted); font-size: .78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .pal-sub code { font-family: var(--mono); }
+      .pal-empty { padding: 1.4rem; text-align: center; color: var(--muted); font-size: .9rem; }
+      .pal-foot { padding: .5rem 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: .74rem; display: flex; gap: .9rem; }
+      .pal-foot kbd {
+        font-family: var(--mono); font-size: .72rem; background: var(--bg-alt); border: 1px solid var(--border-strong);
+        border-radius: .3rem; padding: .05rem .3rem;
+      }
     </style>
   </head>
   <body>
@@ -513,6 +551,7 @@
           <a href="#browse" class="nav-hide-sm">Browse</a>
           <a href="#api" class="nav-hide-sm">API</a>
           <a href="#sdks" class="nav-hide-sm">SDKs</a>
+          <button type="button" class="icon-btn" id="palbtn" title="Command palette (Ctrl / ⌘ K)" aria-label="Open command palette">⌘K</button>
           <button class="icon-btn" id="theme" title="Toggle theme" aria-label="Toggle theme">◐</button>
           <a class="btn-gh" href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -769,6 +808,17 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         <button type="button" class="drawer-close" id="cmp-close" aria-label="Close comparison" title="Close (Esc)">✕</button>
       </div>
       <div id="compare-body"></div>
+    </div>
+
+    <!-- ── Command palette (T19) ───────────────────────── -->
+    <div id="pbackdrop"></div>
+    <div id="palette" role="dialog" aria-modal="true" aria-label="Command palette">
+      <div class="pal-input">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4" stroke-linecap="round"/></svg>
+        <input id="pal-q" type="text" placeholder="Jump to a model, vendor or kind…" autocomplete="off" aria-label="Search models, vendors and kinds" />
+      </div>
+      <ul id="pal-results" role="listbox" aria-label="Results"></ul>
+      <div class="pal-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
     </div>
 
     <script>
@@ -1089,6 +1139,91 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         return `<table class="cmp"><thead>${head}</thead><tbody>${body}</tbody></table>`;
       }
 
+      /* ── Command palette (T19) ─────────────────────── */
+      let palIndex = [], palResults = [], palActive = 0;
+      function buildPaletteIndex() {
+        palIndex = [];
+        const present = new Set();
+        for (const [v, ms] of Object.entries(catalog.vendors)) {
+          palIndex.push({ type: "vendor", vendor: v, text: (vendorLabel(v) + " " + v).toLowerCase() });
+          for (const m of ms) {
+            present.add(m.kind);
+            palIndex.push({
+              type: "model", key: v + "/" + m.id, id: m.id, label: m.label, vendor: v, kind: m.kind,
+              text: (m.id + " " + (m.label || "") + " " + vendorLabel(v) + " " + v).toLowerCase(),
+            });
+          }
+        }
+        for (const k of KINDS) if (present.has(k)) palIndex.unshift({ type: "kind", kind: k, text: ("kind " + KIND_LABEL[k] + " " + k).toLowerCase() });
+      }
+      // Subsequence fuzzy match: -1 if q not a subsequence of hay, else higher = better.
+      function fuzzyScore(hay, q) {
+        let hi = 0, score = 0, streak = 0;
+        for (const ch of q) {
+          const idx = hay.indexOf(ch, hi);
+          if (idx < 0) return -1;
+          if (idx === hi) { streak++; score += 2 + streak; } else { streak = 0; score += 1; }
+          hi = idx + 1;
+        }
+        return score - hay.length * 0.04;   // nudge shorter matches up
+      }
+      function palSearch(raw) {
+        const q = raw.trim().toLowerCase().replace(/\s+/g, "");
+        if (!q) return palIndex.filter((e) => e.type !== "model").slice(0, 40);   // quick jumps: kinds + vendors
+        const scored = [];
+        for (const e of palIndex) { const s = fuzzyScore(e.text, q); if (s >= 0) scored.push([s, e]); }
+        scored.sort((a, b) => b[0] - a[0]);
+        return scored.slice(0, 40).map((x) => x[1]);
+      }
+      function renderPalette() {
+        palResults = palSearch(document.getElementById("pal-q").value);
+        palActive = 0;
+        const ul = document.getElementById("pal-results");
+        if (!palResults.length) { ul.innerHTML = `<li class="pal-empty">No matches</li>`; return; }
+        ul.innerHTML = palResults.map((e, i) => {
+          let ic, cls, title, sub, bg = "";
+          if (e.type === "model") { ic = "◈"; cls = "model"; title = e.label && e.label !== e.id ? e.label : e.id; sub = `<code>${e.id}</code> · ${vendorLabel(e.vendor)}`; }
+          else if (e.type === "vendor") { ic = initials(e.vendor); cls = "vendor"; title = vendorLabel(e.vendor); sub = "Vendor"; bg = ` style="background:${vendorColor(e.vendor)}"`; }
+          else { ic = "⬡"; cls = "kind"; title = KIND_LABEL[e.kind] || e.kind; sub = "Kind filter"; }
+          return `<li role="option" data-i="${i}" aria-selected="${i === 0}" class="pal-item${i === 0 ? " active" : ""}">
+              <span class="pal-ic ${cls}"${bg}>${ic}</span>
+              <span class="pal-main"><span class="pal-title">${title}</span><span class="pal-sub">${sub}</span></span>
+            </li>`;
+        }).join("");
+      }
+      function palMove(d) {
+        if (!palResults.length) return;
+        palActive = (palActive + d + palResults.length) % palResults.length;
+        const items = [...document.querySelectorAll("#pal-results .pal-item")];
+        items.forEach((el, i) => { el.classList.toggle("active", i === palActive); el.setAttribute("aria-selected", String(i === palActive)); });
+        items[palActive].scrollIntoView({ block: "nearest" });
+      }
+      function openPalette() {
+        document.getElementById("palette").classList.add("show");
+        document.getElementById("pbackdrop").classList.add("show");
+        const i = document.getElementById("pal-q"); i.value = ""; renderPalette(); i.focus();
+      }
+      function closePalette() {
+        document.getElementById("palette").classList.remove("show");
+        document.getElementById("pbackdrop").classList.remove("show");
+      }
+      // A palette pick is a thin UI over existing state: models → permalink (opens drawer),
+      // kinds → the kind filter, vendors → scroll to that vendor's section.
+      function selectEntry(e) {
+        closePalette();
+        if (e.type === "model") { location.hash = "#" + encodeURI(e.key); return; }
+        hideDrawer(); hideCompare();
+        if (e.type === "kind") {
+          activeKind = e.kind; document.getElementById("q").value = ""; buildFilters(); render(); writeCurrentState();
+          document.getElementById("browse").scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+        activeKind = null; document.getElementById("q").value = ""; collapsed.delete(e.vendor);
+        buildFilters(); render(); writeCurrentState();
+        const vh = document.querySelector(`.vendor-head[data-vendor="${CSS.escape(e.vendor)}"]`);
+        if (vh) vh.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
       function buildFilters() {
         const f = document.getElementById("filters");
         const present = new Set(Object.values(catalog.vendors).flat().map((m) => m.kind));
@@ -1121,6 +1256,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           catalog = data;
           byKey = new Map();
           for (const [v, ms] of Object.entries(data.vendors)) for (const m of ms) byKey.set(v + "/" + m.id, m);
+          buildPaletteIndex();
           const all = Object.values(data.vendors).flat();
           const kinds = new Set(all.map((m) => m.kind));
           countUp(document.querySelector('[data-stat="models"]'), all.length);
@@ -1193,7 +1329,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       document.getElementById("dbackdrop").onclick = closeDrawerByUser;
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
-        closeCompareByUser(); closeDrawerByUser();
+        closePalette(); closeCompareByUser(); closeDrawerByUser();
       });
       document.addEventListener("click", (e) => {
         if (drawerModel && e.target.closest("[data-copy-id]")) {
@@ -1223,6 +1359,24 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (pinBtn) { const tr = pinBtn.closest("tr[data-key]"); if (tr) togglePin(tr.dataset.key); return; }
         const un = e.target.closest("[data-unpin]");
         if (un) unpin(un.getAttribute("data-unpin"));
+      });
+
+      /* ── Palette wiring (T19) ──────────────────────── */
+      document.getElementById("palbtn").onclick = openPalette;
+      document.getElementById("pbackdrop").onclick = closePalette;
+      document.getElementById("pal-q").addEventListener("input", renderPalette);
+      document.getElementById("pal-q").addEventListener("keydown", (e) => {
+        if (e.key === "ArrowDown") { e.preventDefault(); palMove(1); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); palMove(-1); }
+        else if (e.key === "Enter") { e.preventDefault(); const en = palResults[palActive]; if (en) selectEntry(en); }
+      });
+      document.getElementById("pal-results").addEventListener("click", (e) => {
+        const li = e.target.closest(".pal-item"); if (!li) return;
+        const en = palResults[+li.dataset.i]; if (en) selectEntry(en);
+      });
+      // ⌘K / Ctrl-K opens the palette from anywhere.
+      document.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") { e.preventDefault(); openPalette(); }
       });
     </script>
   </body>

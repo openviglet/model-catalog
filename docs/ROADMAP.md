@@ -30,7 +30,6 @@
 > link to. Every item is inline, zero-dep, static-hosting-safe (no build step, no runtime).
 > Design rationale → [IMPROVEMENTS.md](IMPROVEMENTS.md) §C.
 
-- **T19** 💭 **Command palette (⌘K / Ctrl-K)** — fuzzy quick-jump to any model, vendor or kind; keyboard-first navigation the developer audience expects. deps: T16 → §C4
 - **T20** 📋 **Capability & modality filters + sortable columns** — filter beyond kind (`vision`/`tools`/`reasoning`, input/output modality) and sort by context window / output / release date. deps: — → §C5
 - **T21** 📋 **Insights dashboard** — a small, dependency-free charts section (inline SVG): models per vendor, context-window distribution, kind & modality coverage — fed by `stats.json`. Makes the catalog *interesting* to explore, not just queryable. deps: T24 → §C6
 
