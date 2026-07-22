@@ -72,6 +72,22 @@
 
 - **T45** 💭 **Live benchmark/performance source (auto-refresh T41)** — extend the T41 benchmark adapter to fetch a public, citable capability/speed leaderboard (e.g. Artificial Analysis / LMArena) over the network into the `benchmarks` + `performance` fields, matched to catalog ids, cached as an offline-replayable snapshot and provenance-stamped — replacing manual snapshot edits with a dynamic refresh. Gated on a source with an acceptable licence + stable shape; fail-safe matching (omit, never mis-attribute) + propose-and-review like every source. deps: T41 → §J1
 
+## Block K — Client SDK modernization
+
+> The three client SDKs (JS/TS · Python · Java) shipped in Block B (T9–T11) and still
+> expose only that original surface — their `ModelEntry` stops at `lastVerified` and they
+> know only `catalog`/`index`/`by-kind`/`by-vendor`/`endpoints`. Everything added since
+> (Block F pricing, Block I classification fields, and the Block D/E/H discovery artifacts)
+> is reachable only as untyped pass-through, if at all. This block brings all three back to
+> parity with the published contract. **Split by feature, not by language** — each task
+> updates JS + Python + Java together so the shared surface never diverges. Additive,
+> read-only, zero-dep. Design rationale → §K.
+
+- **T46** 📋 **Typed new `ModelEntry` fields across all three SDKs** — model the Block F/I additive fields (`pricing`, `benchmarks` incl. per-domain `scores`, `performance`, `openWeights`, `parameters`) in the JS `index.d.ts`, the Python dataclass (+ `_FIELD_MAP`), and the Java `ModelEntry` record (+ `KNOWN` set + nested `Pricing`/`Benchmarks`/`Performance` types), preserving unknown-field tolerance; refresh the three READMEs and add a fixture-based unit test per client. deps: — (Blocks B/F/I shipped) → §K1
+- **T47** 📋 **Aggregate & registry endpoint accessors across all three SDKs** — add read-only loaders for the discovery/aggregate artifacts the clients don't yet expose: `stats.json` (T24), `coverage.json` (T29), `providers.json` (T35), `plans.json` (T33) and `aliases.json` (T25), with typed returns mirroring the published shapes; tests + README per client. deps: — → §K2
+- **T48** 📋 **Faceted-slice + change-feed accessors + manifest refresh across all three SDKs** — add `fetchByCapability` / `fetchByModality` slice loaders (T25) and a `changes.json` change-feed accessor (T22), and extend the `EndpointsManifest`/equivalent type with every new discovery key (byCapability, byModality, aliases, stats, coverage, providers, plans, changes, feed, csv, ndjson, badge, llms). deps: — → §K3
+- **T49** 💭 **Shared use-case-tag + price-tier classifier in the SDKs** — port the page's client-side `classify()` (T38) into each SDK as an optional *derived* helper (use-case tags from kind/capabilities/modalities + price-bucketed tier), so consumers get the same at-a-glance categorization without re-implementing it; derived-only, no schema/contract change. deps: T46 → §K4
+
 > The endpoint intentionally stays on its public GitHub Pages URL
 > (`openviglet.github.io/model-catalog`) — an unbranded, community-owned home signals
 > it is a public resource, not a brand asset.

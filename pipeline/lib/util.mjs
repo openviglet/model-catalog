@@ -19,6 +19,8 @@ export const SOURCES_DIR = resolve(CATALOG_ROOT, "sources");
 export const OVERRIDES_FILE = resolve(CATALOG_ROOT, "overrides.json");
 /** Curated snapshot of cited third-party capability benchmarks (Block I / T41). */
 export const BENCHMARKS_FILE = resolve(CATALOG_ROOT, "benchmarks.json");
+/** Curated slug→(vendor,id) matching table for the live Artificial Analysis source (Block J / T45). */
+export const AA_MAP_FILE = resolve(CATALOG_ROOT, "artificial-analysis-map.json");
 /** Proposed envelope + human-readable report land here (never the canonical file). */
 export const OUT_DIR = resolve(CATALOG_ROOT, "out");
 /** The single source of truth — this repo owns it; the emit step publishes it. */

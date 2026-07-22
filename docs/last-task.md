@@ -1,7 +1,7 @@
-# Last task number — `T45` · next block letter — `K`
+# Last task number — `T49` · next block letter — `L`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T46`; after assigning it, bump the number above and the log line below.
+> `T50`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,10 @@
 
 ## Log (most recent first)
 
+- **T49 CREATED** (💭, Block K §K4 — shared use-case-tag + price-tier classifier: port the page's T38 classify() into each SDK as an optional derived helper; derived-only, no schema change; deps T46) — 2026-07-22.
+- **T48 CREATED** (📋, Block K §K3 — faceted-slice + change-feed accessors across all three SDKs: fetchByCapability/fetchByModality (T25) + changes.json (T22) + extend EndpointsManifest with every new discovery key; deps —) — 2026-07-22.
+- **T47 CREATED** (📋, Block K §K2 — aggregate & registry endpoint accessors across all three SDKs: typed loaders for stats/coverage/providers/plans/aliases json; deps —) — 2026-07-22.
+- **T46 CREATED** (📋, Block K §K1 — typed new ModelEntry fields across all three SDKs: pricing/benchmarks+scores/performance/openWeights/parameters in JS d.ts + Python dataclass + Java record, keep unknown-field tolerance, +fixture test each; deps —) — 2026-07-22.
 - **T45 CREATED** (💭, Block J §J1 — live benchmark/performance source: auto-refresh T41 by fetching a public citable leaderboard (Artificial Analysis/LMArena) over the network into benchmarks+performance, offline-cached, provenance-stamped, fail-safe matching; gated on source licence/shape; deps T41) — 2026-07-22.
 - **T44 SHIPPED** (Block I §I7 — page filter/sort by tier + use-case: Use case (tags, AND) + Tier (bands, OR) chip groups in the T20 facet bar, Kind header cycles into a tier sort (tierRank), state in T16 hash (tag/tier/sort); classify()-driven so chips match table; page-only zero-dep. **Block I shipped in full.**) — 2026-07-22.
 - **T43 SHIPPED** (Block I §I6 — speed & cost-efficiency axis: cited `performance` object {throughputTps?, latencyTtftSec?, indicative, source, lastVerified}; shared citedCoreErrors() validator + OBJECT_FIELDS merge loop; adapter emits performance from snapshot; emit coverage/CSV/facts; page Speed row + DERIVED cost-per-capability (index÷price); 2 tests) — 2026-07-22.

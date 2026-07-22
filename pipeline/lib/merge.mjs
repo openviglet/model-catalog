@@ -36,6 +36,11 @@ const PRIORITY = {
   "cohere-api": LIVE_PRIORITY,
   "mistral-api": LIVE_PRIORITY,
   overrides: 30,
+  // Live Artificial Analysis leaderboard (T45): the automated refresh of the curated
+  // snapshot, so a fresh live fetch wins over a possibly-stale hand-curated snapshot,
+  // yet still sits below overrides so a pin can correct it. Supplies benchmarks +
+  // performance only; same fail-safe / non-anchoring contract as the snapshot.
+  "artificial-analysis": 26,
   // Cited-benchmark snapshot (T41): a deliberate curated source that must UPDATE a
   // benchmark as the leaderboard changes, so it sits ABOVE the committed catalog
   // (freshness matters more than stability here, unlike pricing) yet below overrides

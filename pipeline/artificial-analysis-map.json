@@ -1,0 +1,9 @@
+{
+  "_comment": "Curated matching table for the LIVE Artificial Analysis benchmark source (Block J / T45). The artificial-analysis adapter (pipeline/adapters/artificial-analysis.mjs) fetches the AA public leaderboard and, for each model, looks up its AA `slug` in `map` below to resolve the catalog (vendor, id) to enrich. RULES: (1) ONLY a slug listed here emits — an AA model with no mapping is silently dropped (fail safe: never fuzzily matched, never mis-attributed, never introduced as a new id); (2) numbers come from the live feed and are CITED to `source` (a reference, not our verdict — the AA API terms require attribution, which the `source` + 'verify at the source' framing satisfies); (3) every emitted benchmark is provenance-stamped (indicative + source + lastVerified). `map` ships EMPTY: add a mapping only once you have confirmed the AA slug resolves to the intended catalog model. `_exampleMap` shows the entry shape and is NOT read by the adapter. Requires ARTIFICIAL_ANALYSIS_API_KEY for an online run; `--offline` replays pipeline/sources/artificial-analysis.json.",
+  "map": {},
+  "_exampleMap": {
+    "gpt-5": { "vendor": "openai", "id": "gpt-5" },
+    "claude-opus-4-1": { "vendor": "anthropic", "id": "claude-opus-4-1" },
+    "deepseek-r1": { "vendor": "deepseek", "id": "deepseek-reasoner" }
+  }
+}

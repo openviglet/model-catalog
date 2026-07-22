@@ -11,6 +11,7 @@ import { merge } from "./lib/merge.mjs";
 import { validateEnvelope, diffReport } from "./lib/validate.mjs";
 import litellm from "./adapters/litellm.mjs";
 import benchmarks from "./adapters/benchmarks.mjs";
+import artificialAnalysis from "./adapters/artificial-analysis.mjs";
 import ollama from "./adapters/ollama.mjs";
 import bedrock from "./adapters/bedrock.mjs";
 import huggingface from "./adapters/huggingface.mjs";
@@ -426,6 +427,74 @@ test("merge benchmarks source: enriches an existing id, drops one not in the cat
   assert.equal(vendors.openai[0].benchmarks.intelligenceIndex, 69, "existing id enriched with the cited number");
   assert.equal(meta["openai::gpt"].fieldProvenance.benchmarks, "benchmarks");
   assert.ok(skipped.some((s) => s.id === "not-in-catalog"), "a leaderboard model absent from the catalog is dropped, never introduced");
+});
+
+test("artificial-analysis: live feed → cited drafts, only mapped slugs, unmapped dropped (Block J / T45)", () => {
+  assert.equal(artificialAnalysis.vendor, null, "multi-vendor enrichment — never introduces an id");
+  assert.equal(artificialAnalysis.envKey, "ARTIFICIAL_ANALYSIS_API_KEY", "opt-in: online only with a key");
+  const drafts = artificialAnalysis.normalize({
+    items: [
+      {
+        slug: "gpt-5",
+        evaluations: { artificial_analysis_intelligence_index: 69, artificial_analysis_coding_index: 68, artificial_analysis_math_index: 74 },
+        median_output_tokens_per_second: 180,
+        median_time_to_first_token_seconds: 0.4,
+      },
+      { slug: "unmapped-model", evaluations: { artificial_analysis_intelligence_index: 55 } }, // dropped: not in the map
+      { slug: "speed-only", median_output_tokens_per_second: 500 },
+    ],
+    map: {
+      "gpt-5": { vendor: "openai", id: "gpt-5" },
+      "speed-only": { vendor: "x", id: "fast" },
+    },
+  });
+  const byId = Object.fromEntries(drafts.map((d) => [`${d.vendor}/${d.id}`, d]));
+  assert.equal(drafts.length, 2, "the unmapped leaderboard model is dropped (fail safe), never mis-attributed");
+  assert.deepEqual(byId["openai/gpt-5"].benchmarks, {
+    intelligenceIndex: 69,
+    scores: { coding: { value: 68 }, math: { value: 74 } },
+    indicative: true,
+    note: "Cited third-party benchmark — verify at the source.",
+    source: "Artificial Analysis",
+  }, "AA evals → intelligenceIndex + per-domain scores, provenance-stamped; lastVerified left for merge");
+  assert.deepEqual(byId["openai/gpt-5"].performance, {
+    throughputTps: 180, latencyTtftSec: 0.4, indicative: true,
+    note: "Cited third-party benchmark — verify at the source.", source: "Artificial Analysis",
+  });
+  assert.equal(byId["x/fast"].benchmarks, undefined, "speed-only entry emits performance but no benchmarks");
+  assert.equal(byId["x/fast"].performance.throughputTps, 500);
+});
+
+test("artificial-analysis: empty map or no items emits nothing (Block J / T45)", () => {
+  assert.deepEqual(artificialAnalysis.normalize({ items: [{ slug: "gpt-5", evaluations: { artificial_analysis_intelligence_index: 69 } }], map: {} }), [], "empty matching table → nothing (curated opt-in)");
+  assert.deepEqual(artificialAnalysis.normalize({ items: [], map: { "gpt-5": { vendor: "openai", id: "gpt-5" } } }), [], "no feed items → nothing");
+  assert.deepEqual(artificialAnalysis.normalize(null), [], "no raw → nothing");
+});
+
+test("artificial-analysis: the live source enriches the same benchmarks field and wins over the curated snapshot (Block J / T45)", () => {
+  // Both the live AA source and the T41 snapshot supply a benchmark for the same id;
+  // the live source (priority 26) wins over the curated snapshot (25). Both are
+  // non-anchoring, so a model not already in the catalog is still dropped.
+  const cited = (over) => ({ indicative: true, note: "Cited third-party benchmark — verify at the source.", source: "Artificial Analysis", ...over });
+  const { vendors, meta, skipped } = merge({
+    sources: [
+      { sourceId: "artificial-analysis", drafts: [
+        { vendor: "openai", id: "gpt", benchmarks: cited({ intelligenceIndex: 71 }) },
+        { vendor: "openai", id: "ghost", benchmarks: cited({ intelligenceIndex: 40 }) },
+      ] },
+      { sourceId: "benchmarks", drafts: [{ vendor: "openai", id: "gpt", benchmarks: cited({ intelligenceIndex: 60, lastVerified: "2026-01-01" }) }] },
+    ],
+    overrides: [],
+    existing: { version: 1, vendors: { openai: [{ id: "gpt", label: "GPT", kind: "CHAT" }] } },
+    anchoringSources: ANCHORS, // neither benchmark source anchors
+    liveIdsByVendor: new Map(),
+    when: WHEN,
+  });
+  assert.equal(vendors.openai.length, 1, "only the pre-existing id survives; the live-only 'ghost' is dropped");
+  assert.equal(vendors.openai[0].benchmarks.intelligenceIndex, 71, "live AA (26) wins over the curated snapshot (25)");
+  assert.equal(vendors.openai[0].benchmarks.lastVerified, WHEN, "live figure stamped with the run/verify date");
+  assert.equal(meta["openai::gpt"].fieldProvenance.benchmarks, "artificial-analysis");
+  assert.ok(skipped.some((s) => s.id === "ghost"), "a leaderboard model absent from the catalog is never introduced");
 });
 
 test("validateEnvelope: cited performance metrics — valid passes, bad ones flagged (Block I / T43)", () => {

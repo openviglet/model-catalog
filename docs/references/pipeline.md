@@ -55,6 +55,7 @@ npm test                      # pipeline unit tests
 | `huggingface-api` | huggingface | Hub `GET /api/models` (sentence-transformers) | `HUGGINGFACE_API_TOKEN` | Local ONNX embedding models; `pipeline_tag` → kind. **`partial`** (bounded query). |
 | `litellm` | all | LiteLLM `model_prices_and_context_window.json` | _(none — public)_ | Vendor-agnostic enrichment (metadata + indicative pricing). |
 | `benchmarks` | all | `pipeline/benchmarks.json` (curated snapshot) | _(local)_ | Cited third-party capability index (T40 `benchmarks`). Enrichment only — never introduces an id; a leaderboard model not already in the catalog is dropped. |
+| `artificial-analysis` | all | Artificial Analysis leaderboard API (live) | `ARTIFICIAL_ANALYSIS_API_KEY` | Live auto-refresh of `benchmarks` + `performance` (T45). Maps AA slugs → catalog ids via the CURATED `pipeline/artificial-analysis-map.json` (unmapped → dropped, never guessed). Enrichment only (non-anchoring); wins over the `benchmarks` snapshot when both supply a value. |
 | `overrides` | any | `pipeline/overrides.json` | _(local)_ | Human-curated pins. |
 
 The self-hosted / aggregator sources (`ollama-api`, `bedrock-api`, `huggingface-api`)
@@ -74,7 +75,7 @@ source that supplies a value wins; provenance is recorded per field and
 disagreements are flagged as conflicts in the report.
 
 ```
-pinned override (100) > live vendor API (50) > override (30) > cited benchmarks (25) > self-hosted/aggregator (20) > committed catalog (15) > LiteLLM (10)
+pinned override (100) > live vendor API (50) > override (30) > live benchmarks/Artificial Analysis (26) > cited benchmarks snapshot (25) > self-hosted/aggregator (20) > committed catalog (15) > LiteLLM (10)
 ```
 
 - **Scalar fields** (`kind`, `contextWindow`, `maxOutputTokens`, `label`, …) →
