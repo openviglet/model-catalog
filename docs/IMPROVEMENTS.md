@@ -77,13 +77,6 @@ Dense facts drive the defaults; sparse facts are opt-in overlays that always pri
 the provenance-first bet. All views keep the existing framing: tier is a *price proxy, not a quality
 verdict*; every benchmark/speed number is *cited — verify at the source*.
 
-### §L3 — T52 · Decision columns + column chooser
-Promote the comparable attributes out of the crammed "Details" chip-cell into aligned, sortable
-columns (context, price, headline benchmark, speed, tags) with a column chooser (lean default,
-choice persisted in the URL). The *table* holds decision columns; the per-model *page* (§G2) holds
-everything. Kind-aware defaults (CHAT → price/intelligence/context; EMBEDDING → dims) so a
-chat-shaped lens isn't forced on all 8 kinds.
-
 ### §L4 — T53 · Honest sparsity + data hygiene
 Make missing data a first-class, honest dimension: "has price / has benchmark / has speed" quick
 filters; every ranked or plotted view prints its denominator (reusing `stats.coverage` rates so it

@@ -553,6 +553,30 @@
         font-weight: 700; margin-right: .1rem;
       }
       @media (max-width: 620px) { .groupby-ctl { border-left: none; padding-left: 0; } }
+      /* Column chooser (T52) — a popover of checkboxes; choice persists in the URL. */
+      .col-chooser { position: relative; margin-left: auto; }
+      .chooser-btn {
+        padding: .45rem .8rem; font-size: .82rem; font-weight: 600; font-family: var(--sans);
+        border: 1px solid var(--border-strong); border-radius: 999px; background: var(--card);
+        color: var(--muted); cursor: pointer; white-space: nowrap;
+      }
+      .chooser-btn:hover, .chooser-btn[aria-expanded="true"] { border-color: var(--brand); color: var(--text); }
+      .col-menu {
+        position: absolute; right: 0; top: calc(100% + .45rem); z-index: 60; min-width: 12.5rem;
+        background: var(--card); border: 1px solid var(--border-strong); border-radius: .8rem;
+        box-shadow: var(--shadow-hover); padding: .5rem;
+      }
+      .col-menu label {
+        display: flex; align-items: center; gap: .55rem; padding: .38rem .5rem; border-radius: .5rem;
+        font-size: .88rem; cursor: pointer;
+      }
+      .col-menu label:hover { background: var(--bg-alt); }
+      .col-menu input { accent-color: var(--brand); width: .95rem; height: .95rem; }
+      .col-menu-foot { border-top: 1px solid var(--border); margin-top: .4rem; padding-top: .5rem; padding-left: .5rem; }
+      .col-menu .linkish { background: none; border: none; color: var(--brand-3); font-size: .8rem; font-weight: 600; cursor: pointer; padding: 0; }
+      .col-menu .linkish:hover { text-decoration: underline; }
+      /* Numeric decision columns read better right-aligned. */
+      th.col-num, td.col-num { text-align: right; }
       th.sortable { cursor: pointer; -webkit-user-select: none; user-select: none; white-space: nowrap; }
       th.sortable:hover { color: var(--brand-3); }
       th.sortable:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
@@ -749,6 +773,10 @@
           </div>
           <div class="filters" id="filters"></div>
           <div class="filters groupby-ctl" id="groupby" role="group" aria-label="Group results by"></div>
+          <div class="col-chooser" id="col-chooser">
+            <button type="button" class="chooser-btn" id="cols-btn" aria-expanded="false" aria-haspopup="true" title="Choose columns">⋮ Columns</button>
+            <div class="col-menu" id="col-menu" hidden></div>
+          </div>
         </div>
         <div class="facets" id="facets"></div>
         <p id="status" class="status">
@@ -1093,13 +1121,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (!q) return true;
         return (m.id + " " + (m.label || "") + " " + m.vendor).toLowerCase().includes(q);
       }
-      // One row of the model table.
+      // One row of the model table: model + kind, then the active decision columns (T52).
       function rowHtml(m) {
-        const caps = (m.capabilities || []).map((c) => `<span class="chip">${c}</span>`).join("");
-        const ctx = m.contextWindow ? `${fmtTokens(m.contextWindow)} ctx` : "";
-        const dim = m.embeddingDimensions ? `${m.embeddingDimensions} dim` : "";
-        const out = m.maxOutputTokens ? `${fmtTokens(m.maxOutputTokens)} out` : "";
-        const nums = [ctx, out, dim].filter(Boolean).map((x) => `<span class="chip num">${x}</span>`).join("") + priceChip(m.pricing);
         const kc = KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN;
         const cl = classify(m);
         const key = m.vendor + "/" + m.id;
@@ -1107,13 +1130,14 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         // vendor inline under the id; grouped views already carry it in the head.
         const vend = !groupBy ? `<div class="lbl">${vendorLabel(m.vendor)}${m.label && m.label !== m.id ? " · " + m.label : ""}</div>`
           : (m.label && m.label !== m.id ? `<div class="lbl">${m.label}</div>` : "");
+        const cells = effectiveCols().map((ck) => `<td class="${NUMERIC_COLS.has(ck) ? "col-num" : ""}">${COLS[ck].cell(m)}</td>`).join("");
         return `<tr data-key="${key}">
           <td>
             <div class="model-cell"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
             ${vend}
           </td>
           <td><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
-          <td>${useCaseChips(cl.tags)}${nums}${caps || (nums ? "" : '<span class="lbl">—</span>')}</td>
+          ${cells}
         </tr>`;
       }
       // The group key for a model under the active group-by (null → single flat list).
@@ -1137,7 +1161,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         </div>`;
       }
       const tableFor = (bodyHtml) =>
-        `<div class="table-scroll"><table><thead><tr>${sortTh("model")}${sortTh("kind")}${sortTh("details")}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
+        `<div class="table-scroll"><table><thead><tr>${theadRow()}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
 
       function render() {
         const q = document.getElementById("q").value.trim().toLowerCase();
@@ -1194,6 +1218,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (activeTags.size) p.set("tag", [...activeTags].join(","));
         if (activeTiers.size) p.set("tier", [...activeTiers].join(","));
         if (groupBy) p.set("group", groupBy);
+        if (colChoice !== null) p.set("cols", colChoice.join(","));
         if (sortKey) p.set("sort", sortKey + ":" + sortDir);
         const hash = p.toString();
         // replaceState: no history entry per keystroke, and never re-fires hashchange
@@ -1204,7 +1229,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         document.getElementById("q").value = ""; activeKind = null;
         activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
         activeTags.clear(); activeTiers.clear();
-        groupBy = null; sortKey = null; sortDir = 1;
+        groupBy = null; colChoice = null; sortKey = null; sortDir = 1;
       }
       // Route the hash: explorer state (#q=…&kind=…&cap=…&in=…&out=…&tag=…&tier=…&sort=…),
       // model permalink (#vendor/id), or a bare section anchor / empty → baseline.
@@ -1227,6 +1252,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           setFromParam(activeTags, p.get("tag"));
           setFromParam(activeTiers, p.get("tier"));
           groupBy = ["vendor", "kind", "tier"].includes(p.get("group")) ? p.get("group") : null;
+          colChoice = p.has("cols") ? (p.get("cols") || "").split(",").filter(Boolean).filter((k) => COLS[k]) : null;
           const srt = p.get("sort");
           if (srt) { const [k, d] = srt.split(":"); sortKey = k; sortDir = +d || 1; } else { sortKey = null; sortDir = 1; }
           buildFilters(); buildGroupBy(); buildFacets(); render();
@@ -1320,6 +1346,53 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       }
       function useCaseChips(tags) {
         return tags.map((t) => `<span class="chip">${t}</span>`).join("");
+      }
+
+      /* ── Decision columns + column chooser (T52) ────────
+         The comparable attributes move out of one crammed chip-cell into aligned,
+         individually-sortable columns. Which optional columns show is a URL-persisted
+         choice with kind-aware defaults (a chat lens isn't forced on all 8 kinds).
+         The full record still lives in the drawer/compare; the table holds decisions. */
+      const dash = () => '<span class="lbl">—</span>';
+      const numChip = (s) => `<span class="chip num">${s}</span>`;
+      function priceColCell(p) {
+        const bits = priceParts(p);
+        return bits.length ? `<span class="chip num" title="${PRICE_CAVEAT}">${bits.map(([v]) => v).join(" · ")}</span>` : dash();
+      }
+      function benchColCell(b) {
+        const v = b && b.intelligenceIndex;
+        return v == null ? dash() : `<span class="chip num" title="${BENCH_CAVEAT}">${v}</span>`;
+      }
+      function speedColCell(p) {
+        const v = p && p.throughputTps;
+        return v == null ? dash() : `<span class="chip num" title="${PERF_CAVEAT}">${v} tok/s</span>`;
+      }
+      // Each optional column: display cell + (optional) global sort key.
+      const COLS = {
+        tags:         { label: "Use case",     cell: (m) => useCaseChips(classify(m).tags) || dash() },
+        context:      { label: "Context",      cell: (m) => m.contextWindow ? numChip(fmtTokens(m.contextWindow)) : dash(), sort: "context" },
+        output:       { label: "Max output",   cell: (m) => m.maxOutputTokens ? numChip(fmtTokens(m.maxOutputTokens)) : dash(), sort: "output" },
+        dims:         { label: "Embed dims",   cell: (m) => m.embeddingDimensions ? numChip(m.embeddingDimensions) : dash(), sort: "dims" },
+        price:        { label: "Price /1M",    cell: (m) => priceColCell(m.pricing), sort: "price" },
+        intelligence: { label: "Intelligence", cell: (m) => benchColCell(m.benchmarks), sort: "intelligence" },
+        speed:        { label: "Speed",        cell: (m) => speedColCell(m.performance), sort: "speed" },
+        params:       { label: "Params",       cell: (m) => m.parameters != null ? numChip(fmtParams(m.parameters)) : dash(), sort: "params" },
+        weights:      { label: "Weights",      cell: (m) => m.openWeights == null ? dash() : `<span class="chip">${m.openWeights ? "Open" : "Proprietary"}</span>` },
+      };
+      const COL_ORDER = ["tags", "context", "output", "dims", "price", "intelligence", "speed", "params", "weights"];
+      const NUMERIC_COLS = new Set(["context", "output", "dims", "price", "intelligence", "speed", "params"]); // right-aligned
+      // Kind-aware lean defaults (used when the user hasn't chosen columns explicitly).
+      const DEFAULT_COLS = {
+        CHAT: ["tags", "context", "price", "intelligence"],
+        EMBEDDING: ["dims", "context", "price"],
+        RERANK: ["context", "price"],
+        IMAGE: ["tags", "price"],
+        _: ["tags", "context", "price"],
+      };
+      let colChoice = null; // null → auto (kind-aware default); else an explicit ordered array
+      function effectiveCols() {
+        if (colChoice !== null) return colChoice.filter((k) => COLS[k]);
+        return (activeKind && DEFAULT_COLS[activeKind]) || DEFAULT_COLS._;
       }
 
       /* ── Indicative pricing (Block F / T32) ─────────────
@@ -1830,6 +1903,14 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         }
       }
 
+      /* ── Column chooser (T52) ──────────────────────── */
+      function buildColMenu() {
+        const eff = new Set(effectiveCols());
+        document.getElementById("col-menu").innerHTML =
+          COL_ORDER.map((k) => `<label><input type="checkbox" data-col-key="${k}"${eff.has(k) ? " checked" : ""}> ${COLS[k].label}</label>`).join("") +
+          `<div class="col-menu-foot"><button type="button" class="linkish" data-cols-default>Reset to default</button></div>`;
+      }
+
       /* ── Capability & modality facets (T20) ────────── */
       function buildFacets() {
         const all = Object.values(catalog.vendors).flat();
@@ -1866,41 +1947,64 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
          Sorts the whole filtered set at once. With no active sort the natural order
          is vendor-label then id (so grouping by vendor reads alphabetically); an
          active sort ranks globally, falling back to vendor,id to stay deterministic. */
+      // Numeric sort keys → their raw value (or null when absent, so they sort last).
+      const NUM_SORT = {
+        context: (m) => m.contextWindow,
+        output: (m) => m.maxOutputTokens,
+        dims: (m) => m.embeddingDimensions,
+        price: (m) => m.pricing && m.pricing.inputPer1M,
+        intelligence: (m) => m.benchmarks && m.benchmarks.intelligenceIndex,
+        speed: (m) => m.performance && m.performance.throughputTps,
+        params: (m) => m.parameters,
+      };
       function globalSort(rows) {
+        const isNum = !!NUM_SORT[sortKey];
         const val = (m) =>
           sortKey === "id" ? m.id.toLowerCase()
           : sortKey === "kind" ? (KIND_LABEL[m.kind] || m.kind).toLowerCase()
           : sortKey === "tier" ? tierRank(classify(m).tier)
-          : sortKey === "context" ? (m.contextWindow || 0)
-          : sortKey === "output" ? (m.maxOutputTokens || 0)
+          : isNum ? NUM_SORT[sortKey](m)
           : null;
         return [...rows].sort((a, b) => {
           if (sortKey) {
             const va = val(a), vb = val(b);
-            if (va < vb) return -sortDir;
-            if (va > vb) return sortDir;
+            if (isNum) {
+              // Missing numeric values always sort last, regardless of direction.
+              const na = va == null, nb = vb == null;
+              if (na && !nb) return 1;
+              if (nb && !na) return -1;
+              if (!na && !nb) { if (va < vb) return -sortDir; if (va > vb) return sortDir; }
+            } else {
+              if (va < vb) return -sortDir;
+              if (va > vb) return sortDir;
+            }
           }
           const av = vendorLabel(a.vendor).toLowerCase(), bv = vendorLabel(b.vendor).toLowerCase();
           if (av !== bv) return av < bv ? -1 : 1;   // stable tiebreak: vendor, then id
           return a.id.localeCompare(b.id);
         });
       }
-      function headLabel(col) {
-        const arrow = sortDir === 1 ? " ▲" : " ▼";
-        if (col === "model") return "Model" + (sortKey === "id" ? arrow : "");
-        if (col === "kind") return (sortKey === "tier" ? "Tier" + arrow : "Kind" + (sortKey === "kind" ? arrow : ""));
-        if (sortKey === "context") return "Context" + arrow;
-        if (sortKey === "output") return "Max output" + arrow;
-        return "Details";
+      const sortArrow = () => (sortDir === 1 ? " ▲" : " ▼");
+      // Header cell for a column key: "model" | "kind" | one of COL_ORDER.
+      function thFor(colKey) {
+        if (colKey === "model") {
+          const on = sortKey === "id";
+          return `<th class="sortable" data-col="model" role="button" tabindex="0" aria-sort="${on ? (sortDir === 1 ? "ascending" : "descending") : "none"}">Model${on ? sortArrow() : ""}</th>`;
+        }
+        if (colKey === "kind") {
+          const onKind = sortKey === "kind", onTier = sortKey === "tier";
+          const aria = onKind || onTier ? (sortDir === 1 ? "ascending" : "descending") : "none";
+          const label = onTier ? "Tier" + sortArrow() : "Kind" + (onKind ? sortArrow() : "");
+          return `<th class="sortable" data-col="kind" role="button" tabindex="0" aria-sort="${aria}" title="Sort by kind, then by price tier">${label}</th>`;
+        }
+        const c = COLS[colKey];
+        const numCls = NUMERIC_COLS.has(colKey) ? " col-num" : "";
+        if (!c.sort) return `<th class="${numCls.trim()}">${c.label}</th>`;
+        const on = sortKey === c.sort;
+        return `<th class="sortable${numCls}" data-col="col" data-key="${c.sort}" role="button" tabindex="0" aria-sort="${on ? (sortDir === 1 ? "ascending" : "descending") : "none"}">${c.label}${on ? sortArrow() : ""}</th>`;
       }
-      function sortTh(col) {
-        const active = (col === "model" && sortKey === "id")
-          || (col === "kind" && (sortKey === "kind" || sortKey === "tier"))
-          || (col === "details" && (sortKey === "context" || sortKey === "output"));
-        const aria = active ? (sortDir === 1 ? "ascending" : "descending") : "none";
-        const title = col === "kind" ? ' title="Sort by kind, then by price tier"'
-          : col === "details" ? ' title="Sort by context window / max output"' : "";
-        return `<th class="sortable" data-col="${col}" role="button" tabindex="0" aria-sort="${aria}"${title}>${headLabel(col)}</th>`;
+      function theadRow() {
+        return thFor("model") + thFor("kind") + effectiveCols().map(thFor).join("");
       }
       // Cycle a column's sort states (last state clears the sort).
       function stepSort(cycle) {
@@ -1911,10 +2015,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         else { const [k, d] = next.split(":"); sortKey = k; sortDir = +d; }
         render(); writeCurrentState();
       }
-      function headerClick(col) {
+      function onHeader(th) {
+        const col = th.dataset.col;
         if (col === "model") stepSort(["id:1", "id:-1"]);
         else if (col === "kind") stepSort(["kind:1", "kind:-1", "tier:-1", "tier:1"]);
-        else stepSort(["context:-1", "context:1", "output:-1", "output:1"]);
+        else if (col === "col") { const k = th.dataset.key; stepSort([k + ":-1", k + ":1"]); } // numeric: high→low first
       }
 
       function countUp(el, target) {
@@ -1952,14 +2057,14 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           // Skip clicks on the permalink anchor (handled separately) and vendor headers.
           document.getElementById("list").addEventListener("click", (e) => {
             const th = e.target.closest("th[data-col]");
-            if (th) { headerClick(th.dataset.col); return; }
+            if (th) { onHeader(th); return; }
             if (e.target.closest(".permalink") || e.target.closest("[data-pin]") || e.target.closest(".vendor-head")) return;
             const tr = e.target.closest("tr[data-key]");
             if (tr) location.hash = "#" + encodeURI(tr.dataset.key);
           });
           document.getElementById("list").addEventListener("keydown", (e) => {
             const th = e.target.closest("th[data-col]");
-            if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); headerClick(th.dataset.col); }
+            if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onHeader(th); }
           });
           applyHash(); // build filters + render, honoring any deep-linked state/permalink
           // Aggregate/registry datasets via the SDK's typed accessors (T47), not raw
@@ -2054,6 +2159,35 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         const un = e.target.closest("[data-unpin]");
         if (un) unpin(un.getAttribute("data-unpin"));
       });
+
+      /* ── Column chooser wiring (T52) ───────────────── */
+      (function () {
+        const btn = document.getElementById("cols-btn");
+        const menu = document.getElementById("col-menu");
+        const chooser = document.getElementById("col-chooser");
+        btn.onclick = () => {
+          const opening = menu.hidden;
+          if (opening) buildColMenu();
+          menu.hidden = !opening;
+          btn.setAttribute("aria-expanded", String(opening));
+        };
+        menu.addEventListener("change", (e) => {
+          if (!e.target.closest("[data-col-key]")) return;
+          colChoice = COL_ORDER.filter((k) => menu.querySelector(`[data-col-key="${k}"]`).checked);
+          render(); writeCurrentState();
+        });
+        menu.addEventListener("click", (e) => {
+          if (!e.target.closest("[data-cols-default]")) return;
+          colChoice = null; buildColMenu(); render(); writeCurrentState();
+        });
+        // Close on outside click / Esc.
+        document.addEventListener("click", (e) => {
+          if (!menu.hidden && !chooser.contains(e.target)) { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape" && !menu.hidden) { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+        });
+      })();
 
       /* ── Palette wiring (T19) ──────────────────────── */
       document.getElementById("palbtn").onclick = openPalette;
