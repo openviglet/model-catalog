@@ -11,24 +11,6 @@
 > by Block F). Consumer artifacts stay *derived* from the canonical file at emit time, so
 > they can never drift from the source of truth.
 
-## §F — Cost & commercial offerings
-
-The original bet was identity-not-pricing (STRATEGY §I). It is reversed for one concrete
-reason: **Viglet Turing ES needs per-token cost to produce consumption/spend reports**,
-and a single provenance-stamped number published next to the model identity is less
-fragile than making every consumer join the catalog to a second pricing source. The
-whole block is deliberately *bounded* so it doesn't become the maintenance/legal
-liability the old stance feared — the price is an **indicative US list reference, not an
-authoritative or contract-accurate quote**, and is always optional + sourced.
-
-### §F4 — T33 · Provider consumer plans dataset
-Beyond per-API-model pricing, vendors sell **consumer subscription plans** (Claude Pro,
-Claude Pro Max 5×/20×, ChatGPT Plus/Pro, Gemini Advanced, …). Exploratory (💭): these are
-*not* models, so they can't live in `ModelEntry` — they'd be a **separate dataset**, and
-the open scope question is whether a model-identity catalog should own subscription tiers
-at all, or whether this belongs in a different resource. Needs a data shape and a
-source/verification story before it's more than an idea. US-only to start.
-
 ## §G — Static-site expansion & indexing
 
 The goal — segmented, individually-indexable static pages instead of one SPA — is largely

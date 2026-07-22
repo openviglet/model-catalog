@@ -37,16 +37,11 @@
 > (issue form + CONTRIBUTING + site Contribute section with per-model deep links) and the
 > per-vendor coverage/gaps view (coverage.json + heatmap) (see [CHANGELOG.md](CHANGELOG.md)
 > → Block E).
-
-## Block F — Cost & commercial offerings
-
-> Reverses the original non-pricing bet (STRATEGY §I): the catalog now carries an
-> **optional, indicative US list price** so **Viglet Turing ES** can generate
-> consumption/spend reports without every consumer joining to a second source. Bounded
-> to US list price, optional, provenance-gated, and flagged **indicative — not
-> authoritative** (verify with the vendor). Design rationale → §F.
-
-- **T33** 💭 **Provider consumer plans dataset** — beyond per-API-model pricing, publish the vendors' **consumer subscription plans** (e.g. Claude Pro, Claude Pro Max 5×/20×, ChatGPT Plus/Pro, Gemini Advanced), US-only, as a **separate dataset** (not `ModelEntry` — plans aren't models). Exploratory: needs a data shape, a source/verification story and a scope decision (does a model-identity catalog own subscription tiers at all?). deps: — → §F4
+>
+> **Block F — Cost & commercial offerings** shipped in full — the optional indicative
+> US-list `pricing` field + schema, LiteLLM pricing enrichment (161 models), pricing
+> surfaced across every artifact, and the separate consumer-plans dataset (plans.json)
+> (see [CHANGELOG.md](CHANGELOG.md) → Block F).
 
 ## Block G — Static-site expansion & indexing
 

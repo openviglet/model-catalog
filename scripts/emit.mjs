@@ -19,6 +19,8 @@ const here = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(here, "..");
 const SRC = resolve(REPO_ROOT, "catalog/model-catalog.json");
 const SCHEMA_SRC = resolve(REPO_ROOT, "catalog/model-catalog.schema.json");
+const PLANS_SRC = resolve(REPO_ROOT, "catalog/plans.json"); // consumer plans dataset (T33)
+const PLANS_SCHEMA_SRC = resolve(REPO_ROOT, "catalog/plans.schema.json");
 const OUT_DIR = resolve(REPO_ROOT, "public");
 // Public base URL — the GitHub Pages site for this repo. The endpoint intentionally
 // stays on this public host (a community-owned home, not a brand asset); the
@@ -72,6 +74,49 @@ const published = {
   source: SOURCE_URL,
   vendors,
 };
+
+// Consumer subscription plans (T33): a SEPARATE dataset (plans are not models) —
+// vendor consumer tiers (Claude Pro/Max, ChatGPT Plus/Pro, Gemini / Google AI
+// Pro/Ultra) with an INDICATIVE US list price each. Optional: absent → not
+// published. Hand-curated + reviewed (no upstream API), provenance-gated. Flattened
+// like the catalog (a `vendor` key added per plan) for consumer convenience.
+let plansPublished = null;
+let plansCount = 0;
+if (existsSync(PLANS_SRC)) {
+  const plansRoot = JSON.parse(readFileSync(PLANS_SRC, "utf8"));
+  if (typeof plansRoot.version !== "number") fail("plans.json missing integer `version`");
+  if (typeof plansRoot.lastUpdated !== "string") fail("plans.json missing `lastUpdated`");
+  if (typeof plansRoot.plans !== "object" || plansRoot.plans === null) fail("plans.json missing `plans` object");
+  const plans = {};
+  for (const [vendor, entries] of Object.entries(plansRoot.plans)) {
+    if (!Array.isArray(entries)) fail(`plans vendor "${vendor}" is not an array`);
+    const ids = new Set();
+    plans[vendor] = entries.map((p, i) => {
+      const where = `plans.${vendor}[${i}]`;
+      if (!p.id || typeof p.id !== "string") fail(`${where} missing string \`id\``);
+      if (ids.has(p.id)) fail(`${where} duplicate id "${p.id}"`);
+      ids.add(p.id);
+      if (!p.name || typeof p.name !== "string") fail(`${where} (${p.id}) missing \`name\``);
+      if (p.indicative !== true) fail(`${where} (${p.id}) \`indicative\` must be true`);
+      if (!p.source || typeof p.source !== "string") fail(`${where} (${p.id}) missing string \`source\` (never invented)`);
+      if (typeof p.lastVerified !== "string") fail(`${where} (${p.id}) missing string \`lastVerified\``);
+      for (const nf of ["priceMonthlyUSD", "annualMonthlyUSD"]) {
+        if (p[nf] !== undefined && !(typeof p[nf] === "number" && p[nf] >= 0)) fail(`${where} (${p.id}) invalid ${nf}`);
+      }
+      if (p.currency !== undefined && p.currency !== "USD") fail(`${where} (${p.id}) \`currency\` must be USD`);
+      plansCount++;
+      return { ...p, vendor };
+    });
+  }
+  plansPublished = {
+    $schema: `${SOURCE_URL}/plans.schema.json`,
+    version: plansRoot.version,
+    lastUpdated: plansRoot.lastUpdated,
+    source: SOURCE_URL,
+    disclaimer: plansRoot.disclaimer,
+    plans,
+  };
+}
 
 // Compact index (T7): the same envelope shape, but each entry trimmed to just
 // identity + kind. A model-picker that only renders a grouped dropdown fetches a
@@ -178,6 +223,7 @@ const endpoints = {
   llms: `${SOURCE_URL}/llms.txt`,
   pages: `${SOURCE_URL}/models/`,
   schema: `${SOURCE_URL}/catalog.schema.json`,
+  ...(plansPublished ? { plans: `${SOURCE_URL}/plans.json`, plansSchema: `${SOURCE_URL}/plans.schema.json` } : {}),
   byKind: Object.fromEntries(presentKinds.map((k) => [k, `${SOURCE_URL}/by-kind/${k}.json`])),
   byVendor: Object.fromEntries(Object.keys(vendors).map((v) => [v, `${SOURCE_URL}/by-vendor/${v}.json`])),
   byCapability: Object.fromEntries(presentCaps.map((c) => [c, `${SOURCE_URL}/by-capability/${c}.json`])),
@@ -558,7 +604,8 @@ const llmsTxt = `# Model Catalog
 - [Full catalog (JSON)](${SOURCE_URL}/catalog.json): every vendor, every field
 - [Compact index](${SOURCE_URL}/index.json): { vendor, id, label, kind } per entry
 - [Aggregate stats](${SOURCE_URL}/stats.json): counts per vendor/kind/capability + field coverage
-- [Change feed](${SOURCE_URL}/changes.json): what changed at the last publish
+- [Change feed](${SOURCE_URL}/changes.json): what changed at the last publish${plansPublished ? `
+- [Consumer plans](${SOURCE_URL}/plans.json): vendor subscription tiers with an indicative US list price (a reference — verify with the vendor)` : ""}
 - [JSON Schema](${SOURCE_URL}/catalog.schema.json): the envelope + entry contract
 - [Discovery manifest](${SOURCE_URL}/endpoints.json): every published path as an absolute URL
 
@@ -608,6 +655,10 @@ writeFileSync(resolve(OUT_DIR, "feed.xml"), feedXml, "utf8"); // Atom feed (T22)
 writeFileSync(resolve(OUT_DIR, "catalog.csv"), catalogCsv, "utf8"); // flat export (T23)
 writeFileSync(resolve(OUT_DIR, "catalog.ndjson"), catalogNdjson, "utf8"); // streaming export (T23)
 write("aliases.json", aliases); // alias → canonical map (T25)
+if (plansPublished) {
+  write("plans.json", plansPublished); // consumer subscription plans (T33)
+  writeFileSync(resolve(OUT_DIR, "plans.schema.json"), readFileSync(PLANS_SCHEMA_SRC, "utf8"), "utf8");
+}
 for (const [k, v] of Object.entries(byKind)) write(`by-kind/${k}.json`, v);
 for (const [k, v] of Object.entries(byVendor)) write(`by-vendor/${k}.json`, v);
 for (const [k, v] of Object.entries(byCapability)) write(`by-capability/${k}.json`, v);
@@ -628,6 +679,7 @@ console.log(
 );
 console.log(`emit-model-catalog: GEO pages — llms.txt + ${geoPages.length - 2} vendor/model pages under models/`);
 console.log(`emit-model-catalog: badge.json — "${badge.label}: ${badge.message}"`);
+if (plansPublished) console.log(`emit-model-catalog: plans.json — ${plansCount} consumer plans across ${Object.keys(plansPublished.plans).length} vendors (indicative US list)`);
 console.log(
   `emit-model-catalog: change feed (baseline: ${changes.baseline}) — ` +
     `${added.length} added, ${removed.length} removed, ${changed.length} lifecycle`,

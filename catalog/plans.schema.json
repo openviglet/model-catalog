@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openviglet.github.io/model-catalog/plans.schema.json",
+  "title": "Model Catalog — Consumer Subscription Plans",
+  "description": "A SEPARATE dataset from the model catalog (Block F / T33): vendor consumer subscription plans (e.g. Claude Pro/Max, ChatGPT Plus/Pro, Gemini / Google AI Pro/Ultra). Plans are NOT models, so they do not live in ModelEntry. US-only. Every price is an INDICATIVE US list price — a reference only, NOT authoritative (verify with the vendor); provenance-gated (source + lastVerified) and never invented. The source file keys plans by consumer brand / company (lower-case) and omits the redundant per-entry 'vendor' (it is the map key); the published artifact adds 'vendor' to each plan for consumer convenience.",
+  "type": "object",
+  "required": ["version", "lastUpdated", "plans"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Schema major version. Breaking changes bump this."
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO-8601 date the dataset was last updated."
+    },
+    "schema": { "type": "string", "description": "URL of this JSON Schema." },
+    "source": { "type": "string", "description": "Origin of the dataset." },
+    "disclaimer": {
+      "type": "string",
+      "description": "Dataset-wide caveat: indicative US list prices, may be stale, exclude tax, verify with the vendor."
+    },
+    "plans": {
+      "type": "object",
+      "description": "Map of consumer brand / company (lower-case) to its subscription plans.",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "#/$defs/plan" }
+      }
+    }
+  },
+  "$defs": {
+    "plan": {
+      "type": "object",
+      "required": ["id", "name", "indicative", "source", "lastVerified"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable slug, unique within the vendor (e.g. claude-pro, chatgpt-plus)."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display name (e.g. \"Claude Pro\", \"ChatGPT Plus\")."
+        },
+        "product": {
+          "type": "string",
+          "description": "The consumer product the plan belongs to (e.g. Claude, ChatGPT, Gemini)."
+        },
+        "tier": {
+          "type": "string",
+          "description": "Short tier key (e.g. free, plus, pro, max, ultra) — freeform, for grouping/sorting."
+        },
+        "priceMonthlyUSD": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Indicative US list price per month when billed monthly, in USD. Omit for a free tier (or 0). Excludes tax."
+        },
+        "annualMonthlyUSD": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Indicative effective US price per month when billed annually, in USD, when the vendor offers an annual discount."
+        },
+        "currency": {
+          "type": "string",
+          "enum": ["USD"],
+          "description": "Always USD — the dataset carries only indicative US list prices."
+        },
+        "features": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "A few short highlights of what the plan includes (not exhaustive)."
+        },
+        "url": {
+          "type": "string",
+          "description": "The vendor's public product / pricing page for this plan."
+        },
+        "indicative": {
+          "type": "boolean",
+          "const": true,
+          "description": "Always true — signals this is an indicative US list price, NOT an authoritative quote. Verify with the vendor."
+        },
+        "note": {
+          "type": "string",
+          "description": "Free-text disclaimer/qualifier travelling with the price."
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Provenance — where the plan/price came from (a vendor pricing-page URL). Required: never invented."
+        },
+        "lastVerified": {
+          "type": "string",
+          "format": "date",
+          "description": "ISO-8601 date this plan was last confirmed against its source."
+        }
+      }
+    }
+  }
+}

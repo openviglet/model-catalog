@@ -1,0 +1,204 @@
+{
+  "$schema": "https://openviglet.github.io/model-catalog/plans.schema.json",
+  "version": 1,
+  "lastUpdated": "2026-07-22",
+  "source": "https://openviglet.github.io/model-catalog",
+  "disclaimer": "Indicative US consumer subscription plans — a reference only, not authoritative. Prices are US list, in USD, exclude tax, may be stale, and can vary by region. Always verify on the vendor's pricing page.",
+  "plans": {
+    "anthropic": [
+      {
+        "id": "claude-free",
+        "name": "Claude Free",
+        "product": "Claude",
+        "tier": "free",
+        "priceMonthlyUSD": 0,
+        "currency": "USD",
+        "features": [
+          "Access to Claude on web, iOS and Android",
+          "Basic usage limits"
+        ],
+        "url": "https://www.anthropic.com/pricing",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://www.anthropic.com/pricing",
+        "lastVerified": "2026-07-22",
+        "vendor": "anthropic"
+      },
+      {
+        "id": "claude-pro",
+        "name": "Claude Pro",
+        "product": "Claude",
+        "tier": "pro",
+        "priceMonthlyUSD": 20,
+        "annualMonthlyUSD": 17,
+        "currency": "USD",
+        "features": [
+          "More usage than Free",
+          "Access to more models",
+          "Projects, and extended thinking"
+        ],
+        "url": "https://www.anthropic.com/pricing",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://www.anthropic.com/pricing",
+        "lastVerified": "2026-07-22",
+        "vendor": "anthropic"
+      },
+      {
+        "id": "claude-max-5x",
+        "name": "Claude Max (5x)",
+        "product": "Claude",
+        "tier": "max",
+        "priceMonthlyUSD": 100,
+        "currency": "USD",
+        "features": [
+          "~5x more usage than Pro",
+          "Higher output limits",
+          "Priority access at high traffic"
+        ],
+        "url": "https://www.anthropic.com/pricing",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://www.anthropic.com/pricing",
+        "lastVerified": "2026-07-22",
+        "vendor": "anthropic"
+      },
+      {
+        "id": "claude-max-20x",
+        "name": "Claude Max (20x)",
+        "product": "Claude",
+        "tier": "max",
+        "priceMonthlyUSD": 200,
+        "currency": "USD",
+        "features": [
+          "~20x more usage than Pro",
+          "Highest output limits",
+          "Priority access at high traffic"
+        ],
+        "url": "https://www.anthropic.com/pricing",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://www.anthropic.com/pricing",
+        "lastVerified": "2026-07-22",
+        "vendor": "anthropic"
+      }
+    ],
+    "openai": [
+      {
+        "id": "chatgpt-free",
+        "name": "ChatGPT Free",
+        "product": "ChatGPT",
+        "tier": "free",
+        "priceMonthlyUSD": 0,
+        "currency": "USD",
+        "features": [
+          "Access to the base model",
+          "Limited access to advanced models",
+          "Standard rate limits"
+        ],
+        "url": "https://openai.com/chatgpt/pricing/",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://openai.com/chatgpt/pricing/",
+        "lastVerified": "2026-07-22",
+        "vendor": "openai"
+      },
+      {
+        "id": "chatgpt-plus",
+        "name": "ChatGPT Plus",
+        "product": "ChatGPT",
+        "tier": "plus",
+        "priceMonthlyUSD": 20,
+        "currency": "USD",
+        "features": [
+          "Extended limits on messaging and advanced models",
+          "Access to advanced reasoning models",
+          "Deep research and image generation"
+        ],
+        "url": "https://openai.com/chatgpt/pricing/",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://openai.com/chatgpt/pricing/",
+        "lastVerified": "2026-07-22",
+        "vendor": "openai"
+      },
+      {
+        "id": "chatgpt-pro",
+        "name": "ChatGPT Pro",
+        "product": "ChatGPT",
+        "tier": "pro",
+        "priceMonthlyUSD": 200,
+        "currency": "USD",
+        "features": [
+          "Unlimited access to advanced models (subject to abuse guardrails)",
+          "Access to the highest-tier reasoning model",
+          "Extended deep research and higher limits"
+        ],
+        "url": "https://openai.com/chatgpt/pricing/",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://openai.com/chatgpt/pricing/",
+        "lastVerified": "2026-07-22",
+        "vendor": "openai"
+      }
+    ],
+    "google": [
+      {
+        "id": "gemini-free",
+        "name": "Gemini (free)",
+        "product": "Gemini",
+        "tier": "free",
+        "priceMonthlyUSD": 0,
+        "currency": "USD",
+        "features": [
+          "Access to Gemini on web and mobile",
+          "Standard model access and limits"
+        ],
+        "url": "https://gemini.google/subscriptions/",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://gemini.google/subscriptions/",
+        "lastVerified": "2026-07-22",
+        "vendor": "google"
+      },
+      {
+        "id": "google-ai-pro",
+        "name": "Google AI Pro",
+        "product": "Gemini",
+        "tier": "pro",
+        "priceMonthlyUSD": 19.99,
+        "currency": "USD",
+        "features": [
+          "Higher limits and access to the Pro model",
+          "Deep Research and higher usage",
+          "Includes storage and Gemini in Google apps"
+        ],
+        "url": "https://gemini.google/subscriptions/",
+        "indicative": true,
+        "note": "Indicative US list price — formerly Gemini Advanced / Google One AI Premium. Verify with the vendor.",
+        "source": "https://gemini.google/subscriptions/",
+        "lastVerified": "2026-07-22",
+        "vendor": "google"
+      },
+      {
+        "id": "google-ai-ultra",
+        "name": "Google AI Ultra",
+        "product": "Gemini",
+        "tier": "ultra",
+        "priceMonthlyUSD": 249.99,
+        "currency": "USD",
+        "features": [
+          "Highest limits and access to the most capable models",
+          "Access to experimental / advanced tools",
+          "Highest storage tier"
+        ],
+        "url": "https://gemini.google/subscriptions/",
+        "indicative": true,
+        "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://gemini.google/subscriptions/",
+        "lastVerified": "2026-07-22",
+        "vendor": "google"
+      }
+    ]
+  }
+}

@@ -597,6 +597,7 @@
         <div class="nav-links">
           <a href="#insights" class="nav-hide-sm">Insights</a>
           <a href="#coverage" class="nav-hide-sm">Coverage</a>
+          <a href="#plans" class="nav-hide-sm">Plans</a>
           <a href="#browse" class="nav-hide-sm">Browse</a>
           <a href="#api" class="nav-hide-sm">API</a>
           <a href="#sdks" class="nav-hide-sm">SDKs</a>
@@ -692,6 +693,18 @@
       </div>
     </section>
 
+    <!-- ── Consumer plans (Block F / T33) ──────────────── -->
+    <section class="block" id="plans" hidden>
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="kicker">Commercial</div>
+          <h2>Consumer plans</h2>
+          <p>Vendor consumer subscription tiers from <a href="./plans.json"><code>plans.json</code></a> — a separate dataset (plans aren't models). Each price is an <strong>indicative US list price</strong>: a reference only, may be stale, excludes tax — <strong>verify with the vendor</strong>.</p>
+        </div>
+        <div id="plans-wrap"></div>
+      </div>
+    </section>
+
     <!-- ── Browse / Explorer ───────────────────────────── -->
     <section class="block alt" id="browse">
       <div class="wrap">
@@ -742,6 +755,7 @@
                 <tr><td><code>by-capability/&lt;cap&gt;.json</code></td><td>Filtered to one capability — e.g. <a href="./by-capability/reasoning.json"><code>reasoning</code></a>, <a href="./by-capability/vision.json"><code>vision</code></a>.</td></tr>
                 <tr><td><code>by-modality/&lt;m&gt;.json</code></td><td>Filtered to one input/output modality — e.g. <a href="./by-modality/image.json"><code>image</code></a>, <a href="./by-modality/audio.json"><code>audio</code></a>.</td></tr>
                 <tr><td><a href="./aliases.json"><code>aliases.json</code></a></td><td>Alias resolution map — <code>alias id → { vendor, id }</code> of the canonical entry. Resolve <code>-latest</code> / dated snapshots without walking the catalog.</td></tr>
+                <tr><td><a href="./plans.json"><code>plans.json</code></a></td><td>Consumer subscription plans — a separate dataset (Claude, ChatGPT, Gemini), each with an <em>indicative</em> US list price. A reference only — verify with the vendor.</td></tr>
                 <tr><td><a href="./badge.json"><code>badge.json</code></a></td><td>Status badge — a shields.io endpoint payload for a live "N models · M vendors" README badge.</td></tr>
                 <tr><td><a href="./llms.txt"><code>llms.txt</code></a> · <a href="./models/"><code>models/…</code></a></td><td>Citability layer — an <code>llms.txt</code> index plus an indexable, quotable page (Markdown + HTML) per vendor and per model, for assistants and search engines.</td></tr>
                 <tr><td><a href="./endpoints.json"><code>endpoints.json</code></a></td><td>Discovery manifest — absolute URLs for every path, plus the available <code>byKind</code>/<code>byVendor</code> keys. Read this instead of hard-coding paths.</td></tr>
@@ -1479,6 +1493,40 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         document.getElementById("insights").hidden = false;
       }
 
+      /* ── Consumer plans (Block F / T33) ────────────── */
+      const PLAN_VENDOR_LABEL = { anthropic: "Anthropic", openai: "OpenAI", google: "Google" };
+      function renderPlans(data) {
+        if (!data || !data.plans || !Object.keys(data.plans).length) return;
+        const money = (v) => (v == null ? null : v === 0 ? "Free" : "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 }));
+        const cards = Object.entries(data.plans).map(([vendor, plans]) => {
+          const rows = plans.map((p) => {
+            const price = money(p.priceMonthlyUSD);
+            const priceStr = price == null ? '<span class="lbl">—</span>'
+              : price === "Free" ? "Free"
+              : `<span class="mono">${price}</span><span class="lbl">/mo</span>`;
+            const annual = p.annualMonthlyUSD != null ? ` <span class="lbl">($${p.annualMonthlyUSD}/mo billed annually)</span>` : "";
+            const feats = (p.features || []).length ? `<div class="lbl" style="margin-top:.3rem">${p.features.join(" · ")}</div>` : "";
+            const prov = `${p.url || p.source ? `<a href="${p.url || p.source}" target="_blank" rel="noopener">source ↗</a> ` : ""}<span class="lbl">${p.lastVerified || ""}</span>`;
+            return `<tr>
+              <td><strong>${p.name}</strong>${p.tier ? ` <span class="chip">${p.tier}</span>` : ""}${feats}</td>
+              <td>${priceStr}${annual}</td>
+              <td>${prov}</td>
+            </tr>`;
+          }).join("");
+          return `<section class="vendor">
+            <div class="vendor-head" style="cursor:default">
+              <span class="avatar" style="background:${vendorColor(vendor)}">${initials(vendor)}</span>
+              <h3>${PLAN_VENDOR_LABEL[vendor] || vendor}</h3>
+              <span class="count">${plans.length} plan${plans.length !== 1 ? "s" : ""}</span>
+            </div>
+            <div class="table-scroll"><table><thead><tr><th>Plan</th><th>Price <span class="lbl">US list · indicative</span></th><th>Provenance</th></tr></thead><tbody>${rows}</tbody></table></div>
+          </section>`;
+        }).join("");
+        document.getElementById("plans-wrap").innerHTML =
+          cards + (data.disclaimer ? `<p class="lbl" style="margin-top:1rem">${data.disclaimer}</p>` : "");
+        document.getElementById("plans").hidden = false;
+      }
+
       /* ── Coverage & gaps (T29) ─────────────────────── */
       // Short column headers for the coverage matrix (coverage.json field keys).
       const COV_LABEL = {
@@ -1670,6 +1718,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           fetch("./coverage.json")
             .then((r) => (r.ok ? r.json() : null))
             .then((c) => { if (c) renderCoverage(c); })
+            .catch(() => {});
+          // Consumer plans (T33): separate dataset. Missing/old plans.json → section stays hidden.
+          fetch("./plans.json")
+            .then((r) => (r.ok ? r.json() : null))
+            .then((p) => { if (p) renderPlans(p); })
             .catch(() => {});
         })
         .catch((e) => {

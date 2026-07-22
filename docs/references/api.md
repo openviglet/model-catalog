@@ -40,7 +40,8 @@ capability*; it also carries an **optional, indicative US list price** per model
 | `…/by-capability/<cap>.json` | **Faceted slice** — filtered to one capability (e.g. `by-capability/reasoning.json`). Same envelope, plus a `capability` field. |
 | `…/by-modality/<m>.json` | **Faceted slice** — filtered to one modality present on **input or output** (e.g. `by-modality/image.json`). Same envelope, plus a `modality` field. |
 | `…/aliases.json` | **Alias resolution map** — `alias id → { vendor, id }` of the canonical entry, so a consumer can resolve a `-latest`/dated-snapshot alias without scanning every entry. Its own envelope. |
-| `…/endpoints.json` | **Discovery manifest** — a machine-readable map of every published path (absolute URLs): `latest`, `pinned`, `index`, `stats`, `changes`, `feed`, `csv`, `ndjson`, `aliases`, `schema`, and the available `byKind` / `byVendor` / `byCapability` / `byModality` slice keys. Read this to discover the surface rather than hard-coding paths. |
+| `…/plans.json` | **Consumer subscription plans** — a *separate* dataset (plans are not models): vendor consumer tiers (Claude, ChatGPT, Gemini) with an **indicative US list price** each. Keyed by consumer brand. A reference only — verify with the vendor. See below. |
+| `…/endpoints.json` | **Discovery manifest** — a machine-readable map of every published path (absolute URLs): `latest`, `pinned`, `index`, `stats`, `changes`, `feed`, `csv`, `ndjson`, `aliases`, `schema`, `plans` (+ `plansSchema` when present), and the available `byKind` / `byVendor` / `byCapability` / `byModality` slice keys. Read this to discover the surface rather than hard-coding paths. |
 | `…/badge.json` | **Status badge** — a [shields.io endpoint](https://shields.io/badges/endpoint-badge) payload (`{ schemaVersion, label, message, color }`) so a README can show a live "N models · M vendors" badge. |
 | `…/llms.txt` | **`llms.txt` index** — the [llms.txt](https://llmstxt.org) convention: a titled, linked map of the catalog data + every vendor / model page, for assistants and crawlers. |
 | `…/models/` | **Per-vendor / per-model pages** — an indexable, quotable URL per model (`models/<vendor>/<slug>.md` + `.html`) and per vendor (`models/<vendor>/`), with the facts in prose. |
@@ -212,6 +213,38 @@ each id's effective status (`status`, falling back to `deprecated → DEPRECATED
   "changed": [ { "vendor": "…", "id": "…", "kind": "…", "label": "…", "from": "PREVIEW", "to": "GA" } ]
 }
 ```
+
+## Consumer subscription plans (`plans.json`) ⚠️
+
+A **separate dataset** from the model catalog — consumer *subscription plans* are not
+models, so they do not live in `ModelEntry` or `catalog.json`. `plans.json` publishes the
+vendors' consumer tiers (Claude Free/Pro/Max, ChatGPT Free/Plus/Pro, Gemini / Google AI
+Pro/Ultra), **US-only**, keyed by consumer brand. It has its own schema (`plans.schema.json`)
+and its own envelope (not a `vendors` map):
+
+```json
+{
+  "version": 1, "lastUpdated": "2026-07-22",
+  "disclaimer": "Indicative US consumer subscription plans — a reference only …",
+  "plans": {
+    "anthropic": [
+      { "id": "claude-pro", "name": "Claude Pro", "product": "Claude", "tier": "pro",
+        "priceMonthlyUSD": 20, "annualMonthlyUSD": 17, "currency": "USD",
+        "features": ["…"], "url": "https://www.anthropic.com/pricing",
+        "indicative": true, "note": "Indicative US list price — verify with the vendor.",
+        "source": "https://www.anthropic.com/pricing", "lastVerified": "2026-07-22" }
+    ],
+    "openai": [ /* … */ ], "google": [ /* … */ ]
+  }
+}
+```
+
+Every price is an **indicative US list price** — the same bounds as per-model `pricing`:
+a reference only, **not authoritative**, excludes tax, may be stale and vary by region;
+**verify on the vendor's pricing page** before relying on it. Provenance-gated (`source`
++ `lastVerified` + `indicative: true` required per plan) and never invented. Hand-curated
+and review-gated — there is no upstream API for consumer plans. Each plan is flattened with
+its `vendor` in the published artifact. The section is omitted if `catalog/plans.json` is absent.
 
 ## Alternate export formats (`catalog.csv` + `catalog.ndjson`)
 

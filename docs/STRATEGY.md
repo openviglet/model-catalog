@@ -36,6 +36,16 @@ LiteLLM stays the upstream we enrich from — we now *keep* its price keys (mapp
 our shape and normalized to per-token USD) instead of stripping them. Implementation
 is tracked as **Block F** in [ROADMAP.md](ROADMAP.md).
 
+**Consumer subscription plans — in scope, as a separate dataset (decided 2026-07-22).**
+Beyond per-model API pricing, vendors sell consumer tiers (Claude Pro/Max, ChatGPT
+Plus/Pro, Gemini / Google AI Pro/Ultra). The open question was whether a *model-identity*
+catalog should own these at all. Decision: yes, but they are **not models** — they ship as
+a **separate `plans.json` dataset** (own schema, own envelope), never inside `ModelEntry`.
+Same bounds as per-model pricing: **US list only, indicative-not-authoritative, sourced +
+`lastVerified`, never invented**. Hand-curated + review-gated (no upstream API exists for
+consumer plans). Keeping plans out of the model catalog preserves the "identity + kind"
+core while still giving Turing one place to read a plan reference.
+
 **Trust model.** The value of a reference is trust, so provenance is first-class
 (`sources`/`lastVerified` per entry) and the canonical file is only ever updated via
 propose-and-review — a bad upstream fetch must never silently poison the reference.
