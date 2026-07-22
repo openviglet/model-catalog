@@ -130,7 +130,11 @@ export class ModelCatalogClient {
     this.#ttlMs = Number(ttlMs) || 0;
     this.#pinnedVersion = pinnedVersion;
     this.#compact = Boolean(compact);
-    this.#fetch = fetchImpl || (typeof fetch === "function" ? fetch : undefined);
+    // The default global `fetch` must be invoked with the global as its receiver —
+    // calling it as `this.#fetch(url)` otherwise throws "Illegal invocation" in the
+    // browser (WHATWG requires the Window/Worker receiver). Bind the default; a
+    // caller-supplied `fetch` is used as given (it may be an already-bound method).
+    this.#fetch = fetchImpl || (typeof fetch === "function" ? fetch.bind(globalThis) : undefined);
     this.#now = now || Date.now;
     if (typeof this.#fetch !== "function") {
       throw new TypeError(
