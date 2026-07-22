@@ -26,6 +26,7 @@ public/by-vendor/
 public/by-capability/
 public/by-modality/
 public/models/
+public/sdk/
 
 # Pipeline working dirs are handled by their own .gitignore:
 #   pipeline/sources/  (raw per-source snapshot cache)

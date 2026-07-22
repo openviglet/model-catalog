@@ -23,6 +23,7 @@ const PLANS_SRC = resolve(REPO_ROOT, "catalog/plans.json"); // consumer plans da
 const PLANS_SCHEMA_SRC = resolve(REPO_ROOT, "catalog/plans.schema.json");
 const PROVIDERS_SRC = resolve(REPO_ROOT, "catalog/providers.json"); // pricing-source registry (T35)
 const PROVIDERS_SCHEMA_SRC = resolve(REPO_ROOT, "catalog/providers.schema.json");
+const CLIENT_JS_SRC = resolve(REPO_ROOT, "clients/js/index.js"); // the JS SDK the page dogfoods (T50)
 const OUT_DIR = resolve(REPO_ROOT, "public");
 // Public base URL — the GitHub Pages site for this repo. The endpoint intentionally
 // stays on this public host (a community-owned home, not a brand asset); the
@@ -744,6 +745,13 @@ for (const dir of ["by-kind", "by-vendor", "by-capability", "by-modality"]) {
 }
 // Rewrite the GEO page tree from scratch so a removed vendor/model leaves no stale page.
 rmSync(resolve(OUT_DIR, "models"), { recursive: true, force: true });
+// Self-hosted copy of the JS SDK (T50): the browsable page consumes it as a static
+// ESM module (no build, no CDN, still zero-dep), making the site the real-world
+// acceptance test for the client. Copied verbatim from clients/js so page + published
+// package can never drift. Rewritten each run.
+rmSync(resolve(OUT_DIR, "sdk"), { recursive: true, force: true });
+mkdirSync(resolve(OUT_DIR, "sdk"), { recursive: true });
+writeFileSync(resolve(OUT_DIR, "sdk/model-catalog-client.js"), readFileSync(CLIENT_JS_SRC, "utf8"), "utf8");
 const write = (rel, obj) => writeFileSync(resolve(OUT_DIR, rel), JSON.stringify(obj, null, 2) + "\n", "utf8");
 
 const json = JSON.stringify(published, null, 2) + "\n";
@@ -786,6 +794,7 @@ console.log(
     `(${Object.keys(vendors).length} vendors, ${count} models) to ${OUT_DIR}`,
 );
 console.log(`emit-model-catalog: GEO pages — llms.txt + ${geoPages.length - 2} vendor/model pages under models/`);
+console.log("emit-model-catalog: sdk/model-catalog-client.js — self-hosted JS SDK for the page (T50)");
 console.log(`emit-model-catalog: badge.json — "${badge.label}: ${badge.message}"`);
 if (plansPublished) console.log(`emit-model-catalog: plans.json — ${plansCount} consumer plans across ${Object.keys(plansPublished.plans).length} vendors (indicative US list)`);
 if (providersPublished) console.log(`emit-model-catalog: providers.json — ${providersCount} provider pricing sources`);

@@ -77,12 +77,6 @@ Dense facts drive the defaults; sparse facts are opt-in overlays that always pri
 the provenance-first bet. All views keep the existing framing: tier is a *price proxy, not a quality
 verdict*; every benchmark/speed number is *cited — verify at the source*.
 
-### §L1 — T50 · SDK-backed page (dogfood the JS client)
-Migrate `public/index.html` from raw `fetch` to `@openviglet/model-catalog-client` as ESM (emit
-copies `clients/js/*.mjs` into `public/sdk/`; the page `import`s it via `<script type="module">`).
-Foundational for the rest of the block and the validation loop the SDK needs — gaps surfaced here
-are filed against Block K. Zero-dep (self-hosted ESM, no build/CDN); no user-facing behaviour change.
-
 ### §L2 — T51 · Global flat sort + optional group-by
 Rework the Browse render from "sort within each vendor card" to a **flat pass over all models,
 sorted once globally**, with vendor becoming one optional *group-by* (None default / Vendor / Kind /

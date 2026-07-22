@@ -585,6 +585,15 @@
       .cov-legend .sw { display: inline-block; width: 1rem; height: 1rem; border-radius: .25rem;
         vertical-align: middle; margin-right: .35rem; }
     </style>
+    <script>
+      /* Set the theme before first paint (avoids a flash) — the toggle button is
+         wired later in the main module. Kept classic + blocking on purpose. */
+      (function () {
+        const saved = localStorage.getItem("mc-theme");
+        const sysDark = matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.setAttribute("data-theme", saved || (sysDark ? "dark" : "light"));
+      })();
+    </script>
   </head>
   <body>
     <!-- ── Nav ─────────────────────────────────────────── -->
@@ -978,14 +987,19 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       <div class="pal-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> open</span><span><kbd>esc</kbd> close</span></div>
     </div>
 
-    <script>
-      /* ── Theme ─────────────────────────────────────── */
+    <script type="module">
+      /* The browsable page is the reference consumer of the JS SDK (T50): it imports
+         the SAME @openviglet/model-catalog-client that npm ships, self-hosted at
+         ./sdk/ (emit copies clients/js/index.js there — no build, no CDN, zero-dep).
+         Any gap the page hits is fixed in the SDK, never worked around here. */
+      import { ModelCatalogClient, classify } from "./sdk/model-catalog-client.js";
+
+      /* ── Theme toggle ──────────────────────────────── */
+      /* data-theme is already set (pre-paint) by the classic script in <head>;
+         here we only wire the toggle button. */
       (function () {
         const KEY = "mc-theme";
         const root = document.documentElement;
-        const saved = localStorage.getItem(KEY);
-        const sysDark = matchMedia("(prefers-color-scheme: dark)").matches;
-        root.setAttribute("data-theme", saved || (sysDark ? "dark" : "light"));
         document.getElementById("theme").onclick = () => {
           const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
           root.setAttribute("data-theme", next);
@@ -1236,33 +1250,9 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
                       for capability, NOT a benchmark or a quality verdict). */
       const TIER_BG = { Frontier: "#c2410c", High: "#ea580c", Mid: "#64748b", Light: "#0891b2" };
       const TIER_HINT = "Tier bucketed from the vendor's US list price (input / 1M) — a market signal for capability, not a benchmark or quality score.";
-      function classify(m) {
-        const caps = m.capabilities || [];
-        const inMod = (m.modalities && m.modalities.input) || [];
-        const hay = (m.id + " " + (m.label || "")).toLowerCase();
-        const tags = [];
-        switch (m.kind) {
-          case "EMBEDDING": tags.push("Embeddings"); break;
-          case "RERANK": tags.push("Reranking"); break;
-          case "IMAGE": tags.push("Image gen"); break;
-          case "SPEECH": tags.push("Speech"); break;
-          case "TRANSCRIPTION": tags.push("Transcription"); break;
-          case "VIDEO": tags.push("Video"); break;
-          case "MODERATION": tags.push("Moderation"); break;
-          default: // CHAT / UNKNOWN
-            if (caps.includes("reasoning")) tags.push("Reasoning");
-            if (/cod(e|er|ing)/.test(hay)) tags.push("Coding");
-            if (inMod.includes("image") || caps.includes("vision")) tags.push("Multimodal");
-            if (!tags.length) tags.push("Chat");
-        }
-        // Open weights (T39) is a factual, discovery-relevant attribute — surface it
-        // as a use-case tag so "show me open models" is filterable (T44).
-        if (m.openWeights === true) tags.push("Open weights");
-        let tier = null;
-        const inp = m.pricing && m.pricing.inputPer1M;
-        if (inp != null) tier = inp >= 5 ? "Frontier" : inp >= 1 ? "High" : inp >= 0.2 ? "Mid" : "Light";
-        return { tags, tier };
-      }
+      // `classify(m)` → { tags, tier } is imported from the SDK (T50): the page and
+      // every external consumer share the identical use-case-tag + price-tier logic,
+      // so the table's chips can never drift from what the client library derives.
       // Disclosed total parameter count → short label (T39), e.g. 671B, 8B, 1.7M.
       function fmtParams(n) {
         if (n == null) return "";
@@ -1866,8 +1856,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         })(t0);
       }
 
-      fetch("./catalog.json")
-        .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      // Load the catalog through the SDK (baseUrl "." → the current directory), then
+      // pull the aggregate datasets through its typed accessors — the same calls an
+      // external consumer makes. No raw fetch("./catalog.json") anywhere on the page.
+      const client = new ModelCatalogClient({ baseUrl: "." });
+      client.load()
         .then((data) => {
           catalog = data;
           byKey = new Map();
@@ -1897,32 +1890,17 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
             if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); headerClick(th.dataset.col); }
           });
           applyHash(); // build filters + render, honoring any deep-linked state/permalink
-          // Insights dashboard (T21): counts from stats.json, context histogram from the
-          // catalog just loaded. Missing/old stats.json → the section stays hidden.
-          fetch("./stats.json")
-            .then((r) => (r.ok ? r.json() : null))
-            .then((s) => { if (s) renderDashboard(s); })
-            .catch(() => {});
-          // Coverage & gaps (T29): per-vendor field fill from coverage.json.
-          // Missing/old coverage.json → the section stays hidden.
-          fetch("./coverage.json")
-            .then((r) => (r.ok ? r.json() : null))
-            .then((c) => { if (c) renderCoverage(c); })
-            .catch(() => {});
-          // Consumer plans (T33): separate dataset. Missing/old plans.json → section stays hidden.
-          fetch("./plans.json")
-            .then((r) => (r.ok ? r.json() : null))
-            .then((p) => { if (p) renderPlans(p); })
-            .catch(() => {});
-          // Pricing sources (T35): official vendor pricing pages. Missing → section stays hidden.
-          fetch("./providers.json")
-            .then((r) => (r.ok ? r.json() : null))
-            .then((p) => { if (p) renderSources(p); })
-            .catch(() => {});
+          // Aggregate/registry datasets via the SDK's typed accessors (T47), not raw
+          // fetch — the page dogfoods stats()/coverage()/plans()/providers() exactly as
+          // an external consumer would. Any absent artifact leaves its section hidden.
+          client.stats().then((s) => { if (s) renderDashboard(s); }).catch(() => {});
+          client.coverage().then((c) => { if (c) renderCoverage(c); }).catch(() => {});
+          client.plans().then((p) => { if (p) renderPlans(p); }).catch(() => {});
+          client.providers().then((p) => { if (p) renderSources(p); }).catch(() => {});
         })
         .catch((e) => {
           document.getElementById("status").innerHTML =
-            "Could not load catalog.json (" + e.message + "). Run <code>npm run emit</code> locally, or wait for the published site.";
+            "Could not load the catalog (" + e.message + "). Run <code>npm run emit</code> locally, or wait for the published site.";
         });
 
       /* ── Install tabs (per build tool) ─────────────── */
