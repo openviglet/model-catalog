@@ -110,6 +110,16 @@
       }
       .btn-gh:hover { border-color: var(--brand); text-decoration: none; }
       @media (max-width: 720px) { .nav-hide-sm { display: none; } }
+      /* Compact mobile menu (T57) — the hamburger + dropdown appear only < 720px. */
+      .nav-only-sm { display: none; }
+      @media (max-width: 720px) { .nav-only-sm { display: grid; } }
+      .nav-menu {
+        display: flex; flex-direction: column; padding: .4rem 1.5rem 1rem;
+        border-top: 1px solid var(--border); background: var(--bg);
+      }
+      .nav-menu a { color: var(--text); font-weight: 600; font-size: .95rem; padding: .6rem .2rem; border-bottom: 1px solid var(--border); }
+      .nav-menu a:last-child { border-bottom: none; }
+      .nav-menu a:hover { color: var(--brand-3); text-decoration: none; }
 
       /* ── Hero ────────────────────────────────────────── */
       header {
@@ -608,6 +618,22 @@
       .col-menu .linkish:hover { text-decoration: underline; }
       /* Numeric decision columns read better right-aligned. */
       th.col-num, td.col-num { text-align: right; }
+      /* Card view on phones (T57) — an 8-column scrolling table is hostile < 720px, so
+         each browse row collapses into a labelled card. Scoped to #list so the analytics
+         / leaderboard / compare tables are untouched. */
+      @media (max-width: 720px) {
+        #list .table-scroll { overflow-x: visible; }
+        #list table, #list tbody, #list tr, #list td { display: block; width: auto; }
+        #list thead { display: none; }
+        #list tr[data-key] {
+          border: 1px solid var(--border); border-radius: .8rem; margin-bottom: .7rem;
+          padding: .35rem .2rem; background: var(--card);
+        }
+        #list td { border: none !important; padding: .3rem .85rem; text-align: left !important; }
+        #list td[data-label]::before {
+          content: attr(data-label) ": "; color: var(--muted); font-weight: 600; font-size: .74rem;
+        }
+      }
       /* Honest sparsity (T53): a dimmed dash that invites a contribution. */
       a.empty-cell { color: var(--muted); opacity: .45; text-decoration: none; cursor: help; }
       a.empty-cell:hover { opacity: 1; color: var(--brand-3); }
@@ -701,11 +727,22 @@
           <a href="#api" class="nav-hide-sm">API</a>
           <button type="button" class="icon-btn" id="palbtn" title="Command palette (Ctrl / ⌘ K)" aria-label="Open command palette">⌘K</button>
           <button class="icon-btn" id="theme" title="Toggle theme" aria-label="Toggle theme">◐</button>
-          <a class="btn-gh" href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">
+          <a class="btn-gh nav-hide-sm" href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
             <span class="nav-hide-sm">Star</span>
           </a>
+          <button type="button" class="icon-btn nav-only-sm" id="navtoggle" aria-label="Menu" aria-expanded="false" aria-controls="navmenu">☰</button>
         </div>
+      </div>
+      <!-- Compact mobile menu (T57): the nav links are hidden < 720px; this reveals them. -->
+      <div class="nav-menu" id="navmenu" hidden>
+        <a href="#browse">Explore</a>
+        <a href="#decide">Decide</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#api">API</a>
+        <a href="#sdks">SDKs</a>
+        <a href="#contribute">Contribute</a>
+        <a href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
     </nav>
 
@@ -1167,6 +1204,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (n >= 10_000) return Math.round(n / 1000) + "K";
         return n.toLocaleString("en-US");
       }
+      // Coalesce rapid calls into one, `ms` after the last (T57).
+      function debounce(fn, ms) {
+        let t;
+        return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+      }
 
       let catalog = null, activeKind = null;
       let byKey = new Map();               // "vendor/id" -> full model record (T17 drawer lookup)
@@ -1212,13 +1254,13 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         // vendor inline under the id; grouped views already carry it in the head.
         const vend = !groupBy ? `<div class="lbl">${vendorLabel(m.vendor)}${m.label && m.label !== m.id ? " · " + m.label : ""}</div>`
           : (m.label && m.label !== m.id ? `<div class="lbl">${m.label}</div>` : "");
-        const cells = effectiveCols().map((ck) => `<td class="${NUMERIC_COLS.has(ck) ? "col-num" : ""}">${COLS[ck].cell(m)}</td>`).join("");
+        const cells = effectiveCols().map((ck) => `<td class="${NUMERIC_COLS.has(ck) ? "col-num" : ""}" data-label="${COLS[ck].label}">${COLS[ck].cell(m)}</td>`).join("");
         return `<tr data-key="${key}">
           <td>
             <div class="model-cell"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
             ${vend}
           </td>
-          <td><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
+          <td data-label="Kind"><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
           ${cells}
         </tr>`;
       }
@@ -2298,7 +2340,10 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           document.querySelector('[data-stat="version"]').textContent = "v" + data.version;
           document.getElementById("footmeta").textContent =
             ` · schema v${data.version} · updated ${data.lastUpdated} · ${all.length} models`;
-          document.getElementById("q").addEventListener("input", () => { render(); writeCurrentState(); });
+          // Debounce the keystroke re-render (T57): Browse rebuilds the whole table DOM,
+          // so coalesce rapid typing into one render ~140ms after the last keystroke.
+          const onSearch = debounce(() => { render(); writeCurrentState(); }, 140);
+          document.getElementById("q").addEventListener("input", onSearch);
           window.addEventListener("hashchange", applyHash);
           // Row click → navigate to the model permalink (hashchange opens the drawer).
           // Skip clicks on the permalink anchor (handled separately) and vendor headers.
@@ -2449,6 +2494,21 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         const t = e.target.closest(".atab");
         if (t) selectAnalyticsTab(t.dataset.atab);
       });
+
+      /* ── Compact mobile menu (T57) ─────────────────── */
+      (function () {
+        const btn = document.getElementById("navtoggle");
+        const menu = document.getElementById("navmenu");
+        btn.onclick = () => {
+          const open = menu.hidden;
+          menu.hidden = !open;
+          btn.setAttribute("aria-expanded", String(open));
+        };
+        // A menu link navigates (hash change) — close the menu after the pick.
+        menu.addEventListener("click", (e) => {
+          if (e.target.closest("a")) { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+        });
+      })();
 
       /* ── Facet rail: clear-all + copy-link (T56) ───── */
       document.getElementById("clear-filters").onclick = clearFilters;

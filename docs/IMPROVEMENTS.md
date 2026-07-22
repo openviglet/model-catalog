@@ -47,39 +47,3 @@ design **tokens** so hub → page → drawer read as one system (today the stati
 separate mini-stylesheet). Sparse-aware by *omitting* empty sections (a low-data model looks
 intentional, not broken) — unlike the drawer/compare, which show "—" for alignment. The drawer
 stays as the in-context preview and gains an "Open full page ↗" link. Evolves T26.
-
-## §L — Explore & decide: catalog data experience
-
-The catalog outgrew its container. Rich per-model data (pricing, cited benchmarks + per-domain
-scores, cited speed, open-weights/parameters, classification) across ~240 models now sits behind
-a Browse surface that still presents a **vendor-grouped inventory** — and sorting happens *within*
-each vendor group, so the cross-vendor questions the catalog is uniquely able to answer ("cheapest
-chat model overall", "biggest context window", "best intelligence-per-dollar") are literally
-impossible in the UI. Meanwhile the home page is accreting analytics bands (Insights, Coverage,
-Plans, Sources) above Browse — the "hyper-page with everything" to avoid. This block turns the site
-from an **inventory** into a **decision tool**, organised around three jobs — **orient** (what/why
-+ how to consume), **explore/decide** (find & compare across the whole dataset), **cite** (durable
-per-model / per-segment pages, §G) — each with its own surface so no single screen carries
-everything.
-
-**Foundational principle — the site is the reference consumer of the JS SDK.** The page must stop
-hand-rolling `fetch("./catalog.json")` and instead consume `@openviglet/model-catalog-client` (the
-Block B/K SDK), loaded as a static ESM module (no build, no CDN, still zero-dep). This makes the
-site the real-world acceptance test for the SDK: any gap the Explore rework hits — a missing loader,
-an untyped field, an unexposed slice — is fixed **in the SDK** (feeding Block K: T47 aggregate
-loaders, T48 faceted-slice / change-feed accessors), never worked around in the page.
-
-**Honesty under sparsity is a design constraint, not an afterthought.** Benchmarks are populated on
-~14% of models, performance ~8%, pricing ~86%; three advertised fields (`knowledgeCutoff`,
-`releaseDate`, `status`), `benchmarks.arenaElo` and the `reasoning` score domain are 0% filled.
-Dense facts drive the defaults; sparse facts are opt-in overlays that always print their denominator
-("32 of 182 chat models with a cited score") and never null-fill, plot, or invent — consistent with
-the provenance-first bet. All views keep the existing framing: tier is a *price proxy, not a quality
-verdict*; every benchmark/speed number is *cited — verify at the source*.
-
-### §L8 — T57 · Mobile & render performance
-Restore usable **mobile navigation** (today every nav link is hidden < 720px, leaving only ⌘K +
-theme) via a compact menu, add a **card view** < 720px (an 8-column horizontally-scrolling table is
-hostile on a phone), and **debounce the keystroke re-render** (Browse currently rebuilds the whole
-table DOM on every keypress — fine at 240 models, laggy well before it breaks). Exploratory (💭):
-the mobile IA + card layout want a design pass.

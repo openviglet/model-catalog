@@ -67,6 +67,17 @@
 > [CHANGELOG.md](CHANGELOG.md) → Block K). The endpoint intentionally stays on its public
 > GitHub Pages URL (`openviglet.github.io/model-catalog`) — an unbranded, community-owned
 > home signals a public resource, not a brand asset.
+>
+> **Block L — Explore & decide: catalog data experience** shipped in full — the site
+> became a cross-vendor **decision tool** and the reference consumer of the JS SDK: the
+> page dogfoods `@openviglet/model-catalog-client` as self-hosted ESM (T50), Browse is a
+> flat globally-sorted table with optional group-by (T51), aligned sortable decision
+> columns + a URL-persisted column chooser (T52), honest-sparsity filters/empty-states +
+> self-dropping empty CSV columns (T53), a price×intelligence frontier scatter +
+> `leaderboards.json` + a tri-SDK `leaderboards()` accessor (T54), a tabbed analytics home
+> off the critical path with a four-band nav (T55), a grouped facet rail with counts +
+> shareable presets (T56), and mobile nav + card view + debounced render (T57)
+> (see [CHANGELOG.md](CHANGELOG.md) → Block L).
 
 ## Block G — Static-site expansion & indexing
 
@@ -77,19 +88,6 @@
 
 - **T34** 📋 **Per-segment hubs + sitemap** — evolve the T26 page generator in `scripts/emit.mjs` into real per-capability / per-modality / per-kind (+ per-tier) **hubs**: each a compact static leaderboard (top models pre-sorted, cross-linked to per-model pages) + prose intro + links to the JSON slice and to Explore pre-filtered — *not* a bare link list — plus `sitemap.xml` + `robots.txt`. Serves humans and crawlers; zero-dep, derived-at-emit, no framework. deps: — (T26 shipped) → §G1
 - **T58** 📋 **First-class per-model page** — promote the emitted per-model page (T26) from a bare table into a scannable reference styled to the SPA design tokens: header + at-a-glance stat tiles + populated-only cited sections + always-on provenance + derived related models; omit empty sections (not "—"); the drawer gains an "Open full page ↗" link. Unifies the SPA↔static visual system. deps: — (T26 shipped) → §G2
-
-## Block L — Explore & decide: catalog data experience
-
-> Rich per-model data (pricing, cited benchmarks + scores, speed, open-weights, classification)
-> across ~240 models now outgrows a vendor-grouped list that can only sort *within* a vendor — the
-> cross-vendor questions ("cheapest chat overall", "best intelligence-per-$") are impossible, and
-> the home page is accreting analytics bands. This block turns the site from an inventory into a
-> **decision tool** across three jobs — orient / explore / cite (the cite surface is Block G) —
-> without one hyper-page. **Foundational bet:** the site becomes the reference consumer of the JS
-> SDK — gaps found here are fixed in the SDK (feeding Block K), never worked around in the page.
-> Sparse data stays honest (denominators, opt-in overlays, never invented). Design rationale → §L.
-
-- **T57** 💭 **Mobile & render performance** — restore mobile nav (compact menu), card view < 720px, debounce the keystroke re-render. deps: T51 → §L8
 
 ## Non-goals
 
