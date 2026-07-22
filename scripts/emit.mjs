@@ -485,7 +485,7 @@ const csvCell = (v) => {
   const s = Array.isArray(v) ? v.join(";") : String(v);
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; // RFC 4180 quoting
 };
-const csvRow = (e) => CSV_COLUMNS.map((c) => {
+const csvCellFor = (e, c) => {
   if (c === "inputModalities") return csvCell((e.modalities && e.modalities.input) || []);
   if (c === "outputModalities") return csvCell((e.modalities && e.modalities.output) || []);
   if (c === "priceInputPer1M") return csvCell(e.pricing && e.pricing.inputPer1M);
@@ -505,8 +505,16 @@ const csvRow = (e) => CSV_COLUMNS.map((c) => {
   if (c === "perfSource") return csvCell(e.performance && e.performance.source);
   if (c === "perfLastVerified") return csvCell(e.performance && e.performance.lastVerified);
   return csvCell(e[c]);
-}).join(",");
-const catalogCsv = [CSV_COLUMNS.join(","), ...flat.map(csvRow)].join("\r\n") + "\r\n";
+};
+// Data hygiene (T53): don't advertise always-empty columns. Keep the identity/core
+// columns unconditionally, but drop any optional column that is empty for EVERY model
+// — self-healing (a column reappears the moment a value is recorded), so consumers
+// never see a wall of blank fields that erodes trust in the data.
+const CSV_ALWAYS = new Set(["vendor", "id", "label", "kind"]);
+const activeCsvCols = CSV_COLUMNS.filter((c) => CSV_ALWAYS.has(c) || flat.some((e) => csvCellFor(e, c) !== ""));
+const droppedCsvCols = CSV_COLUMNS.filter((c) => !activeCsvCols.includes(c));
+const csvRow = (e) => activeCsvCols.map((c) => csvCellFor(e, c)).join(",");
+const catalogCsv = [activeCsvCols.join(","), ...flat.map(csvRow)].join("\r\n") + "\r\n";
 const catalogNdjson = flat.map((e) => JSON.stringify(e)).join("\n") + "\n";
 
 // ── GEO / citability artifacts (T26) ──────────────────────────────────────
@@ -795,6 +803,7 @@ console.log(
 );
 console.log(`emit-model-catalog: GEO pages — llms.txt + ${geoPages.length - 2} vendor/model pages under models/`);
 console.log("emit-model-catalog: sdk/model-catalog-client.js — self-hosted JS SDK for the page (T50)");
+if (droppedCsvCols.length) console.log(`emit-model-catalog: catalog.csv dropped ${droppedCsvCols.length} always-empty column(s): ${droppedCsvCols.join(", ")} (T53)`);
 console.log(`emit-model-catalog: badge.json — "${badge.label}: ${badge.message}"`);
 if (plansPublished) console.log(`emit-model-catalog: plans.json — ${plansCount} consumer plans across ${Object.keys(plansPublished.plans).length} vendors (indicative US list)`);
 if (providersPublished) console.log(`emit-model-catalog: providers.json — ${providersCount} provider pricing sources`);

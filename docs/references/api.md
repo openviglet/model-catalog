@@ -327,11 +327,15 @@ section is omitted if `catalog/providers.json` is absent.
 ## Alternate export formats (`catalog.csv` + `catalog.ndjson`)
 
 Both are emitted from the same flattened entries as `catalog.json`, in the same order, so
-they never drift. **`catalog.csv`** is one row per model with a fixed, stable column set —
-`vendor,id,label,kind,contextWindow,maxOutputTokens,embeddingDimensions,capabilities,inputModalities,outputModalities,knowledgeCutoff,releaseDate,status,deprecated,aliases,sources,lastVerified,priceInputPer1M,priceOutputPer1M,priceCurrency,priceSource,priceLastVerified`
-(the five `price*` columns are the indicative US list price — a reference only, verify with the vendor; empty when unpriced)
-— array fields `;`-joined, RFC-4180 quoted. **`catalog.ndjson`** is one JSON object per
-line (the flattened `ModelEntry`, including `vendor`), newline-delimited.
+they never drift. **`catalog.csv`** is one row per model, drawn from this superset of columns
+(in this order) —
+`vendor,id,label,kind,contextWindow,maxOutputTokens,embeddingDimensions,capabilities,openWeights,parameters,inputModalities,outputModalities,knowledgeCutoff,releaseDate,status,deprecated,aliases,sources,lastVerified,priceInputPer1M,priceOutputPer1M,priceCurrency,priceSource,priceLastVerified,benchmarkIntelligenceIndex,benchmarkArenaElo,benchmarkReasoning,benchmarkCoding,benchmarkMath,benchmarkSource,benchmarkLastVerified,perfThroughputTps,perfLatencyTtftSec,perfSource,perfLastVerified`
+(the `price*` columns are the indicative US list price — a reference only, verify with the vendor; the `benchmark*` / `perf*` columns are cited third-party figures — verify at the source).
+For **data hygiene**, any *optional* column that is empty for **every** model in a given publish
+is omitted from that CSV (the identity columns `vendor,id,label,kind` are always present); a
+column reappears automatically once any model carries a value — so read the header row, don't
+assume a fixed position. Array fields are `;`-joined, RFC-4180 quoted. **`catalog.ndjson`** is
+one JSON object per line (the flattened `ModelEntry`, including `vendor`), newline-delimited.
 
 ```bash
 # every reasoning-capable chat model, as a table

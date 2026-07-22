@@ -77,16 +77,6 @@ Dense facts drive the defaults; sparse facts are opt-in overlays that always pri
 the provenance-first bet. All views keep the existing framing: tier is a *price proxy, not a quality
 verdict*; every benchmark/speed number is *cited — verify at the source*.
 
-### §L4 — T53 · Honest sparsity + data hygiene
-Make missing data a first-class, honest dimension: "has price / has benchmark / has speed" quick
-filters; every ranked or plotted view prints its denominator (reusing `stats.coverage` rates so it
-can't drift); empty cells render as a dimmed dash with a "not recorded yet — contribute" tooltip
-wired to the T28 prefilled issue; a low-population view shows a contribute empty-state, not a
-near-blank chart. The same pass clears the 0%-filled noise — stop advertising always-empty fields
-(drop the empty CSV columns / hide all-zero coverage columns / remove `reasoning` + `arenaElo`
-scaffolding until data exists; add the missing `COV_LABEL` entries) — because empty columns erode
-the very trust the coverage view exists to build.
-
 ### §L5 — T54 · Decision views: frontier + leaderboards
 The flagship "which model" visuals, scoped honestly to the population that supports them: a
 hand-rolled inline-SVG **price × intelligence** scatter (log price axis, Pareto front highlighted,

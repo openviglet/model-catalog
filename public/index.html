@@ -577,6 +577,14 @@
       .col-menu .linkish:hover { text-decoration: underline; }
       /* Numeric decision columns read better right-aligned. */
       th.col-num, td.col-num { text-align: right; }
+      /* Honest sparsity (T53): a dimmed dash that invites a contribution. */
+      a.empty-cell { color: var(--muted); opacity: .45; text-decoration: none; cursor: help; }
+      a.empty-cell:hover { opacity: 1; color: var(--brand-3); }
+      .chip-count {
+        display: inline-block; margin-left: .25rem; padding: 0 .32rem; border-radius: 999px;
+        font-size: .72rem; font-weight: 700; background: color-mix(in srgb, var(--muted) 18%, transparent);
+      }
+      .filters button[aria-pressed="true"] .chip-count { background: rgba(255,255,255,.28); }
       th.sortable { cursor: pointer; -webkit-user-select: none; user-select: none; white-space: nowrap; }
       th.sortable:hover { color: var(--brand-3); }
       th.sortable:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
@@ -1098,6 +1106,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       const activeOutMods = new Set();     // output-modality filter chips (AND) — T20
       const activeTags = new Set();        // use-case tag chips (AND) — T44
       const activeTiers = new Set();       // price-tier band chips (OR — one tier per model) — T44
+      const activeHas = new Set();         // "has price / benchmark / speed" quick filters (AND) — T53
       let sortKey = null, sortDir = 1;     // global column sort — T20/T44/T51
       let groupBy = null;                  // null (flat) | "vendor" | "kind" | "tier" — T51
       const GROUP_OPTS = [[null, "None"], ["vendor", "Vendor"], ["kind", "Kind"], ["tier", "Tier"]];
@@ -1118,6 +1127,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           for (const t of activeTags) if (!cl.tags.includes(t)) return false; // AND
           if (activeTiers.size && !activeTiers.has(cl.tier)) return false;     // OR (one tier per model)
         }
+        for (const h of activeHas) if (!HAS_FN[h](m)) return false;            // has-data filters (AND) — T53
         if (!q) return true;
         return (m.id + " " + (m.label || "") + " " + m.vendor).toLowerCase().includes(q);
       }
@@ -1217,6 +1227,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (activeOutMods.size) p.set("out", [...activeOutMods].join(","));
         if (activeTags.size) p.set("tag", [...activeTags].join(","));
         if (activeTiers.size) p.set("tier", [...activeTiers].join(","));
+        if (activeHas.size) p.set("has", [...activeHas].join(","));
         if (groupBy) p.set("group", groupBy);
         if (colChoice !== null) p.set("cols", colChoice.join(","));
         if (sortKey) p.set("sort", sortKey + ":" + sortDir);
@@ -1228,7 +1239,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       function resetFilters() {
         document.getElementById("q").value = ""; activeKind = null;
         activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
-        activeTags.clear(); activeTiers.clear();
+        activeTags.clear(); activeTiers.clear(); activeHas.clear();
         groupBy = null; colChoice = null; sortKey = null; sortDir = 1;
       }
       // Route the hash: explorer state (#q=…&kind=…&cap=…&in=…&out=…&tag=…&tier=…&sort=…),
@@ -1251,6 +1262,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           setFromParam(activeOutMods, p.get("out"));
           setFromParam(activeTags, p.get("tag"));
           setFromParam(activeTiers, p.get("tier"));
+          setFromParam(activeHas, p.get("has"));
           groupBy = ["vendor", "kind", "tier"].includes(p.get("group")) ? p.get("group") : null;
           colChoice = p.has("cols") ? (p.get("cols") || "").split(",").filter(Boolean).filter((k) => COLS[k]) : null;
           const srt = p.get("sort");
@@ -1353,31 +1365,40 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
          individually-sortable columns. Which optional columns show is a URL-persisted
          choice with kind-aware defaults (a chat lens isn't forced on all 8 kinds).
          The full record still lives in the drawer/compare; the table holds decisions. */
-      const dash = () => '<span class="lbl">—</span>';
       const numChip = (s) => `<span class="chip num">${s}</span>`;
-      function priceColCell(p) {
-        const bits = priceParts(p);
-        return bits.length ? `<span class="chip num" title="${PRICE_CAVEAT}">${bits.map(([v]) => v).join(" · ")}</span>` : dash();
+      // Honest sparsity (T53): a missing decision value renders as a dimmed dash that
+      // deep-links to the pre-filled propose form — the empty cell becomes an explicit,
+      // low-friction invitation to contribute rather than dead space.
+      const emptyCell = (m) => `<a class="empty-cell" href="${correctionUrl(m)}" target="_blank" rel="noopener" title="Not recorded yet — contribute this value">—</a>`;
+      // "Has data" quick-filter predicates (T53) — the headline field for each axis.
+      const HAS_FN = {
+        price: (m) => !!m.pricing,
+        benchmark: (m) => !!(m.benchmarks && m.benchmarks.intelligenceIndex != null),
+        speed: (m) => !!(m.performance && m.performance.throughputTps != null),
+      };
+      function priceColCell(m) {
+        const bits = priceParts(m.pricing);
+        return bits.length ? `<span class="chip num" title="${PRICE_CAVEAT}">${bits.map(([v]) => v).join(" · ")}</span>` : emptyCell(m);
       }
-      function benchColCell(b) {
-        const v = b && b.intelligenceIndex;
-        return v == null ? dash() : `<span class="chip num" title="${BENCH_CAVEAT}">${v}</span>`;
+      function benchColCell(m) {
+        const v = m.benchmarks && m.benchmarks.intelligenceIndex;
+        return v == null ? emptyCell(m) : `<span class="chip num" title="${BENCH_CAVEAT}">${v}</span>`;
       }
-      function speedColCell(p) {
-        const v = p && p.throughputTps;
-        return v == null ? dash() : `<span class="chip num" title="${PERF_CAVEAT}">${v} tok/s</span>`;
+      function speedColCell(m) {
+        const v = m.performance && m.performance.throughputTps;
+        return v == null ? emptyCell(m) : `<span class="chip num" title="${PERF_CAVEAT}">${v} tok/s</span>`;
       }
       // Each optional column: display cell + (optional) global sort key.
       const COLS = {
-        tags:         { label: "Use case",     cell: (m) => useCaseChips(classify(m).tags) || dash() },
-        context:      { label: "Context",      cell: (m) => m.contextWindow ? numChip(fmtTokens(m.contextWindow)) : dash(), sort: "context" },
-        output:       { label: "Max output",   cell: (m) => m.maxOutputTokens ? numChip(fmtTokens(m.maxOutputTokens)) : dash(), sort: "output" },
-        dims:         { label: "Embed dims",   cell: (m) => m.embeddingDimensions ? numChip(m.embeddingDimensions) : dash(), sort: "dims" },
-        price:        { label: "Price /1M",    cell: (m) => priceColCell(m.pricing), sort: "price" },
-        intelligence: { label: "Intelligence", cell: (m) => benchColCell(m.benchmarks), sort: "intelligence" },
-        speed:        { label: "Speed",        cell: (m) => speedColCell(m.performance), sort: "speed" },
-        params:       { label: "Params",       cell: (m) => m.parameters != null ? numChip(fmtParams(m.parameters)) : dash(), sort: "params" },
-        weights:      { label: "Weights",      cell: (m) => m.openWeights == null ? dash() : `<span class="chip">${m.openWeights ? "Open" : "Proprietary"}</span>` },
+        tags:         { label: "Use case",     cell: (m) => useCaseChips(classify(m).tags) || emptyCell(m) },
+        context:      { label: "Context",      cell: (m) => m.contextWindow ? numChip(fmtTokens(m.contextWindow)) : emptyCell(m), sort: "context" },
+        output:       { label: "Max output",   cell: (m) => m.maxOutputTokens ? numChip(fmtTokens(m.maxOutputTokens)) : emptyCell(m), sort: "output" },
+        dims:         { label: "Embed dims",   cell: (m) => m.embeddingDimensions ? numChip(m.embeddingDimensions) : emptyCell(m), sort: "dims" },
+        price:        { label: "Price /1M",    cell: (m) => priceColCell(m), sort: "price" },
+        intelligence: { label: "Intelligence", cell: (m) => benchColCell(m), sort: "intelligence" },
+        speed:        { label: "Speed",        cell: (m) => speedColCell(m), sort: "speed" },
+        params:       { label: "Params",       cell: (m) => m.parameters != null ? numChip(fmtParams(m.parameters)) : emptyCell(m), sort: "params" },
+        weights:      { label: "Weights",      cell: (m) => m.openWeights == null ? emptyCell(m) : `<span class="chip">${m.openWeights ? "Open" : "Proprietary"}</span>` },
       };
       const COL_ORDER = ["tags", "context", "output", "dims", "price", "intelligence", "speed", "params", "weights"];
       const NUMERIC_COLS = new Set(["context", "output", "dims", "price", "intelligence", "speed", "params"]); // right-aligned
@@ -1753,7 +1774,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           card("Context window", svgBars(contextHistogram()), "Models by max context window") +
           card("Top capabilities", svgBars(capRows)) +
           card("Input modalities", svgBars(inRows)) +
-          card("Field coverage", svgBars(covRows, { max: 1, fmt: (v) => Math.round(v * 100) + "%" }));
+          card("Field coverage", svgBars(covRows, { max: 1, fmt: (v) => Math.round(v * 100) + "%" }),
+            `Share of the ${stats.coverage.total} catalogued models carrying each field — the denominator behind every sparse overlay.`);
         document.getElementById("insights").hidden = false;
       }
 
@@ -1829,9 +1851,10 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       // Short column headers for the coverage matrix (coverage.json field keys).
       const COV_LABEL = {
         contextWindow: "Context", maxOutputTokens: "Max out", embeddingDimensions: "Embed dims",
-        capabilities: "Capabilities", modalities: "Modalities", knowledgeCutoff: "Cutoff",
+        capabilities: "Capabilities", openWeights: "Open weights", parameters: "Params",
+        modalities: "Modalities", knowledgeCutoff: "Cutoff",
         releaseDate: "Released", aliases: "Aliases", status: "Status", sources: "Sources", lastVerified: "Verified",
-        pricing: "Price",
+        pricing: "Price", benchmarks: "Benchmark", performance: "Speed",
       };
       // A gap → a pre-filled proposal for that vendor (change-type = correction). T28 tie-in.
       function coverageGapUrl(vendor) {
@@ -1844,6 +1867,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       }
       function renderCoverage(cov) {
         const pct = (r) => Math.round((r || 0) * 100);
+        // Data hygiene (T53): hide columns that are 0% across the WHOLE catalog — an
+        // all-empty column advertises a field we don't actually carry, which erodes the
+        // trust this view exists to build. They return automatically once data arrives.
+        const shownFields = cov.fields.filter((f) => (cov.overall.fields[f] || {}).rate > 0);
+        const hiddenCount = cov.fields.length - shownFields.length;
         const cell = (vendor, field, o) => {
           const c = o.fields[field] || { filled: 0, rate: 0 };
           const bg = `color-mix(in srgb, var(--brand) ${pct(c.rate)}%, transparent)`;
@@ -1857,9 +1885,9 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           }
           return `<td><span class="cov-cell${gap}" style="background:${bg}" title="${title}">${pct(c.rate)}%</span></td>`;
         };
-        const head = `<tr><th class="cov-vendor">Vendor</th>${cov.fields.map((f) => `<th title="${f}">${COV_LABEL[f] || f}</th>`).join("")}</tr>`;
+        const head = `<tr><th class="cov-vendor">Vendor</th>${shownFields.map((f) => `<th title="${f}">${COV_LABEL[f] || f}</th>`).join("")}</tr>`;
         const rowFor = (vendor, o, cls) =>
-          `<tr class="${cls}"><th class="cov-vendor">${vendor ? vendorLabel(vendor) : "All vendors"} <span class="lbl">${o.total}</span></th>${cov.fields.map((f) => cell(vendor, f, o)).join("")}</tr>`;
+          `<tr class="${cls}"><th class="cov-vendor">${vendor ? vendorLabel(vendor) : "All vendors"} <span class="lbl">${o.total}</span></th>${shownFields.map((f) => cell(vendor, f, o)).join("")}</tr>`;
         const body = rowFor(null, cov.overall, "cov-overall") +
           Object.entries(cov.byVendor).map(([v, o]) => rowFor(v, o, "")).join("");
         document.getElementById("cov-wrap").innerHTML =
@@ -1869,7 +1897,8 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         legend.innerHTML =
           `<span><span class="sw" style="background:color-mix(in srgb,var(--brand) 92%,transparent)"></span>well covered</span>` +
           `<span><span class="sw" style="background:color-mix(in srgb,var(--brand) 22%,transparent)"></span>sparse</span>` +
-          `<span><span class="sw" style="border:1px dashed var(--border-strong)"></span>none — <a href="#contribute">help fill it in</a></span>`;
+          `<span><span class="sw" style="border:1px dashed var(--border-strong)"></span>none — <a href="#contribute">help fill it in</a></span>` +
+          (hiddenCount ? `<span class="lbl">${hiddenCount} field${hiddenCount !== 1 ? "s" : ""} hidden (0% across the catalog)</span>` : "");
         document.getElementById("cov-wrap").after(legend);
         document.getElementById("coverage").hidden = false;
       }
@@ -1936,9 +1965,27 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           for (const v of values) wrap.appendChild(chip(set, v));
           g.appendChild(wrap); return g;
         };
+        // "Has data" quick filters (T53) — each chip carries its match count (a
+        // denominator) so sparsity is visible before you click: e.g. "Has speed 18".
+        const HAS_DEFS = [["price", "Has price"], ["benchmark", "Has benchmark"], ["speed", "Has speed"]];
+        const hasGroup = () => {
+          const g = document.createElement("div"); g.className = "facet-group";
+          const l = document.createElement("span"); l.className = "facet-label"; l.textContent = "Has data"; g.appendChild(l);
+          const wrap = document.createElement("div"); wrap.className = "filters";
+          for (const [h, label] of HAS_DEFS) {
+            const n = all.filter((m) => HAS_FN[h](m)).length;
+            const b = document.createElement("button");
+            b.type = "button";
+            b.innerHTML = `${label} <span class="chip-count">${n}</span>`;
+            b.setAttribute("aria-pressed", String(activeHas.has(h)));
+            b.onclick = () => { activeHas.has(h) ? activeHas.delete(h) : activeHas.add(h); buildFacets(); render(); writeCurrentState(); };
+            wrap.appendChild(b);
+          }
+          g.appendChild(wrap); return g;
+        };
         const host = document.getElementById("facets");
         host.innerHTML = "";
-        [group("Use case", tags, activeTags), group("Tier", tiers, activeTiers),
+        [group("Use case", tags, activeTags), group("Tier", tiers, activeTiers), hasGroup(),
          group("Capability", caps, activeCaps), group("Input", insM, activeInMods), group("Output", outM, activeOutMods)]
           .forEach((g) => { if (g) host.appendChild(g); });
       }
