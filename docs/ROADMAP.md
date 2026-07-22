@@ -33,7 +33,6 @@
 > More ways to consume the same canonical file, all emitted deterministically at publish
 > time — no server, no query runtime, no new dependency. Design rationale → §D.
 
-- **T23** 💭 **Alternate export formats** — emit `catalog.csv` and `catalog.ndjson` from the canonical file for spreadsheet / data-pipeline / `grep`-friendly consumers who don't want to walk nested JSON. deps: — → §D2
 - **T25** 📋 **Extended faceting + alias resolution** — `by-capability/<cap>.json` and `by-modality/<m>.json` slices alongside the existing by-kind/by-vendor, plus an `aliases.json` map (alias id → canonical id) so consumers can resolve `-latest`/dated snapshots without walking every entry. deps: — → §D4
 - **T26** 📋 **GEO / citability artifacts** — emit an `llms.txt` index and per-vendor / per-model static Markdown+HTML pages so search engines and assistants can index and *cite* the catalog. Directly serves the discoverability thesis (STRATEGY §I: be the thing tools cite for "what embedding models does OpenAI have?"). deps: T24 → §D5
 - **T27** 💭 **Embeddable status badge** — a shields.io-endpoint-compatible `badge.json` (`{schemaVersion,label,message}`) so any README can show a live "Model Catalog · 194 models · 14 vendors" badge; cheap, high-visibility adoption driver. deps: T24 → §D6

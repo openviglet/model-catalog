@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T23 SHIPPED** (Block D §D2 — alternate exports: emit.mjs writes catalog.csv (flat, fixed 17-col set, `;`-joined arrays, RFC-4180 quoting, CRLF) + catalog.ndjson (one flattened entry per line) from the same ordered flat entries; advertised in endpoints.json csv/ndjson + api.md + page) — 2026-07-22.
 - **T22 SHIPPED** (Block D §D1 — catalog change feed: emit.mjs diffs the freshly built catalog against the previously published one → changes.json (added/removed/lifecycle-changed + counts + baseline flag) + Atom feed.xml; baseline = prior on-disk build → live fetch (8s timeout, CATALOG_EMIT_NO_FETCH override) → none; deterministic timestamps from lastUpdated; advertised in endpoints.json/api.md/page) — 2026-07-22.
 - **T21 SHIPPED** (Block C §C6 — insights dashboard: 6 inline-SVG bar charts (per vendor/kind/capability/input-modality + context-window histogram + field coverage %) fed by stats.json, context histogram bucketed client-side; theme-aware fills via inline style, section hidden if stats.json absent, nav Insights link) — 2026-07-22.
 - **T24 SHIPPED** (Block D §D3 — stats.json aggregate metrics emitted by emit.mjs: totals + byVendor/byKind/byCapability/byInput/byOutputModality ranked count maps + per-field coverage {filled,rate}; advertised in endpoints.json/api.md/page table; unblocks T21) — 2026-07-22.

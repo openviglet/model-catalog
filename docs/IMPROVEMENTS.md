@@ -16,12 +16,6 @@ The canonical file is the single source of truth; the published surface is whate
 can *derive* from it deterministically at emit time. Everything here is another such
 derivation — same guarantee as `index.json` and the faceted slices, no new moving parts.
 
-### §D2 — T23 · Alternate export formats
-Not every consumer wants nested JSON. `catalog.csv` (one row per model, flat columns)
-serves spreadsheets and BI tools; `catalog.ndjson` serves streaming/`jq -c`/data
-pipelines and `grep`. Both are trivially emitted from the same flattened entries, no
-schema implications. Kept an *idea* pending confirmation of the exact CSV column set.
-
 ### §D4 — T25 · Extended faceting + alias resolution
 Round out the faceting story: `by-capability/<cap>.json` and `by-modality/<m>.json`
 mirror the existing by-kind/by-vendor slices, and `aliases.json` publishes an alias→

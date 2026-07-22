@@ -129,6 +129,8 @@ const endpoints = {
   stats: `${SOURCE_URL}/stats.json`,
   changes: `${SOURCE_URL}/changes.json`,
   feed: `${SOURCE_URL}/feed.xml`,
+  csv: `${SOURCE_URL}/catalog.csv`,
+  ndjson: `${SOURCE_URL}/catalog.ndjson`,
   schema: `${SOURCE_URL}/catalog.schema.json`,
   byKind: Object.fromEntries(presentKinds.map((k) => [k, `${SOURCE_URL}/by-kind/${k}.json`])),
   byVendor: Object.fromEntries(Object.keys(vendors).map((v) => [v, `${SOURCE_URL}/by-vendor/${v}.json`])),
@@ -280,6 +282,31 @@ const feedXml = `<?xml version="1.0" encoding="utf-8"?>
 ${feedEntries.length ? feedEntries.join("\n") + "\n" : ""}</feed>
 `;
 
+// ── Alternate export formats (T23) ────────────────────────────────────────
+// Not every consumer wants nested JSON. `catalog.csv` (one flat row per model)
+// serves spreadsheets / BI tools; `catalog.ndjson` (one JSON object per line)
+// serves streaming, `jq -c` and `grep`. Both derive from the same flattened
+// entries as catalog.json, in the same order, so they can never drift. Array
+// fields are `;`-joined in CSV; modalities are split into input/output columns.
+const CSV_COLUMNS = [
+  "vendor", "id", "label", "kind", "contextWindow", "maxOutputTokens",
+  "embeddingDimensions", "capabilities", "inputModalities", "outputModalities",
+  "knowledgeCutoff", "releaseDate", "status", "deprecated", "aliases",
+  "sources", "lastVerified",
+];
+const csvCell = (v) => {
+  if (v == null) return "";
+  const s = Array.isArray(v) ? v.join(";") : String(v);
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; // RFC 4180 quoting
+};
+const csvRow = (e) => CSV_COLUMNS.map((c) => {
+  if (c === "inputModalities") return csvCell((e.modalities && e.modalities.input) || []);
+  if (c === "outputModalities") return csvCell((e.modalities && e.modalities.output) || []);
+  return csvCell(e[c]);
+}).join(",");
+const catalogCsv = [CSV_COLUMNS.join(","), ...flat.map(csvRow)].join("\r\n") + "\r\n";
+const catalogNdjson = flat.map((e) => JSON.stringify(e)).join("\n") + "\n";
+
 mkdirSync(OUT_DIR, { recursive: true });
 // Rewrite the slice dirs from scratch so a removed kind/vendor leaves no stale file.
 for (const dir of ["by-kind", "by-vendor"]) {
@@ -296,13 +323,15 @@ write("index.json", index); // compact
 write("stats.json", stats); // aggregate metrics (T24)
 write("changes.json", changes); // change feed (T22)
 writeFileSync(resolve(OUT_DIR, "feed.xml"), feedXml, "utf8"); // Atom feed (T22)
+writeFileSync(resolve(OUT_DIR, "catalog.csv"), catalogCsv, "utf8"); // flat export (T23)
+writeFileSync(resolve(OUT_DIR, "catalog.ndjson"), catalogNdjson, "utf8"); // streaming export (T23)
 for (const [k, v] of Object.entries(byKind)) write(`by-kind/${k}.json`, v);
 for (const [k, v] of Object.entries(byVendor)) write(`by-vendor/${k}.json`, v);
 write("endpoints.json", endpoints); // discovery manifest
 
 console.log(
   `emit-model-catalog: wrote catalog.json + catalog-v${root.version}.json + schema + index.json + stats.json + ` +
-    `changes.json + feed.xml + ${presentKinds.length} by-kind + ${Object.keys(byVendor).length} by-vendor slices + endpoints.json ` +
+    `changes.json + feed.xml + catalog.csv + catalog.ndjson + ${presentKinds.length} by-kind + ${Object.keys(byVendor).length} by-vendor slices + endpoints.json ` +
     `(${Object.keys(vendors).length} vendors, ${count} models) to ${OUT_DIR}`,
 );
 console.log(

@@ -11,6 +11,8 @@ public/endpoints.json
 public/stats.json
 public/changes.json
 public/feed.xml
+public/catalog.csv
+public/catalog.ndjson
 public/by-kind/
 public/by-vendor/
 

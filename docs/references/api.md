@@ -30,6 +30,8 @@ capability* — **not pricing** (see [STRATEGY.md](../STRATEGY.md) §I).
 | `…/stats.json` | **Aggregate metrics** — pre-computed counts (models per vendor / kind / capability / input+output modality), per-field fill **coverage**, and grand `totals`. Read one number instead of re-aggregating the full catalog. Its own envelope (not a `vendors` map). |
 | `…/changes.json` | **Change feed** — what changed vs. the previously published catalog: `added` / `removed` / lifecycle-`changed` ids for this publish, with `counts`. Its own envelope (not a `vendors` map). |
 | `…/feed.xml` | **Atom feed** — the same adds / removals / lifecycle transitions as `changes.json`, subscribable in any feed reader. |
+| `…/catalog.csv` | **Flat CSV export** — one row per model, RFC-4180 quoted (array fields `;`-joined). For spreadsheets / BI. |
+| `…/catalog.ndjson` | **NDJSON export** — one flattened model per line. For streaming, `jq -c` and `grep`. |
 | `…/by-kind/<KIND>.json` | **Faceted slice** — the full catalog filtered to one `kind` (e.g. `by-kind/EMBEDDING.json`). Same envelope, plus a `kind` field. Fetch one facet instead of downloading everything and filtering client-side. |
 | `…/by-vendor/<vendor>.json` | **Faceted slice** — the full catalog filtered to one vendor (e.g. `by-vendor/openai.json`). Same envelope, plus a `vendor` field. |
 | `…/endpoints.json` | **Discovery manifest** — a machine-readable map of every published path (absolute URLs): `latest`, `pinned`, `index`, `stats`, `schema`, and the available `byKind` / `byVendor` slice keys. Read this to discover the surface rather than hard-coding paths. |
@@ -157,6 +159,24 @@ each id's effective status (`status`, falling back to `deprecated → DEPRECATED
   "removed": [ /* same shape */ ],
   "changed": [ { "vendor": "…", "id": "…", "kind": "…", "label": "…", "from": "PREVIEW", "to": "GA" } ]
 }
+```
+
+## Alternate export formats (`catalog.csv` + `catalog.ndjson`)
+
+Both are emitted from the same flattened entries as `catalog.json`, in the same order, so
+they never drift. **`catalog.csv`** is one row per model with a fixed, stable column set —
+`vendor,id,label,kind,contextWindow,maxOutputTokens,embeddingDimensions,capabilities,inputModalities,outputModalities,knowledgeCutoff,releaseDate,status,deprecated,aliases,sources,lastVerified`
+— array fields `;`-joined, RFC-4180 quoted. **`catalog.ndjson`** is one JSON object per
+line (the flattened `ModelEntry`, including `vendor`), newline-delimited.
+
+```bash
+# every reasoning-capable chat model, as a table
+curl -s https://openviglet.github.io/model-catalog/catalog.csv \
+  | awk -F, 'NR==1 || ($4=="CHAT" && $8 ~ /reasoning/)'
+
+# stream every embedding model's id + dimensions
+curl -s https://openviglet.github.io/model-catalog/catalog.ndjson \
+  | jq -c 'select(.kind=="EMBEDDING") | {id, embeddingDimensions}'
 ```
 
 ## How consumers use it
