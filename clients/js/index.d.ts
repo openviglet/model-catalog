@@ -29,6 +29,66 @@ export interface Modalities {
   output?: Array<"text" | "image" | "audio" | "video" | "embedding">;
 }
 
+/**
+ * Optional INDICATIVE US list price (Block F). A reference only — verify with the
+ * vendor; never an authoritative, per-contract, per-region or negotiated quote.
+ * Provenance-gated (`source` + `lastVerified`) and never invented.
+ */
+export interface Pricing {
+  inputPer1M?: number;
+  outputPer1M?: number;
+  currency?: "USD";
+  unit?: string;
+  /** Always `true` — an indicative US list reference, not authoritative. */
+  indicative: true;
+  note?: string;
+  source: string;
+  lastVerified: string;
+  [key: string]: unknown;
+}
+
+/** A single cited per-domain benchmark score (Block I), e.g. `reasoning`/`coding`/`math`. */
+export interface BenchmarkScore {
+  value: number;
+  /** Per-domain provenance override; falls back to the parent `Benchmarks.source`. */
+  source?: string;
+  lastVerified?: string;
+}
+
+/**
+ * Optional CITED third-party capability numbers (Block I) — a reference to a public,
+ * citable leaderboard (e.g. Artificial Analysis / LMArena), NOT our quality verdict.
+ * Provenance-gated and never invented; verify at the source.
+ */
+export interface Benchmarks {
+  intelligenceIndex?: number;
+  arenaElo?: number;
+  /** Per-domain cited scores keyed by domain (recommended: reasoning, coding, math). */
+  scores?: Record<string, BenchmarkScore>;
+  /** Always `true` — indicative cited numbers, not an authoritative verdict. */
+  indicative: true;
+  note?: string;
+  source: string;
+  lastVerified: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Optional CITED speed metrics (Block I) — the "fast vs capable" axis alongside
+ * `benchmarks`. A reference to a public measurement, NOT our own benchmark.
+ * Provenance-gated and never invented; verify at the source.
+ */
+export interface Performance {
+  throughputTps?: number;
+  latencyTtftSec?: number;
+  /** Always `true` — indicative cited measurements, not authoritative. */
+  indicative: true;
+  note?: string;
+  source: string;
+  lastVerified: string;
+  [key: string]: unknown;
+}
+
 /** A catalog model entry (as flattened by this client — always carries `vendor`). */
 export interface ModelEntry {
   id: string;
@@ -38,6 +98,10 @@ export interface ModelEntry {
   contextWindow?: number;
   embeddingDimensions?: number;
   capabilities?: string[];
+  /** True when the weights are openly downloadable, false when proprietary API-only (Block I). */
+  openWeights?: boolean;
+  /** Total parameter count, only when the vendor has publicly disclosed it (Block I). */
+  parameters?: number;
   deprecated?: boolean;
   maxOutputTokens?: number;
   modalities?: Modalities;
@@ -47,6 +111,12 @@ export interface ModelEntry {
   status?: Status;
   sources?: string[];
   lastVerified?: string;
+  /** Indicative US list price — a reference only, not authoritative (Block F). */
+  pricing?: Pricing;
+  /** Cited third-party capability numbers — a reference, not our verdict (Block I). */
+  benchmarks?: Benchmarks;
+  /** Cited speed metrics — a reference to a public measurement (Block I). */
+  performance?: Performance;
   /** Additive-schema tolerance: unknown fields pass through untyped. */
   [key: string]: unknown;
 }

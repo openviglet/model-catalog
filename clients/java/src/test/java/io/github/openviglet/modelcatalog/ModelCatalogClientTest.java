@@ -31,7 +31,16 @@ class ModelCatalogClientTest {
               "vendors": {
                 "openai": [
                   { "id": "gpt-4o", "label": "GPT-4o", "kind": "CHAT", "contextWindow": 128000,
-                    "capabilities": ["vision", "tools"] },
+                    "capabilities": ["vision", "tools"],
+                    "openWeights": false, "parameters": 200000000000,
+                    "pricing": { "inputPer1M": 2.5, "outputPer1M": 10, "currency": "USD",
+                      "unit": "per_1M_tokens", "indicative": true, "source": "litellm",
+                      "lastVerified": "2026-07-20" },
+                    "benchmarks": { "intelligenceIndex": 71, "arenaElo": 1342,
+                      "scores": { "coding": { "value": 55 }, "reasoning": { "value": 80 } },
+                      "indicative": true, "source": "Artificial Analysis", "lastVerified": "2026-07-20" },
+                    "performance": { "throughputTps": 120, "latencyTtftSec": 0.42,
+                      "indicative": true, "source": "Artificial Analysis", "lastVerified": "2026-07-20" } },
                   { "id": "text-embedding-3-large", "label": "Embedding 3 Large", "kind": "EMBEDDING",
                     "embeddingDimensions": 3072, "futureField": "kept" }
                 ],
@@ -107,6 +116,20 @@ class ModelCatalogClientTest {
         ModelEntry emb = c.get("openai", "text-embedding-3-large").orElseThrow();
         assertEquals(3072, emb.embeddingDimensions());
         assertEquals("kept", emb.extra().get("futureField"));
+    }
+
+    @Test
+    void blockFandIadditiveFields() {
+        ModelCatalogClient c = client(new FakeFetcher()).build();
+        ModelEntry gpt = c.get("openai", "gpt-4o").orElseThrow();
+        assertEquals(Boolean.FALSE, gpt.openWeights());
+        assertEquals(200000000000L, gpt.parameters().longValue());
+        assertEquals(2.5, gpt.pricing().inputPer1M());
+        assertEquals(Boolean.TRUE, gpt.pricing().indicative());
+        assertEquals(71.0, gpt.benchmarks().intelligenceIndex());
+        assertEquals(55.0, gpt.benchmarks().scores().get("coding").value());
+        assertEquals(120.0, gpt.performance().throughputTps());
+        assertEquals(0.42, gpt.performance().latencyTtftSec());
     }
 
     @Test

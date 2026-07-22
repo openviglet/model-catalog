@@ -45,14 +45,6 @@ here is additive, read-only and zero-dep — no new schema, no envelope-shape ch
 existing T13 publish workflows (auto-incrementing patch) ship the result, so no new release
 plumbing is needed.
 
-### §K1 — T46 · Typed new `ModelEntry` fields
-Add the Block F/I additive fields to each client's model type: `pricing`, `benchmarks` (with the
-per-domain `scores` map), `performance`, `openWeights`, `parameters`. Nested objects get proper
-types (`Pricing`/`Benchmarks`/`Performance`) in the typed languages; Python extends `_FIELD_MAP`
-and Java extends the `KNOWN` set so the fields stop landing in the untyped bucket. Unknown-field
-tolerance stays intact for the *next* additive field. A fixture carrying the new fields, parsed
-in a unit test per client, guards the mapping.
-
 ### §K2 — T47 · Aggregate & registry endpoint accessors
 The clients expose the catalog and its facet slices but none of the aggregate/registry artifacts
 emitted since. Add typed read-only loaders for `stats.json`, `coverage.json`, `providers.json`,

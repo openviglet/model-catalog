@@ -17,7 +17,17 @@ const CATALOG = {
   source: BASE,
   vendors: {
     openai: [
-      { id: "gpt-4o", label: "GPT-4o", kind: "CHAT" },
+      // Illustrative values — exercises pass-through of the Block F/I additive fields.
+      {
+        id: "gpt-4o",
+        label: "GPT-4o",
+        kind: "CHAT",
+        openWeights: false,
+        parameters: 200000000000,
+        pricing: { inputPer1M: 2.5, outputPer1M: 10, currency: "USD", unit: "per_1M_tokens", indicative: true, source: "litellm", lastVerified: "2026-07-20" },
+        benchmarks: { intelligenceIndex: 71, arenaElo: 1342, scores: { coding: { value: 55 }, reasoning: { value: 80 } }, indicative: true, source: "Artificial Analysis", lastVerified: "2026-07-20" },
+        performance: { throughputTps: 120, latencyTtftSec: 0.42, indicative: true, source: "Artificial Analysis", lastVerified: "2026-07-20" },
+      },
       { id: "text-embedding-3-large", label: "Embedding 3 Large", kind: "EMBEDDING" },
     ],
     // Second vendor omits per-entry `vendor` to prove the client backfills from the key.
@@ -70,6 +80,19 @@ test("all() flattens vendors and backfills the vendor key", async () => {
     all.map((e) => e.vendor).sort(),
     ["anthropic", "openai", "openai"],
   );
+});
+
+test("Block F/I additive fields (pricing/benchmarks/performance/openWeights/parameters) pass through", async () => {
+  const c = new ModelCatalogClient({ baseUrl: BASE, fetch: fakeFetch() });
+  const gpt = await c.get("openai", "gpt-4o");
+  assert.equal(gpt.openWeights, false);
+  assert.equal(gpt.parameters, 200000000000);
+  assert.equal(gpt.pricing.inputPer1M, 2.5);
+  assert.equal(gpt.pricing.indicative, true);
+  assert.equal(gpt.benchmarks.intelligenceIndex, 71);
+  assert.equal(gpt.benchmarks.scores.coding.value, 55);
+  assert.equal(gpt.performance.throughputTps, 120);
+  assert.equal(gpt.performance.latencyTtftSec, 0.42);
 });
 
 test("byKind / byVendor / get filter correctly and are case-insensitive", async () => {

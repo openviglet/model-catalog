@@ -18,7 +18,18 @@ CATALOG = {
     "source": BASE,
     "vendors": {
         "openai": [
-            {"id": "gpt-4o", "label": "GPT-4o", "kind": "CHAT", "contextWindow": 128000},
+            {
+                "id": "gpt-4o",
+                "label": "GPT-4o",
+                "kind": "CHAT",
+                "contextWindow": 128000,
+                # Illustrative values — exercises the Block F/I additive fields.
+                "openWeights": False,
+                "parameters": 200000000000,
+                "pricing": {"inputPer1M": 2.5, "outputPer1M": 10, "currency": "USD", "unit": "per_1M_tokens", "indicative": True, "source": "litellm", "lastVerified": "2026-07-20"},
+                "benchmarks": {"intelligenceIndex": 71, "arenaElo": 1342, "scores": {"coding": {"value": 55}, "reasoning": {"value": 80}}, "indicative": True, "source": "Artificial Analysis", "lastVerified": "2026-07-20"},
+                "performance": {"throughputTps": 120, "latencyTtftSec": 0.42, "indicative": True, "source": "Artificial Analysis", "lastVerified": "2026-07-20"},
+            },
             {
                 "id": "text-embedding-3-large",
                 "label": "Embedding 3 Large",
@@ -87,6 +98,18 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(emb.extra["futureField"], "ignored-but-kept")
         gpt = c.get("openai", "gpt-4o")
         self.assertEqual(gpt.context_window, 128000)
+
+    def test_block_f_i_additive_fields(self):
+        c = ModelCatalogClient(base_url=BASE, fetch=make_fetch())
+        gpt = c.get("openai", "gpt-4o")
+        self.assertIs(gpt.open_weights, False)
+        self.assertEqual(gpt.parameters, 200000000000)
+        self.assertEqual(gpt.pricing["inputPer1M"], 2.5)
+        self.assertIs(gpt.pricing["indicative"], True)
+        self.assertEqual(gpt.benchmarks["intelligenceIndex"], 71)
+        self.assertEqual(gpt.benchmarks["scores"]["coding"]["value"], 55)
+        self.assertEqual(gpt.performance["throughputTps"], 120)
+        self.assertEqual(gpt.performance["latencyTtftSec"], 0.42)
 
     def test_by_kind_by_vendor_get_case_insensitive(self):
         c = ModelCatalogClient(base_url=BASE, fetch=make_fetch())

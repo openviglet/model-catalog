@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T46 SHIPPED** (Block K §K1 — typed new ModelEntry fields across all three SDKs: pricing/benchmarks+scores/performance/openWeights/parameters as JS d.ts interfaces + Python dataclass fields (+_FIELD_MAP, nested=dicts) + Java records (Pricing/BenchmarkScore/Benchmarks/Performance) with parameters as Long (int32 overflow) + lng()/dbl() parsers; unknown-field tolerance intact; READMEs + fixture test each (JS 11/Python 11/Java 12 green)) — 2026-07-22.
 - **T45 SHIPPED** (Block J §J1 — live Artificial Analysis benchmark source auto-refreshing T41: new artificial-analysis adapter fetches the AA leaderboard API → same benchmarks+performance shape via exported benchmarkDraft(); envKey ARTIFICIAL_ANALYSIS_API_KEY (opt-in) + offline-replayable snapshot; non-anchoring, curated slug→id table artificial-analysis-map.json (unmapped dropped, never mis-attributed); merge priority 26 (above snapshot 25, below overrides); map ships empty so catalog unchanged; 3 tests. **Block J shipped in full.**) — 2026-07-22.
 - **T49 CREATED** (💭, Block K §K4 — shared use-case-tag + price-tier classifier: port the page's T38 classify() into each SDK as an optional derived helper; derived-only, no schema change; deps T46) — 2026-07-22.
 - **T48 CREATED** (📋, Block K §K3 — faceted-slice + change-feed accessors across all three SDKs: fetchByCapability/fetchByModality (T25) + changes.json (T22) + extend EndpointsManifest with every new discovery key; deps —) — 2026-07-22.
