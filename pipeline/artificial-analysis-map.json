@@ -1,9 +1,43 @@
 {
-  "_comment": "Curated matching table for the LIVE Artificial Analysis benchmark source (Block J / T45). The artificial-analysis adapter (pipeline/adapters/artificial-analysis.mjs) fetches the AA public leaderboard and, for each model, looks up its AA `slug` in `map` below to resolve the catalog (vendor, id) to enrich. RULES: (1) ONLY a slug listed here emits — an AA model with no mapping is silently dropped (fail safe: never fuzzily matched, never mis-attributed, never introduced as a new id); (2) numbers come from the live feed and are CITED to `source` (a reference, not our verdict — the AA API terms require attribution, which the `source` + 'verify at the source' framing satisfies); (3) every emitted benchmark is provenance-stamped (indicative + source + lastVerified). `map` ships EMPTY: add a mapping only once you have confirmed the AA slug resolves to the intended catalog model. `_exampleMap` shows the entry shape and is NOT read by the adapter. Requires ARTIFICIAL_ANALYSIS_API_KEY for an online run; `--offline` replays pipeline/sources/artificial-analysis.json.",
-  "map": {},
+  "_comment": "Curated matching table for the LIVE Artificial Analysis benchmark source (Block J / T45). The artificial-analysis adapter (pipeline/adapters/artificial-analysis.mjs) fetches the AA public leaderboard and, for each model, looks up its AA `slug` in `map` below to resolve the catalog (vendor, id) to enrich. RULES: (1) ONLY a slug listed here emits — an AA model with no mapping is silently dropped (fail safe: never fuzzily matched, never mis-attributed, never introduced as a new id); (2) numbers come from the live feed and are CITED to `source` (a reference, not our verdict — the AA API terms require attribution, which the `source` + 'verify at the source' framing satisfies); (3) every emitted benchmark is provenance-stamped (indicative + source + lastVerified). Only unambiguous matches are mapped — moving-target aliases (e.g. mistral-large-latest, deepseek-chat) are deliberately left out because a fixed AA version could mis-attribute. `_exampleMap` shows the entry shape and is NOT read by the adapter. Requires ARTIFICIAL_ANALYSIS_API_KEY for an online run; `--offline` replays pipeline/sources/artificial-analysis.json.",
+  "map": {
+    "gpt-5": { "vendor": "openai", "id": "gpt-5" },
+    "gpt-5-mini": { "vendor": "openai", "id": "gpt-5-mini" },
+    "gpt-5-nano": { "vendor": "openai", "id": "gpt-5-nano" },
+    "gpt-5-codex": { "vendor": "openai", "id": "gpt-5-codex" },
+    "o3": { "vendor": "openai", "id": "o3" },
+    "o3-pro": { "vendor": "openai", "id": "o3-pro" },
+    "o3-mini": { "vendor": "openai", "id": "o3-mini" },
+    "o4-mini": { "vendor": "openai", "id": "o4-mini" },
+    "o1": { "vendor": "openai", "id": "o1" },
+    "o1-pro": { "vendor": "openai", "id": "o1-pro" },
+    "gpt-4o": { "vendor": "openai", "id": "gpt-4o" },
+    "gpt-4o-mini": { "vendor": "openai", "id": "gpt-4o-mini" },
+    "gpt-4o-2024-08-06": { "vendor": "openai", "id": "gpt-4o-2024-08-06" },
+    "gpt-4o-2024-05-13": { "vendor": "openai", "id": "gpt-4o-2024-05-13" },
+    "gpt-4-turbo": { "vendor": "openai", "id": "gpt-4-turbo" },
+    "gpt-4": { "vendor": "openai", "id": "gpt-4" },
+    "gpt-oss-120b": { "vendor": "cerebras", "id": "gpt-oss-120b" },
+    "grok-4": { "vendor": "xai", "id": "grok-4" },
+    "grok-3": { "vendor": "xai", "id": "grok-3" },
+    "grok-code-fast-1": { "vendor": "xai", "id": "grok-code-fast-1" },
+    "glm-4.5": { "vendor": "zai", "id": "glm-4.5" },
+    "qwen-turbo": { "vendor": "qwen", "id": "qwen-turbo" },
+    "claude-3-5-haiku": { "vendor": "anthropic", "id": "claude-3-5-haiku-20241022" },
+    "claude-3-7-sonnet": { "vendor": "anthropic", "id": "claude-3-7-sonnet-20250219" },
+    "claude-4-1-opus": { "vendor": "anthropic", "id": "claude-opus-4-1-20250805" },
+    "claude-4-opus": { "vendor": "anthropic", "id": "claude-opus-4-20250514" },
+    "claude-4-sonnet": { "vendor": "anthropic", "id": "claude-sonnet-4-20250514" },
+    "claude-4-5-sonnet": { "vendor": "anthropic", "id": "claude-sonnet-4-5-20250929" },
+    "gemini-1-5-flash": { "vendor": "gemini", "id": "gemini-1.5-flash" },
+    "gemini-1-5-pro": { "vendor": "gemini", "id": "gemini-1.5-pro" },
+    "gemini-2-0-flash": { "vendor": "gemini", "id": "gemini-2.0-flash" },
+    "gemini-2-0-flash-lite-001": { "vendor": "gemini", "id": "gemini-2.0-flash-lite" },
+    "gemini-2-5-flash": { "vendor": "gemini", "id": "gemini-2.5-flash" },
+    "gemini-2-5-pro": { "vendor": "gemini", "id": "gemini-2.5-pro" }
+  },
   "_exampleMap": {
     "gpt-5": { "vendor": "openai", "id": "gpt-5" },
-    "claude-opus-4-1": { "vendor": "anthropic", "id": "claude-opus-4-1" },
-    "deepseek-r1": { "vendor": "deepseek", "id": "deepseek-reasoner" }
+    "claude-4-sonnet": { "vendor": "anthropic", "id": "claude-sonnet-4-20250514" }
   }
 }

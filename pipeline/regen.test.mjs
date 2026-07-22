@@ -465,6 +465,22 @@ test("artificial-analysis: live feed → cited drafts, only mapped slugs, unmapp
   assert.equal(byId["x/fast"].performance.throughputTps, 500);
 });
 
+test("artificial-analysis: AA's 0 / null 'not measured' becomes an omitted field, never a bogus 0 (Block J / T45)", () => {
+  const [d] = artificialAnalysis.normalize({
+    items: [{
+      slug: "claude-x",
+      // AA doesn't host Anthropic → speed reported as 0; a domain it didn't run → null.
+      evaluations: { artificial_analysis_intelligence_index: 29, artificial_analysis_coding_index: 0, artificial_analysis_math_index: null },
+      median_output_tokens_per_second: 0,
+      median_time_to_first_token_seconds: 0,
+    }],
+    map: { "claude-x": { vendor: "anthropic", id: "claude-x" } },
+  });
+  assert.equal(d.benchmarks.intelligenceIndex, 29, "real index kept");
+  assert.equal(d.benchmarks.scores, undefined, "0 / null domain scores omitted, not published as 0");
+  assert.equal(d.performance, undefined, "0 tok/s + 0s TTFT → no performance object (AA didn't measure it)");
+});
+
 test("artificial-analysis: empty map or no items emits nothing (Block J / T45)", () => {
   assert.deepEqual(artificialAnalysis.normalize({ items: [{ slug: "gpt-5", evaluations: { artificial_analysis_intelligence_index: 69 } }], map: {} }), [], "empty matching table → nothing (curated opt-in)");
   assert.deepEqual(artificialAnalysis.normalize({ items: [], map: { "gpt-5": { vendor: "openai", id: "gpt-5" } } }), [], "no feed items → nothing");

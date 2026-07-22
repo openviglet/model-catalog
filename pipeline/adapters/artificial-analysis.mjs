@@ -43,7 +43,10 @@ const EVAL_TO_DOMAIN = {
 };
 const INTELLIGENCE_KEY = "artificial_analysis_intelligence_index";
 
-const finiteNum = (v) => (typeof v === "number" && Number.isFinite(v) ? v : undefined);
+// AA reports 0 / null for a metric it did NOT measure (e.g. speed for a model it
+// doesn't host). Treat any non-positive value as absent so those become omitted
+// fields rather than a bogus "0 tok/s" / "0s latency" / "0 index" measurement.
+const posNum = (v) => (typeof v === "number" && Number.isFinite(v) && v > 0 ? v : undefined);
 
 /** Load the committed slug→(vendor,id) matching table (`{ map: {...} }`), or {}. */
 function loadMap() {
@@ -68,16 +71,16 @@ function toSnapshotModel(item, target) {
   const ev = (item && typeof item.evaluations === "object" && item.evaluations) || {};
   const scores = {};
   for (const [key, domain] of Object.entries(EVAL_TO_DOMAIN)) {
-    const v = finiteNum(ev[key]);
+    const v = posNum(ev[key]);
     if (v !== undefined) scores[domain] = v;
   }
   return {
     vendor: target.vendor,
     id: target.id,
-    intelligenceIndex: finiteNum(ev[INTELLIGENCE_KEY]),
+    intelligenceIndex: posNum(ev[INTELLIGENCE_KEY]),
     scores: Object.keys(scores).length ? scores : undefined,
-    throughputTps: finiteNum(item.median_output_tokens_per_second),
-    latencyTtftSec: finiteNum(item.median_time_to_first_token_seconds),
+    throughputTps: posNum(item.median_output_tokens_per_second),
+    latencyTtftSec: posNum(item.median_time_to_first_token_seconds),
   };
 }
 
