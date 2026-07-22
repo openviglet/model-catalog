@@ -1943,7 +1943,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         }
         const xs = pts.map((p) => p.x), ys = pts.map((p) => p.y);
         const minP = Math.min(...xs), maxP = Math.max(...xs), minI = Math.min(...ys), maxI = Math.max(...ys);
-        const W = 680, H = 380, ML = 52, MR = 16, MT = 16, MB = 46;
+        const W = 680, H = 404, ML = 52, MR = 16, MT = 16, MB = 60;
         const plotW = W - ML - MR, plotH = H - MT - MB;
         const lg = Math.log10, lgMin = lg(minP), lgMax = lg(maxP);
         const xPix = (v) => ML + (lgMax === lgMin ? 0.5 : (lg(v) - lgMin) / (lgMax - lgMin)) * plotW;
@@ -1970,7 +1970,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           const on = front.has(p.key);
           return `<circle class="dot" data-key="${p.key}" cx="${xPix(p.x).toFixed(1)}" cy="${yPix(p.y).toFixed(1)}" r="${on ? 5 : 3.5}" style="fill:${on ? "var(--brand)" : vendorColor(p.vendor)};opacity:${on ? 1 : 0.5}"><title>${p.label} — $${p.x}/1M in · intelligence ${p.y}${on ? " · on the frontier" : ""}</title></circle>`;
         }).join("");
-        const labels = `<text class="c-l" x="${ML + plotW / 2}" y="${H - 4}" text-anchor="middle">Input price (US list, $/1M) — log scale</text>`
+        const labels = `<text class="c-l" x="${ML + plotW / 2}" y="${H - 14}" text-anchor="middle">Input price (US list, $/1M) — log scale</text>`
           + `<text class="c-l" x="13" y="${MT + plotH / 2}" text-anchor="middle" transform="rotate(-90 13 ${MT + plotH / 2})">Intelligence index (cited)</text>`;
         host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Price versus cited intelligence scatter of chat models">${yAxis}${xAxis}${frontLine}${dots}${labels}</svg>`;
         return true;
