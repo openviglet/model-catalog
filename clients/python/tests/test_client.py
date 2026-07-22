@@ -80,6 +80,27 @@ PLANS = {
 }
 ALIASES = {"version": 1, "count": 1, "aliases": {"gpt-4o-latest": {"vendor": "openai", "id": "gpt-4o"}}}
 
+# Faceted slice + change feed (T48).
+BY_CAPABILITY_VISION = {
+    "version": 1,
+    "capability": "vision",
+    "vendors": {"openai": [{"id": "gpt-4o", "label": "GPT-4o", "kind": "CHAT", "vendor": "openai"}]},
+}
+BY_MODALITY_IMAGE = {
+    "version": 1,
+    "modality": "image",
+    "vendors": {"openai": [{"id": "gpt-4o", "label": "GPT-4o", "kind": "CHAT", "vendor": "openai"}]},
+}
+CHANGES = {
+    "version": 1,
+    "previousLastUpdated": "2026-07-20",
+    "baseline": "present",
+    "counts": {"added": 1, "removed": 0, "changed": 0},
+    "added": [{"vendor": "openai", "id": "gpt-4o", "kind": "CHAT", "label": "GPT-4o"}],
+    "removed": [],
+    "changed": [],
+}
+
 
 def make_fetch():
     """A fake fetch that records calls and serves the fixtures above."""
@@ -95,6 +116,9 @@ def make_fetch():
         BASE + "/providers.json": PROVIDERS,
         BASE + "/plans.json": PLANS,
         BASE + "/aliases.json": ALIASES,
+        BASE + "/by-capability/vision.json": BY_CAPABILITY_VISION,
+        BASE + "/by-modality/image.json": BY_MODALITY_IMAGE,
+        BASE + "/changes.json": CHANGES,
     }
 
     def fetch(url):
@@ -215,6 +239,23 @@ class ClientTest(unittest.TestCase):
         aliases = c.aliases()
         self.assertEqual(fetch.calls[4], BASE + "/aliases.json")
         self.assertEqual(aliases["aliases"]["gpt-4o-latest"], {"vendor": "openai", "id": "gpt-4o"})
+
+    def test_capability_modality_slices_and_change_feed(self):
+        fetch = make_fetch()
+        c = ModelCatalogClient(base_url=BASE, fetch=fetch)
+        vision = c.fetch_by_capability("Vision")  # case-insensitive -> lowercased path
+        self.assertEqual(fetch.calls[0], BASE + "/by-capability/vision.json")
+        self.assertEqual(len(vision), 1)
+        self.assertEqual(vision[0].vendor, "openai")
+
+        image = c.fetch_by_modality("IMAGE")
+        self.assertEqual(fetch.calls[1], BASE + "/by-modality/image.json")
+        self.assertEqual(image[0].id, "gpt-4o")
+
+        changes = c.changes()
+        self.assertEqual(fetch.calls[2], BASE + "/changes.json")
+        self.assertEqual(changes["counts"]["added"], 1)
+        self.assertEqual(changes["added"][0]["id"], "gpt-4o")
 
     def test_base_url_trailing_slashes_normalized(self):
         fetch = make_fetch()

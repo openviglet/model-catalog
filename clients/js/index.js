@@ -180,6 +180,16 @@ export class ModelCatalogClient {
     return flatten(await this.#fetchJson(`by-vendor/${String(vendor).toLowerCase()}.json`));
   }
 
+  /** Fetch the `by-capability/<cap>.json` slice directly (e.g. "reasoning"). Returns flattened entries. */
+  async fetchByCapability(capability) {
+    return flatten(await this.#fetchJson(`by-capability/${String(capability).toLowerCase()}.json`));
+  }
+
+  /** Fetch the `by-modality/<m>.json` slice directly (input OR output, e.g. "image"). Returns flattened entries. */
+  async fetchByModality(modality) {
+    return flatten(await this.#fetchJson(`by-modality/${String(modality).toLowerCase()}.json`));
+  }
+
   /** The discovery manifest (`endpoints.json`) — a map of every published path. */
   async endpoints() {
     return this.#fetchJson("endpoints.json");
@@ -212,6 +222,11 @@ export class ModelCatalogClient {
   /** The alias resolution map (`aliases.json`) — alias id → its canonical `{ vendor, id }`. */
   async aliases() {
     return this.#fetchJson("aliases.json");
+  }
+
+  /** The change feed (`changes.json`) — models added / removed / lifecycle-changed at the last publish. */
+  async changes() {
+    return this.#fetchJson("changes.json");
   }
 }
 

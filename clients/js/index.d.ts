@@ -243,7 +243,36 @@ export interface Aliases {
   [key: string]: unknown;
 }
 
-/** The `endpoints.json` discovery manifest. */
+/** A model added to / removed from the catalog at a publish (`changes.json`). */
+export interface ChangeEntry {
+  vendor: string;
+  id: string;
+  kind: Kind;
+  label: string;
+}
+
+/** A lifecycle transition at a publish — carries the effective before/after status. */
+export interface LifecycleChange extends ChangeEntry {
+  from: string | null;
+  to: string | null;
+}
+
+/** The change feed (`changes.json`) — the delta at the last publish. */
+export interface Changes {
+  version: number;
+  lastUpdated: string;
+  source: string;
+  previousLastUpdated: string | null;
+  /** `"none"` on the first publish (empty diff by definition), else `"present"`. */
+  baseline: "present" | "none";
+  counts: { added: number; removed: number; changed: number };
+  added: ChangeEntry[];
+  removed: ChangeEntry[];
+  changed: LifecycleChange[];
+  [key: string]: unknown;
+}
+
+/** The `endpoints.json` discovery manifest — every published path as an absolute URL. */
 export interface EndpointsManifest {
   version: number;
   lastUpdated: string;
@@ -252,8 +281,26 @@ export interface EndpointsManifest {
   pinned: Record<string, string>;
   index: string;
   schema: string;
+  stats: string;
+  coverage: string;
+  changes: string;
+  feed: string;
+  csv: string;
+  ndjson: string;
+  aliases: string;
+  badge: string;
+  llms: string;
+  pages: string;
+  /** Present only when the consumer-plans dataset is published. */
+  plans?: string;
+  plansSchema?: string;
+  /** Present only when the provider registry is published. */
+  providers?: string;
+  providersSchema?: string;
   byKind: Record<string, string>;
   byVendor: Record<string, string>;
+  byCapability: Record<string, string>;
+  byModality: Record<string, string>;
   [key: string]: unknown;
 }
 
@@ -294,6 +341,10 @@ export declare class ModelCatalogClient {
   fetchByKind(kind: Kind | string): Promise<ModelEntry[]>;
   /** Fetch the `by-vendor/<vendor>.json` slice directly (smaller payload). */
   fetchByVendor(vendor: string): Promise<ModelEntry[]>;
+  /** Fetch the `by-capability/<cap>.json` slice directly (e.g. "reasoning"). */
+  fetchByCapability(capability: string): Promise<ModelEntry[]>;
+  /** Fetch the `by-modality/<m>.json` slice directly (input OR output, e.g. "image"). */
+  fetchByModality(modality: string): Promise<ModelEntry[]>;
   /** The discovery manifest (`endpoints.json`). */
   endpoints(): Promise<EndpointsManifest>;
   /** Pre-computed aggregate metrics (`stats.json`). */
@@ -306,6 +357,8 @@ export declare class ModelCatalogClient {
   plans(): Promise<PlansDataset>;
   /** The alias resolution map (`aliases.json`). */
   aliases(): Promise<Aliases>;
+  /** The change feed (`changes.json`) — the delta at the last publish. */
+  changes(): Promise<Changes>;
 }
 
 export default ModelCatalogClient;

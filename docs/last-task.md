@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T48 SHIPPED** (Block K §K3 — faceted-slice + change-feed accessors + manifest refresh across all three SDKs: fetchByCapability/fetchByModality slice loaders [lower-cased paths] + changes() change-feed accessor; JS typed Changes/ChangeEntry/LifecycleChange + fully-refreshed EndpointsManifest [all endpoints.json keys], Python/Java raw dict/map; READMEs + 1 slice+feed test each [JS 13/Python 13/Java 14 green]) — 2026-07-22.
 - **T47 SHIPPED** (Block K §K2 — aggregate & registry endpoint accessors across all three SDKs: stats/coverage/providers/plans/aliases loaders fetched direct like endpoints(); JS typed returns [Stats/Coverage/ProvidersRegistry+Provider/PlansDataset+Plan/Aliases+AliasTarget/CoverageMetric] + methods, Python dict-returning methods, Java Map-returning methods; READMEs + 1 accessor test each [JS 12/Python 12/Java 13 green]) — 2026-07-22.
 - **T58 CREATED** (📋, Block G §G2 — first-class per-model page: promote emitted T26 page to a scannable reference styled to SPA tokens — header + at-a-glance stat tiles + populated-only cited sections + always-on provenance + derived related models; omit empty sections; drawer "Open full page ↗"; deps — [T26 shipped]) — 2026-07-22.
 - **T57 CREATED** (💭, Block L §L8 — mobile & render perf: restore mobile nav (compact menu) + card view <720px + debounce keystroke re-render; deps T51) — 2026-07-22.

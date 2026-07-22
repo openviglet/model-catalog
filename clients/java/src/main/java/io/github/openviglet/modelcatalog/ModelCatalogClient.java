@@ -172,6 +172,16 @@ public final class ModelCatalogClient {
         return flatten(Json.parseObject(fetch("by-vendor/" + vendor.toLowerCase(Locale.ROOT) + ".json")));
     }
 
+    /** Fetch the {@code by-capability/<cap>.json} slice directly (e.g. {@code "reasoning"}). */
+    public List<ModelEntry> fetchByCapability(String capability) {
+        return flatten(Json.parseObject(fetch("by-capability/" + capability.toLowerCase(Locale.ROOT) + ".json")));
+    }
+
+    /** Fetch the {@code by-modality/<m>.json} slice directly (input OR output, e.g. {@code "image"}). */
+    public List<ModelEntry> fetchByModality(String modality) {
+        return flatten(Json.parseObject(fetch("by-modality/" + modality.toLowerCase(Locale.ROOT) + ".json")));
+    }
+
     /** The discovery manifest ({@code endpoints.json}) as a raw map of every published path. */
     public Map<String, Object> endpoints() {
         return Json.parseObject(fetch("endpoints.json"));
@@ -205,6 +215,11 @@ public final class ModelCatalogClient {
     /** The alias resolution map ({@code aliases.json}) — alias id to canonical {@code {vendor, id}}. */
     public Map<String, Object> aliases() {
         return Json.parseObject(fetch("aliases.json"));
+    }
+
+    /** The change feed ({@code changes.json}) — models added/removed/lifecycle-changed at the last publish. */
+    public Map<String, Object> changes() {
+        return Json.parseObject(fetch("changes.json"));
     }
 
     // --- internals ------------------------------------------------------------

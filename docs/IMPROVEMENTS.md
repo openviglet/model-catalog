@@ -67,13 +67,6 @@ here is additive, read-only and zero-dep — no new schema, no envelope-shape ch
 existing T13 publish workflows (auto-incrementing patch) ship the result, so no new release
 plumbing is needed.
 
-### §K3 — T48 · Faceted-slice + change-feed accessors + manifest refresh
-Round out endpoint parity: `fetchByCapability` / `fetchByModality` mirror the existing
-`fetchByKind` / `fetchByVendor` slice loaders, and a `changes.json` accessor exposes the change
-feed. The discovery-manifest type (`EndpointsManifest` and its peers) is stale — extend it with
-every key `endpoints.json` now advertises so the manifest a client returns matches what the
-endpoint actually serves.
-
 ### §K4 — T49 · Shared use-case-tag + price-tier classifier
 The browsable page derives at-a-glance *use-case tags* (from kind/capabilities/modalities) and a
 price-bucketed *tier* client-side via `classify()` (T38). That logic is useful to any consumer,

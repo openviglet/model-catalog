@@ -69,6 +69,27 @@ const PLANS = {
 };
 const ALIASES = { version: 1, count: 1, aliases: { "gpt-4o-latest": { vendor: "openai", id: "gpt-4o" } } };
 
+// Faceted slice + change feed (T48).
+const BY_CAPABILITY_VISION = {
+  version: 1,
+  capability: "vision",
+  vendors: { openai: [{ id: "gpt-4o", label: "GPT-4o", kind: "CHAT", vendor: "openai" }] },
+};
+const BY_MODALITY_IMAGE = {
+  version: 1,
+  modality: "image",
+  vendors: { openai: [{ id: "gpt-4o", label: "GPT-4o", kind: "CHAT", vendor: "openai" }] },
+};
+const CHANGES = {
+  version: 1,
+  previousLastUpdated: "2026-07-20",
+  baseline: "present",
+  counts: { added: 1, removed: 0, changed: 0 },
+  added: [{ vendor: "openai", id: "gpt-4o", kind: "CHAT", label: "GPT-4o" }],
+  removed: [],
+  changed: [],
+};
+
 /** Build a fake fetch that counts calls and serves the fixtures above. */
 function fakeFetch() {
   const calls = [];
@@ -83,6 +104,9 @@ function fakeFetch() {
     [`${BASE}/providers.json`]: PROVIDERS,
     [`${BASE}/plans.json`]: PLANS,
     [`${BASE}/aliases.json`]: ALIASES,
+    [`${BASE}/by-capability/vision.json`]: BY_CAPABILITY_VISION,
+    [`${BASE}/by-modality/image.json`]: BY_MODALITY_IMAGE,
+    [`${BASE}/changes.json`]: CHANGES,
   };
   const fn = async (url) => {
     calls.push(url);
@@ -213,6 +237,24 @@ test("aggregate & registry accessors hit their own paths and return the publishe
   const aliases = await c.aliases();
   assert.equal(fetch.calls[4], `${BASE}/aliases.json`);
   assert.deepEqual(aliases.aliases["gpt-4o-latest"], { vendor: "openai", id: "gpt-4o" });
+});
+
+test("capability/modality slice loaders + change feed hit their own paths", async () => {
+  const fetch = fakeFetch();
+  const c = new ModelCatalogClient({ baseUrl: BASE, fetch });
+  const vision = await c.fetchByCapability("Vision"); // case-insensitive → lowercased path
+  assert.equal(fetch.calls[0], `${BASE}/by-capability/vision.json`);
+  assert.equal(vision.length, 1);
+  assert.equal(vision[0].vendor, "openai");
+
+  const image = await c.fetchByModality("IMAGE");
+  assert.equal(fetch.calls[1], `${BASE}/by-modality/image.json`);
+  assert.equal(image[0].id, "gpt-4o");
+
+  const changes = await c.changes();
+  assert.equal(fetch.calls[2], `${BASE}/changes.json`);
+  assert.equal(changes.counts.added, 1);
+  assert.equal(changes.added[0].id, "gpt-4o");
 });
 
 test("a non-ok response throws with the url and status", async () => {

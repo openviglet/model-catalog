@@ -158,6 +158,14 @@ class ModelCatalogClient:
         """Fetch the ``by-vendor/<vendor>.json`` slice directly (smaller payload)."""
         return _flatten(self._fetch_json("by-vendor/%s.json" % str(vendor).lower()))
 
+    def fetch_by_capability(self, capability: str) -> List[ModelEntry]:
+        """Fetch the ``by-capability/<cap>.json`` slice directly (e.g. ``"reasoning"``)."""
+        return _flatten(self._fetch_json("by-capability/%s.json" % str(capability).lower()))
+
+    def fetch_by_modality(self, modality: str) -> List[ModelEntry]:
+        """Fetch the ``by-modality/<m>.json`` slice directly (input OR output, e.g. ``"image"``)."""
+        return _flatten(self._fetch_json("by-modality/%s.json" % str(modality).lower()))
+
     def endpoints(self) -> Dict[str, Any]:
         """The discovery manifest (``endpoints.json``) — a map of every published path."""
         return self._fetch_json("endpoints.json")
@@ -186,3 +194,7 @@ class ModelCatalogClient:
     def aliases(self) -> Dict[str, Any]:
         """The alias resolution map (``aliases.json``) — alias id -> canonical ``{vendor, id}``."""
         return self._fetch_json("aliases.json")
+
+    def changes(self) -> Dict[str, Any]:
+        """The change feed (``changes.json``) — models added/removed/lifecycle-changed at last publish."""
+        return self._fetch_json("changes.json")

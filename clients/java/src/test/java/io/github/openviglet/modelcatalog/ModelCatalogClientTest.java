@@ -95,6 +95,24 @@ class ModelCatalogClientTest {
             { "version": 1, "count": 1, "aliases": { "gpt-4o-latest": { "vendor": "openai", "id": "gpt-4o" } } }
             """;
 
+    // Faceted slice + change feed (T48).
+    private static final String BY_CAPABILITY_VISION = """
+            { "version": 1, "capability": "vision", "vendors": {
+              "openai": [ { "id": "gpt-4o", "label": "GPT-4o", "kind": "CHAT", "vendor": "openai" } ] } }
+            """;
+
+    private static final String BY_MODALITY_IMAGE = """
+            { "version": 1, "modality": "image", "vendors": {
+              "openai": [ { "id": "gpt-4o", "label": "GPT-4o", "kind": "CHAT", "vendor": "openai" } ] } }
+            """;
+
+    private static final String CHANGES = """
+            { "version": 1, "previousLastUpdated": "2026-07-20", "baseline": "present",
+              "counts": { "added": 1, "removed": 0, "changed": 0 },
+              "added": [ { "vendor": "openai", "id": "gpt-4o", "kind": "CHAT", "label": "GPT-4o" } ],
+              "removed": [], "changed": [] }
+            """;
+
     /** A fake fetcher that records calls and serves the fixtures above. */
     static final class FakeFetcher implements ModelCatalogClient.Fetcher {
         final List<String> calls = new ArrayList<>();
@@ -111,6 +129,9 @@ class ModelCatalogClientTest {
             routes.put(BASE + "/providers.json", PROVIDERS);
             routes.put(BASE + "/plans.json", PLANS);
             routes.put(BASE + "/aliases.json", ALIASES);
+            routes.put(BASE + "/by-capability/vision.json", BY_CAPABILITY_VISION);
+            routes.put(BASE + "/by-modality/image.json", BY_MODALITY_IMAGE);
+            routes.put(BASE + "/changes.json", CHANGES);
         }
 
         @Override
@@ -275,6 +296,28 @@ class ModelCatalogClientTest {
         Map<String, Object> target = (Map<String, Object>) ((Map<String, Object>) aliases.get("aliases")).get("gpt-4o-latest");
         assertEquals("openai", target.get("vendor"));
         assertEquals("gpt-4o", target.get("id"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void capabilityModalitySlicesAndChangeFeed() {
+        FakeFetcher fetcher = new FakeFetcher();
+        ModelCatalogClient c = client(fetcher).build();
+
+        List<ModelEntry> vision = c.fetchByCapability("Vision"); // case-insensitive -> lowercased path
+        assertEquals(BASE + "/by-capability/vision.json", fetcher.calls.get(0));
+        assertEquals(1, vision.size());
+        assertEquals("openai", vision.get(0).vendor());
+
+        List<ModelEntry> image = c.fetchByModality("IMAGE");
+        assertEquals(BASE + "/by-modality/image.json", fetcher.calls.get(1));
+        assertEquals("gpt-4o", image.get(0).id());
+
+        Map<String, Object> changes = c.changes();
+        assertEquals(BASE + "/changes.json", fetcher.calls.get(2));
+        assertEquals(1L, ((Map<String, Object>) changes.get("counts")).get("added"));
+        List<Object> added = (List<Object>) changes.get("added");
+        assertEquals("gpt-4o", ((Map<String, Object>) added.get(0)).get("id"));
     }
 
     @Test

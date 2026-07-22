@@ -111,7 +111,10 @@ ModelCatalogClient.builder()
 | `vendors()` | Distinct vendor keys. |
 | `fetchByKind(kind)` | Fetch the `by-kind/<KIND>.json` slice directly (smaller payload). |
 | `fetchByVendor(vendor)` | Fetch the `by-vendor/<vendor>.json` slice directly. |
+| `fetchByCapability(capability)` | Fetch the `by-capability/<cap>.json` slice directly (e.g. `"reasoning"`). |
+| `fetchByModality(modality)` | Fetch the `by-modality/<m>.json` slice directly (input OR output, e.g. `"image"`). |
 | `endpoints()` | The `endpoints.json` discovery manifest (raw map). |
+| `changes()` | The change feed (`changes.json`, raw map) — added / removed / lifecycle-changed at the last publish. |
 | `stats()` | Aggregate metrics (`stats.json`) — totals, per-facet counts, coverage (raw map). |
 | `coverage()` | Per-vendor field-coverage breakdown (`coverage.json`, raw map). |
 | `providers()` | The provider pricing-source registry (`providers.json`, raw map). |
