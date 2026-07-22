@@ -77,12 +77,6 @@ Dense facts drive the defaults; sparse facts are opt-in overlays that always pri
 the provenance-first bet. All views keep the existing framing: tier is a *price proxy, not a quality
 verdict*; every benchmark/speed number is *cited — verify at the source*.
 
-### §L2 — T51 · Global flat sort + optional group-by
-Rework the Browse render from "sort within each vendor card" to a **flat pass over all models,
-sorted once globally**, with vendor becoming one optional *group-by* (None default / Vendor / Kind /
-Tier). The single highest-leverage fix: cross-vendor ranking becomes possible. Reuses the existing
-sort/filter/drawer/pin machinery; the URL hash already carries sort state.
-
 ### §L3 — T52 · Decision columns + column chooser
 Promote the comparable attributes out of the crammed "Details" chip-cell into aligned, sortable
 columns (context, price, headline benchmark, speed, tags) with a column chooser (lean default,

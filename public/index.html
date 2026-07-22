@@ -546,6 +546,13 @@
         font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
         font-weight: 700; min-width: 5.2rem; padding-top: .1rem;
       }
+      /* Group-by segmented control (T51) — sits beside the kind filters in the controls row. */
+      .groupby-ctl { align-items: center; padding-left: .6rem; border-left: 1px solid var(--border-strong); }
+      .groupby-ctl .gb-label {
+        font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+        font-weight: 700; margin-right: .1rem;
+      }
+      @media (max-width: 620px) { .groupby-ctl { border-left: none; padding-left: 0; } }
       th.sortable { cursor: pointer; -webkit-user-select: none; user-select: none; white-space: nowrap; }
       th.sortable:hover { color: var(--brand-3); }
       th.sortable:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; }
@@ -732,7 +739,7 @@
         <div class="sec-head">
           <div class="kicker">Explore</div>
           <h2>Browse the catalog</h2>
-          <p>Search, filter by kind, capability or modality, and click a column header to sort. Grouped by vendor — click a vendor row to collapse it, or press <kbd>⌘K</kbd> to jump anywhere.</p>
+          <p>Search, filter by kind, capability or modality, and click a column header to sort <strong>across every vendor at once</strong>. Optionally group the results by vendor, kind or tier — or press <kbd>⌘K</kbd> to jump anywhere.</p>
           <p class="lbl">Each model shows a <strong>use-case</strong> tag (derived from its kind, capabilities and modalities) and, when priced, a coloured <strong>tier</strong> — <span class="chip" style="background:#c2410c;color:#fff;border-color:transparent">Frontier</span> <span class="chip" style="background:#ea580c;color:#fff;border-color:transparent">High</span> <span class="chip" style="background:#64748b;color:#fff;border-color:transparent">Mid</span> <span class="chip" style="background:#0891b2;color:#fff;border-color:transparent">Light</span> — bucketed from the vendor's US list price as a market proxy for capability (not a benchmark or quality score).</p>
         </div>
         <div class="controls">
@@ -741,6 +748,7 @@
             <input id="q" type="search" placeholder="Search id, label or vendor…" autocomplete="off" />
           </div>
           <div class="filters" id="filters"></div>
+          <div class="filters groupby-ctl" id="groupby" role="group" aria-label="Group results by"></div>
         </div>
         <div class="facets" id="facets"></div>
         <p id="status" class="status">
@@ -1062,71 +1070,112 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
       const activeOutMods = new Set();     // output-modality filter chips (AND) — T20
       const activeTags = new Set();        // use-case tag chips (AND) — T44
       const activeTiers = new Set();       // price-tier band chips (OR — one tier per model) — T44
-      let sortKey = null, sortDir = 1;     // within-vendor column sort — T20/T44
+      let sortKey = null, sortDir = 1;     // global column sort — T20/T44/T51
+      let groupBy = null;                  // null (flat) | "vendor" | "kind" | "tier" — T51
+      const GROUP_OPTS = [[null, "None"], ["vendor", "Vendor"], ["kind", "Kind"], ["tier", "Tier"]];
       const TIER_ORDER = ["Frontier", "High", "Mid", "Light"]; // T38 tiers, high→low
       const tierRank = (t) => { const i = TIER_ORDER.indexOf(t); return i < 0 ? 0 : TIER_ORDER.length - i; };
+
+      // Does a model pass the active search + kind + capability/modality + tag/tier filters?
+      function passesFilters(m, q) {
+        if (activeKind && m.kind !== activeKind) return false;
+        const mc = m.capabilities || [];
+        for (const c of activeCaps) if (!mc.includes(c)) return false;
+        const im = (m.modalities && m.modalities.input) || [];
+        for (const x of activeInMods) if (!im.includes(x)) return false;
+        const om = (m.modalities && m.modalities.output) || [];
+        for (const x of activeOutMods) if (!om.includes(x)) return false;
+        if (activeTags.size || activeTiers.size) {
+          const cl = classify(m);
+          for (const t of activeTags) if (!cl.tags.includes(t)) return false; // AND
+          if (activeTiers.size && !activeTiers.has(cl.tier)) return false;     // OR (one tier per model)
+        }
+        if (!q) return true;
+        return (m.id + " " + (m.label || "") + " " + m.vendor).toLowerCase().includes(q);
+      }
+      // One row of the model table.
+      function rowHtml(m) {
+        const caps = (m.capabilities || []).map((c) => `<span class="chip">${c}</span>`).join("");
+        const ctx = m.contextWindow ? `${fmtTokens(m.contextWindow)} ctx` : "";
+        const dim = m.embeddingDimensions ? `${m.embeddingDimensions} dim` : "";
+        const out = m.maxOutputTokens ? `${fmtTokens(m.maxOutputTokens)} out` : "";
+        const nums = [ctx, out, dim].filter(Boolean).map((x) => `<span class="chip num">${x}</span>`).join("") + priceChip(m.pricing);
+        const kc = KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN;
+        const cl = classify(m);
+        const key = m.vendor + "/" + m.id;
+        // A flat (ungrouped) table drops the vendor context of a group head, so show the
+        // vendor inline under the id; grouped views already carry it in the head.
+        const vend = !groupBy ? `<div class="lbl">${vendorLabel(m.vendor)}${m.label && m.label !== m.id ? " · " + m.label : ""}</div>`
+          : (m.label && m.label !== m.id ? `<div class="lbl">${m.label}</div>` : "");
+        return `<tr data-key="${key}">
+          <td>
+            <div class="model-cell"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
+            ${vend}
+          </td>
+          <td><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
+          <td>${useCaseChips(cl.tags)}${nums}${caps || (nums ? "" : '<span class="lbl">—</span>')}</td>
+        </tr>`;
+      }
+      // The group key for a model under the active group-by (null → single flat list).
+      function groupOf(m) {
+        if (groupBy === "vendor") return m.vendor;
+        if (groupBy === "kind") return m.kind;
+        if (groupBy === "tier") return classify(m).tier || "Unpriced";
+        return null;
+      }
+      // A collapsible group head, styled like the old vendor card head for each group-by.
+      function groupHead(type, value, count) {
+        let bg, ini, label;
+        if (type === "kind") { bg = KIND_COLOR[value] || KIND_COLOR.UNKNOWN; label = KIND_LABEL[value] || value; ini = label.slice(0, 2); }
+        else if (type === "tier") { bg = value === "Unpriced" ? "#64748b" : (TIER_BG[value] || "#64748b"); label = value; ini = value.slice(0, 1); }
+        else { bg = vendorColor(value); ini = initials(value); label = vendorLabel(value); }
+        return `<div class="vendor-head" data-group="${value}">
+          <span class="avatar" style="background:${bg}">${ini}</span>
+          <h3>${label}</h3>
+          <span class="count">${count} model${count !== 1 ? "s" : ""}</span>
+          <span class="chev">▾</span>
+        </div>`;
+      }
+      const tableFor = (bodyHtml) =>
+        `<div class="table-scroll"><table><thead><tr>${sortTh("model")}${sortTh("kind")}${sortTh("details")}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
 
       function render() {
         const q = document.getElementById("q").value.trim().toLowerCase();
         const list = document.getElementById("list");
         list.innerHTML = "";
-        let shown = 0;
-        for (const vendor of Object.keys(catalog.vendors).sort()) {
-          let rows = catalog.vendors[vendor].filter((m) => {
-            if (activeKind && m.kind !== activeKind) return false;
-            const mc = m.capabilities || [];
-            for (const c of activeCaps) if (!mc.includes(c)) return false;
-            const im = (m.modalities && m.modalities.input) || [];
-            for (const x of activeInMods) if (!im.includes(x)) return false;
-            const om = (m.modalities && m.modalities.output) || [];
-            for (const x of activeOutMods) if (!om.includes(x)) return false;
-            if (activeTags.size || activeTiers.size) {
-              const cl = classify(m);
-              for (const t of activeTags) if (!cl.tags.includes(t)) return false; // AND
-              if (activeTiers.size && !activeTiers.has(cl.tier)) return false;     // OR (one tier per model)
-            }
-            if (!q) return true;
-            return (m.id + " " + (m.label || "") + " " + vendor).toLowerCase().includes(q);
-          });
-          if (!rows.length) continue;
-          rows = sortRows(rows);
-          shown += rows.length;
-          const isCol = collapsed.has(vendor);
-          const sec = document.createElement("section");
-          sec.className = "vendor" + (isCol ? " collapsed" : "");
-          const body = rows.map((m) => {
-            const caps = (m.capabilities || []).map((c) => `<span class="chip">${c}</span>`).join("");
-            const ctx = m.contextWindow ? `${fmtTokens(m.contextWindow)} ctx` : "";
-            const dim = m.embeddingDimensions ? `${m.embeddingDimensions} dim` : "";
-            const out = m.maxOutputTokens ? `${fmtTokens(m.maxOutputTokens)} out` : "";
-            const nums = [ctx, out, dim].filter(Boolean).map((x) => `<span class="chip num">${x}</span>`).join("") + priceChip(m.pricing);
-            const kc = KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN;
-            const cl = classify(m);
-            const key = vendor + "/" + m.id;
-            return `<tr data-key="${key}">
-              <td>
-                <div class="model-cell"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
-                ${m.label && m.label !== m.id ? `<div class="lbl">${m.label}</div>` : ""}
-              </td>
-              <td><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
-              <td>${useCaseChips(cl.tags)}${nums}${caps || (nums ? "" : '<span class="lbl">—</span>')}</td>
-            </tr>`;
-          }).join("");
-          sec.innerHTML =
-            `<div class="vendor-head" data-vendor="${vendor}">
-               <span class="avatar" style="background:${vendorColor(vendor)}">${initials(vendor)}</span>
-               <h3>${vendorLabel(vendor)}</h3>
-               <span class="count">${rows.length} model${rows.length !== 1 ? "s" : ""}</span>
-               <span class="chev">▾</span>
-             </div>
-             <div class="table-scroll">
-               <table><thead><tr>${sortTh("model")}${sortTh("kind")}${sortTh("details")}</tr></thead><tbody>${body}</tbody></table>
-             </div>`;
-          sec.querySelector(".vendor-head").onclick = () => {
-            collapsed.has(vendor) ? collapsed.delete(vendor) : collapsed.add(vendor);
-            render();
-          };
-          list.appendChild(sec);
+        // T51: a single flat pass over EVERY model, filtered then sorted once globally —
+        // so a sort ranks across all vendors, not just within one card.
+        const rows = globalSort(Object.values(catalog.vendors).flat().filter((m) => passesFilters(m, q)));
+        const shown = rows.length;
+        if (!groupBy) {
+          if (shown) {
+            const sec = document.createElement("section");
+            sec.className = "vendor";
+            sec.innerHTML = tableFor(rows.map(rowHtml).join(""));
+            list.appendChild(sec);
+          }
+        } else {
+          // Partition the already-sorted list, preserving global order within each group;
+          // group display order follows first appearance in the sorted list.
+          const order = [];
+          const buckets = new Map();
+          for (const m of rows) {
+            const g = groupOf(m);
+            if (!buckets.has(g)) { buckets.set(g, []); order.push(g); }
+            buckets.get(g).push(m);
+          }
+          for (const g of order) {
+            const items = buckets.get(g);
+            const gkey = groupBy + ":" + g;
+            const sec = document.createElement("section");
+            sec.className = "vendor" + (collapsed.has(gkey) ? " collapsed" : "");
+            sec.innerHTML = groupHead(groupBy, g, items.length) + tableFor(items.map(rowHtml).join(""));
+            sec.querySelector(".vendor-head").onclick = () => {
+              collapsed.has(gkey) ? collapsed.delete(gkey) : collapsed.add(gkey);
+              render();
+            };
+            list.appendChild(sec);
+          }
         }
         document.getElementById("status").innerHTML = shown
           ? `<span style="color:var(--brand-3);font-weight:600">${shown}</span> model${shown !== 1 ? "s" : ""} shown`
@@ -1144,6 +1193,7 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         if (activeOutMods.size) p.set("out", [...activeOutMods].join(","));
         if (activeTags.size) p.set("tag", [...activeTags].join(","));
         if (activeTiers.size) p.set("tier", [...activeTiers].join(","));
+        if (groupBy) p.set("group", groupBy);
         if (sortKey) p.set("sort", sortKey + ":" + sortDir);
         const hash = p.toString();
         // replaceState: no history entry per keystroke, and never re-fires hashchange
@@ -1154,14 +1204,14 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         document.getElementById("q").value = ""; activeKind = null;
         activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
         activeTags.clear(); activeTiers.clear();
-        sortKey = null; sortDir = 1;
+        groupBy = null; sortKey = null; sortDir = 1;
       }
       // Route the hash: explorer state (#q=…&kind=…&cap=…&in=…&out=…&tag=…&tier=…&sort=…),
       // model permalink (#vendor/id), or a bare section anchor / empty → baseline.
       function applyHash() {
         const rawEnc = location.hash.slice(1);
         if (rawEnc.startsWith("compare=")) {   // shareable comparison #compare=v/id,v/id
-          if (!document.getElementById("list").children.length) { buildFilters(); buildFacets(); render(); }
+          if (!document.getElementById("list").children.length) { buildFilters(); buildGroupBy(); buildFacets(); render(); }
           openCompare(rawEnc.slice(8).split(",").map((s) => decodeURIComponent(s)).filter(Boolean));
           return;
         }
@@ -1176,22 +1226,23 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           setFromParam(activeOutMods, p.get("out"));
           setFromParam(activeTags, p.get("tag"));
           setFromParam(activeTiers, p.get("tier"));
+          groupBy = ["vendor", "kind", "tier"].includes(p.get("group")) ? p.get("group") : null;
           const srt = p.get("sort");
           if (srt) { const [k, d] = srt.split(":"); sortKey = k; sortDir = +d || 1; } else { sortKey = null; sortDir = 1; }
-          buildFilters(); buildFacets(); render();
+          buildFilters(); buildGroupBy(); buildFacets(); render();
           return;
         }
         const raw = decodeURIComponent(rawEnc);
         if (raw.includes("/")) {
           // model permalink → make sure the table exists to scroll to, then open the drawer
           hideCompare();
-          if (!document.getElementById("list").children.length) { buildFilters(); buildFacets(); render(); }
+          if (!document.getElementById("list").children.length) { buildFilters(); buildGroupBy(); buildFacets(); render(); }
           openModel(raw);
           return;
         }
         hideDrawer(); hideCompare();
         resetFilters();
-        buildFilters(); buildFacets(); render();
+        buildFilters(); buildGroupBy(); buildFacets(); render();
       }
 
       /* ── Detail drawer (T17) ───────────────────────── */
@@ -1570,9 +1621,10 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           document.getElementById("browse").scrollIntoView({ behavior: "smooth" });
           return;
         }
-        activeKind = null; document.getElementById("q").value = ""; collapsed.delete(e.vendor);
-        buildFilters(); render(); writeCurrentState();
-        const vh = document.querySelector(`.vendor-head[data-vendor="${CSS.escape(e.vendor)}"]`);
+        activeKind = null; document.getElementById("q").value = "";
+        groupBy = "vendor"; collapsed.delete("vendor:" + e.vendor);   // ensure the vendor's group head exists to scroll to
+        buildFilters(); buildGroupBy(); render(); writeCurrentState();
+        const vh = document.querySelector(`.vendor-head[data-group="${CSS.escape(e.vendor)}"]`);
         if (vh) vh.scrollIntoView({ behavior: "smooth", block: "center" });
       }
 
@@ -1764,6 +1816,20 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
         for (const k of KINDS) if (present.has(k)) f.appendChild(mk(k, KIND_LABEL[k]));
       }
 
+      /* ── Group-by segmented control (T51) ──────────── */
+      function buildGroupBy() {
+        const host = document.getElementById("groupby");
+        host.innerHTML = "";
+        const l = document.createElement("span"); l.className = "gb-label"; l.textContent = "Group"; host.appendChild(l);
+        for (const [val, label] of GROUP_OPTS) {
+          const b = document.createElement("button");
+          b.type = "button"; b.textContent = label;
+          b.setAttribute("aria-pressed", String(groupBy === val));
+          b.onclick = () => { groupBy = val; buildGroupBy(); render(); writeCurrentState(); };
+          host.appendChild(b);
+        }
+      }
+
       /* ── Capability & modality facets (T20) ────────── */
       function buildFacets() {
         const all = Object.values(catalog.vendors).flat();
@@ -1796,21 +1862,27 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           .forEach((g) => { if (g) host.appendChild(g); });
       }
 
-      /* ── Within-vendor column sort (T20) ───────────── */
-      function sortRows(rows) {
-        if (!sortKey) return rows;
+      /* ── Global column sort (T20 · cross-vendor T51) ───
+         Sorts the whole filtered set at once. With no active sort the natural order
+         is vendor-label then id (so grouping by vendor reads alphabetically); an
+         active sort ranks globally, falling back to vendor,id to stay deterministic. */
+      function globalSort(rows) {
         const val = (m) =>
           sortKey === "id" ? m.id.toLowerCase()
           : sortKey === "kind" ? (KIND_LABEL[m.kind] || m.kind).toLowerCase()
           : sortKey === "tier" ? tierRank(classify(m).tier)
           : sortKey === "context" ? (m.contextWindow || 0)
           : sortKey === "output" ? (m.maxOutputTokens || 0)
-          : 0;
+          : null;
         return [...rows].sort((a, b) => {
-          const va = val(a), vb = val(b);
-          if (va < vb) return -sortDir;
-          if (va > vb) return sortDir;
-          return a.id.localeCompare(b.id);   // stable tiebreak
+          if (sortKey) {
+            const va = val(a), vb = val(b);
+            if (va < vb) return -sortDir;
+            if (va > vb) return sortDir;
+          }
+          const av = vendorLabel(a.vendor).toLowerCase(), bv = vendorLabel(b.vendor).toLowerCase();
+          if (av !== bv) return av < bv ? -1 : 1;   // stable tiebreak: vendor, then id
+          return a.id.localeCompare(b.id);
         });
       }
       function headLabel(col) {

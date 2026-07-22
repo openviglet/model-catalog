@@ -89,7 +89,6 @@
 > SDK — gaps found here are fixed in the SDK (feeding Block K), never worked around in the page.
 > Sparse data stays honest (denominators, opt-in overlays, never invented). Design rationale → §L.
 
-- **T51** 📋 **Global flat sort + optional group-by** — rework Browse from per-vendor sorting to a flat, globally-sorted table with vendor as one optional group-by (None/Vendor/Kind/Tier); the highest-leverage fix — makes cross-vendor ranking possible. deps: T50 → §L2
 - **T52** 📋 **Decision columns + column chooser** — promote price/context/benchmark/speed/tags out of the crammed Details cell into aligned, sortable, kind-aware columns with a URL-persisted column chooser (lean default). deps: T51 → §L3
 - **T53** 📋 **Honest sparsity + data hygiene** — "has price/benchmark/speed" filters, denominators on every ranked/plot view, dimmed empty cells + contribute deep-link, contribute empty-states; and stop advertising 0%-filled fields (drop empty CSV cols / hide all-zero coverage cols / remove reasoning+arenaElo scaffolding; add missing COV_LABEL). deps: T51 → §L4
 - **T54** 💭 **Decision views: frontier + leaderboards** — hand-rolled inline-SVG price×intelligence Pareto scatter (over the ~32 chat models with both) + precomputed `leaderboards.json` (cheapest per kind, best intelligence-per-$, biggest context, fastest), each carrying its population/total. deps: T51, T53 → §L5
