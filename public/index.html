@@ -1900,8 +1900,12 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           .map(([k, v]) => ({ label: KIND_LABEL[k] || k, value: v, color: KIND_COLOR[k] || KIND_COLOR.UNKNOWN }));
         const capRows = rowsOf(stats.byCapability, null, () => "var(--brand-2)");
         const inRows = rowsOf(stats.byInputModality, null, () => "var(--brand-3)");
+        // Short labels (avoid clipping long field keys) + drop 0%-filled fields, so the
+        // chart matches the T53 hygiene pass in the Coverage matrix. COV_LABEL is defined
+        // in the coverage section below (available by the time this runs).
         const covRows = Object.entries(stats.coverage.fields)
-          .map(([k, v]) => ({ label: k, value: v.rate, color: "var(--brand-2)" }))
+          .filter(([, v]) => v.rate > 0)
+          .map(([k, v]) => ({ label: COV_LABEL[k] || k, value: v.rate, color: "var(--brand-2)" }))
           .sort((a, b) => b.value - a.value);
         document.getElementById("charts").innerHTML =
           card("Models per vendor", svgBars(vendorRows)) +
@@ -1972,7 +1976,9 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
          board with its population/total denominator and rows that open the drawer. */
       function lbValue(b, v) {
         if (b.metric.includes("contextWindow")) return fmtTokens(v);
-        if (b.metric.includes("inputPer1M")) return "$" + v;
+        // Only the cheapest-* boards are a dollar price; intelligence-per-$ also mentions
+        // inputPer1M in its metric expression but is an index-points-per-dollar ratio.
+        if (b.metric === "pricing.inputPer1M") return "$" + v;
         return v >= 100 ? Math.round(v) : v;
       }
       function renderLeaderboards(data) {
