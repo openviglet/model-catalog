@@ -1,7 +1,7 @@
-# Last task number — `T58` · next block letter — `M`
+# Last task number — `T62` · next block letter — `N`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T59`; after assigning it, bump the number above and the log line below.
+> `T63`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T59-T62 CREATED** (📋/💭, Block M §M — Conversational catalog: make the reference askable with cited answers via a separate vectorless-RAG backend (Turing's grounded catalog copilot `POST /api/sn/{site}/copilot` on turing-demo.viglet.org) — site stays static+zero-dep, no LLM here. Emit `query-manifest.json` (per-field type/facet/enum/range descriptor over catalog.ndjson — the field-schema + NL→filter contract for the external RAG) (T59); emit `context.txt` (token-budgeted ≤~40k one-line-per-model digest for stuff-all/GEO, complements llms.txt) (T60); optional "Ask the catalog" widget POSTing to a configurable endpoint + rendering cited model deep-links, hidden when unconfigured (T61); 💭 qa-eval.jsonl grounded-answer eval set + example prompts (T62). Pairs with Turing Block BF; all additive, zero-dep, provenance-first [answers cite ids, never invented]) — 2026-07-22.
 - **T57 SHIPPED** (Block L §L8 — mobile & render perf: compact ☰ mobile menu (#navmenu) restoring nav <720px + Star into it; card view <720px scoped to #list via media query + data-label ::before labels; debounced search render (~140ms, debounce() helper). **Block L shipped in full.**) — 2026-07-22.
 - **T56 SHIPPED** (Block L §L7 — facet rail + presets: sticky left rail (browse-layout 2-col, stacks <900px) w/ collapsible groups [cap/in/out collapsed by default], per-chip match counts, per-group AND/OR labels + active badge, "N active"+Clear all (filters only) + Copy link; 6 curated preset hash-links routed via applyHash; buildFacets rebuilt + updateRailActive) — 2026-07-22.
 - **T55 SHIPPED** (Block L §L6 — IA re-layout: consolidated Insights/Coverage/Plans/Sources into one tabbed #analytics home [Overview/Coverage/Plans/Sources, enableAnalyticsTab/selectAnalyticsTab, reveals per-artifact] placed off critical path after Explore; nav trimmed 8→4 [Explore/Decide/Analytics/API], SDKs+Contribute to footer; hero leads Explore + Which model?; pure IA no new data) — 2026-07-22.

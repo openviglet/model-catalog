@@ -89,6 +89,27 @@
 - **T34** 📋 **Per-segment hubs + sitemap** — evolve the T26 page generator in `scripts/emit.mjs` into real per-capability / per-modality / per-kind (+ per-tier) **hubs**: each a compact static leaderboard (top models pre-sorted, cross-linked to per-model pages) + prose intro + links to the JSON slice and to Explore pre-filtered — *not* a bare link list — plus `sitemap.xml` + `robots.txt`. Serves humans and crawlers; zero-dep, derived-at-emit, no framework. deps: — (T26 shipped) → §G1
 - **T58** 📋 **First-class per-model page** — promote the emitted per-model page (T26) from a bare table into a scannable reference styled to the SPA design tokens: header + at-a-glance stat tiles + populated-only cited sections + always-on provenance + derived related models; omit empty sections (not "—"); the drawer gains an "Open full page ↗" link. Unifies the SPA↔static visual system. deps: — (T26 shipped) → §G2
 
+## Block M — Conversational catalog: ask the catalog, get cited answers
+
+> The catalog is a *reference*; the highest-value questions over it are comparative
+> and numeric ("cheapest embedding model with ≥1M context", "open-weight chat under
+> $0.50/1M with tools") — exactly what a **vectorless / structured-data RAG** answers
+> well and a vector store answers badly. This block makes the reference *askable*
+> without breaking the foundational bets: the site stays **static + zero-dep** (no
+> server, no LLM here), so the RAG/LLM runs on a **separate backend** — Viglet
+> Turing ES's grounded catalog copilot (`POST /api/sn/{site}/copilot`, vectorless +
+> cited), hosted on `turing-demo.viglet.org`. This repo's job is to emit the two
+> artifacts that make the catalog answerable and to add an optional widget that
+> renders **grounded answers with cited model deep-links**. Answers are never
+> invented — they cite `id`s that resolve to per-model pages/the drawer, consistent
+> with the provenance-first bet. Serves the **orient** job (§L) and the GEO thesis
+> (STRATEGY §I — be the thing assistants cite). Design rationale → §M.
+
+- **T59** 📋 **Structured-RAG field manifest** — emit `models/query-manifest.json`: a per-field descriptor over the flat record shape already emitted as `catalog.ndjson` (field name, type STRING/NUMBER/BOOL/ARRAY, facetable, enum value sets for vendor/kind/capabilities/modalities/tier, numeric min–max for context/output/pricing, canonical sort keys, human description). The contract an external structured/vectorless RAG (Turing's catalog copilot) declares its field schema from and constrains NL→filter against — no guessed or hallucinated fields. Derived-at-emit, zero-dep, additive. deps: — → §M1
+- **T60** 📋 **LLM context bundle (stuff-all + GEO)** — emit `models/context.txt`: a compact, token-budgeted digest (a header describing the columns + `lastUpdated` + the indicative/verify caveats, then one line per model with the decision fields — id, vendor, kind, context, max output, price in/out, tier, key capabilities, headline benchmark, open-weights). Sized to fit a small context window (target ≤ ~40k tokens) for the "no-retrieval, stuff the whole catalog" vectorless mode and as an assistant-ingestible GEO artifact (complements the T26 `llms.txt`). deps: — → §M2
+- **T61** 📋 **"Ask the catalog" widget** — an optional chat box on the SPA (orient surface) that POSTs a question to a configurable structured-RAG endpoint (`data-ask-endpoint`; default the `turing-demo.viglet.org` catalog copilot `POST /api/sn/{site}/copilot`) and renders the grounded answer with **cited model deep-links** — mapping returned citation `id`s to per-model pages / the T17 drawer. No API key in the page (the backend holds it); the section hides entirely when no endpoint is configured, keeping the static site self-contained + zero-dep (inline JS). deps: T59, T60 → §M3
+- **T62** 💭 **Grounded-answer eval set + example prompts** — a committed `qa-eval.jsonl` of question → expected model `id`(s) / filter, seeding the widget's example prompts and usable as a drift check (locally, or fed to Turing's `nl-facet-eval` harness) as the catalog changes. deps: T59 → §M4
+
 ## Non-goals
 
 - **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal (Block F) the catalog carries an *optional* per-token US **list** price — flagged **indicative, not authoritative** (a reference only, verify with the vendor), provenance-gated and never invented. It is **not** a billing engine: no per-contract, per-region, negotiated or committed-use pricing.

@@ -54,3 +54,28 @@ propose-and-review — a bad upstream fetch must never silently poison the refer
 model-picker reference (remote fetch, offline-tolerant) but does not own it. Keeping
 the catalog in its own repo lets it version, publish and evolve independently of the
 product release cycle, and lets other tools depend on it without depending on Turing.
+
+## §II A reference that answers — the conversational layer (decided 2026-07-22)
+
+**The bet.** A market reference is more valuable, and more citable, when you can
+*ask* it — "cheapest embedding model with ≥1M context", "open-weight chat under
+$0.50/1M with tools" — instead of only browsing filters. These are comparative,
+numeric, exact-field questions: the sweet spot of **vectorless / structured-data
+RAG** (deterministic field/facet/range filtering, then an LLM grounded on the matched
+rows) and the weak spot of vector-embedding RAG. Because the catalog is small,
+fully structured and provenance-stamped, it is close to an ideal vectorless-RAG
+corpus, and a Q&A surface directly advances the GEO thesis in §I (an assistant cites
+the source that answers, with citations, not the one that only lists).
+
+**Where the compute lives — deliberately not here.** The site is static and zero-dep
+by foundational bet, and an API key must never ship in a static page, so the RAG/LLM
+runs on a **separate backend**, not in this repo. The chosen backend is **Viglet
+Turing ES's grounded catalog copilot** (`/api/sn/{site}/copilot` — vectorless, cited)
+on `turing-demo.viglet.org`; any OpenAI-compatible endpoint could stand in. This repo
+contributes only *derived artifacts* (a field manifest + a stuffable context bundle)
+and an *optional* widget that renders grounded, cited answers and hides itself when no
+endpoint is configured — so the reference stays self-contained and framework-free
+while gaining a conversational front door. Answers cite `id`s that resolve to
+per-model pages; nothing is invented (the provenance-first rule holds end to end).
+Tracked as **Block M** in [ROADMAP.md](ROADMAP.md); the backend counterpart is
+`openviglet/turing` Block BF.
