@@ -554,8 +554,10 @@
       }
 
       /* ── Facet rail + presets (T20 · reworked T56) ────── */
-      .browse-layout { display: grid; grid-template-columns: 15.5rem 1fr; gap: 1.4rem; align-items: start; }
-      @media (max-width: 900px) { .browse-layout { grid-template-columns: 1fr; } }
+      /* minmax(0, 1fr) — not a bare 1fr — so a long unbreakable model id can't expand
+         the track past the container (which shoved the whole layout right on mobile). */
+      .browse-layout { display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+      @media (max-width: 900px) { .browse-layout { grid-template-columns: minmax(0, 1fr); } }
       .rail {
         position: sticky; top: 4.6rem; background: var(--card); border: 1px solid var(--border);
         border-radius: 1rem; padding: 1rem 1.1rem; box-shadow: var(--shadow-card);
@@ -637,6 +639,9 @@
         #list td[data-label]::before {
           content: attr(data-label) ": "; color: var(--muted); font-weight: 600; font-size: .74rem;
         }
+        /* Let long monospace ids wrap inside the card instead of overflowing it. */
+        #list .model-cell { flex-wrap: wrap; }
+        #list .mid { word-break: break-all; }
       }
       /* Honest sparsity (T53): a dimmed dash that invites a contribution. */
       a.empty-cell { color: var(--muted); opacity: .45; text-decoration: none; cursor: help; }
