@@ -161,3 +161,28 @@ class ModelCatalogClient:
     def endpoints(self) -> Dict[str, Any]:
         """The discovery manifest (``endpoints.json``) — a map of every published path."""
         return self._fetch_json("endpoints.json")
+
+    # --- aggregate & registry documents ---------------------------------------
+    # Separate published artifacts (not ``ModelEntry`` lists), returned as their
+    # published shape (a plain dict) — like :meth:`endpoints`. Fetched directly,
+    # bypassing the catalog cache.
+
+    def stats(self) -> Dict[str, Any]:
+        """Pre-computed aggregate metrics (``stats.json``) — totals, per-facet counts, coverage."""
+        return self._fetch_json("stats.json")
+
+    def coverage(self) -> Dict[str, Any]:
+        """Per-vendor field-coverage breakdown (``coverage.json``) — where the data has gaps."""
+        return self._fetch_json("coverage.json")
+
+    def providers(self) -> Dict[str, Any]:
+        """The provider pricing-source registry (``providers.json``) — official pricing pages."""
+        return self._fetch_json("providers.json")
+
+    def plans(self) -> Dict[str, Any]:
+        """The consumer subscription-plans dataset (``plans.json``) — indicative US list prices."""
+        return self._fetch_json("plans.json")
+
+    def aliases(self) -> Dict[str, Any]:
+        """The alias resolution map (``aliases.json``) — alias id -> canonical ``{vendor, id}``."""
+        return self._fetch_json("aliases.json")

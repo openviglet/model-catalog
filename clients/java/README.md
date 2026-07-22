@@ -112,6 +112,11 @@ ModelCatalogClient.builder()
 | `fetchByKind(kind)` | Fetch the `by-kind/<KIND>.json` slice directly (smaller payload). |
 | `fetchByVendor(vendor)` | Fetch the `by-vendor/<vendor>.json` slice directly. |
 | `endpoints()` | The `endpoints.json` discovery manifest (raw map). |
+| `stats()` | Aggregate metrics (`stats.json`) — totals, per-facet counts, coverage (raw map). |
+| `coverage()` | Per-vendor field-coverage breakdown (`coverage.json`, raw map). |
+| `providers()` | The provider pricing-source registry (`providers.json`, raw map). |
+| `plans()` | The consumer subscription-plans dataset (`plans.json`, raw map — indicative US list prices). |
+| `aliases()` | The alias resolution map (`aliases.json`, raw map) — alias id → `{vendor, id}`. |
 
 A custom transport (e.g. for tests) can be supplied via `.fetcher(url -> body)`.
 

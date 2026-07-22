@@ -93,6 +93,11 @@ ModelCatalogClient(
 | `fetch_by_kind(kind)` | Fetch the `by-kind/<KIND>.json` slice directly (smaller payload). |
 | `fetch_by_vendor(vendor)` | Fetch the `by-vendor/<vendor>.json` slice directly. |
 | `endpoints()` | The `endpoints.json` discovery manifest. |
+| `stats()` | Aggregate metrics (`stats.json`) — totals, per-facet counts, field coverage. |
+| `coverage()` | Per-vendor field-coverage breakdown (`coverage.json`). |
+| `providers()` | The provider pricing-source registry (`providers.json`). |
+| `plans()` | The consumer subscription-plans dataset (`plans.json`, indicative US list prices). |
+| `aliases()` | The alias resolution map (`aliases.json`) — alias id → `{vendor, id}`. |
 
 ## Test
 

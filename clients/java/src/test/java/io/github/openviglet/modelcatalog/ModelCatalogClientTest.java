@@ -67,6 +67,34 @@ class ModelCatalogClientTest {
             { "version": 1, "latest": "https://example.test/models/catalog.json", "byKind": {}, "byVendor": {} }
             """;
 
+    // Aggregate & registry artifacts (T47) — trimmed to the shape the accessors return.
+    private static final String STATS = """
+            { "version": 1, "totals": { "models": 3, "vendors": 2, "kinds": 2, "capabilities": 0 },
+              "byVendor": { "openai": 2, "anthropic": 1 },
+              "coverage": { "total": 3, "fields": { "pricing": { "filled": 1, "rate": 0.3333 } } } }
+            """;
+
+    private static final String COVERAGE = """
+            { "version": 1, "fields": ["pricing"],
+              "overall": { "total": 3, "fields": { "pricing": { "filled": 1, "rate": 0.3333 } } },
+              "byVendor": { "openai": { "total": 2, "fields": { "pricing": { "filled": 1, "rate": 0.5 } } } } }
+            """;
+
+    private static final String PROVIDERS = """
+            { "version": 1, "providers": [
+              { "id": "openai", "name": "OpenAI", "category": "model-creator", "catalogVendor": "openai" } ] }
+            """;
+
+    private static final String PLANS = """
+            { "version": 1, "plans": { "anthropic": [
+              { "id": "claude-pro", "name": "Claude Pro", "indicative": true, "source": "anthropic.com",
+                "lastVerified": "2026-07-20", "vendor": "anthropic" } ] } }
+            """;
+
+    private static final String ALIASES = """
+            { "version": 1, "count": 1, "aliases": { "gpt-4o-latest": { "vendor": "openai", "id": "gpt-4o" } } }
+            """;
+
     /** A fake fetcher that records calls and serves the fixtures above. */
     static final class FakeFetcher implements ModelCatalogClient.Fetcher {
         final List<String> calls = new ArrayList<>();
@@ -78,6 +106,11 @@ class ModelCatalogClientTest {
             routes.put(BASE + "/index.json", CATALOG);
             routes.put(BASE + "/by-kind/EMBEDDING.json", BY_KIND_EMBEDDING);
             routes.put(BASE + "/endpoints.json", ENDPOINTS);
+            routes.put(BASE + "/stats.json", STATS);
+            routes.put(BASE + "/coverage.json", COVERAGE);
+            routes.put(BASE + "/providers.json", PROVIDERS);
+            routes.put(BASE + "/plans.json", PLANS);
+            routes.put(BASE + "/aliases.json", ALIASES);
         }
 
         @Override
@@ -209,6 +242,39 @@ class ModelCatalogClientTest {
         assertEquals(BASE + "/by-kind/EMBEDDING.json", fetcher.calls.get(0));
         Map<String, Object> manifest = c.endpoints();
         assertEquals(BASE + "/catalog.json", manifest.get("latest"));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void aggregateAndRegistryAccessors() {
+        FakeFetcher fetcher = new FakeFetcher();
+        ModelCatalogClient c = client(fetcher).build();
+
+        Map<String, Object> stats = c.stats();
+        assertEquals(BASE + "/stats.json", fetcher.calls.get(0));
+        assertEquals(3L, ((Map<String, Object>) stats.get("totals")).get("models"));
+
+        Map<String, Object> coverage = c.coverage();
+        assertEquals(BASE + "/coverage.json", fetcher.calls.get(1));
+        Map<String, Object> byVendor = (Map<String, Object>) coverage.get("byVendor");
+        assertEquals(2L, ((Map<String, Object>) byVendor.get("openai")).get("total"));
+
+        Map<String, Object> providers = c.providers();
+        assertEquals(BASE + "/providers.json", fetcher.calls.get(2));
+        List<Object> provList = (List<Object>) providers.get("providers");
+        assertEquals("model-creator", ((Map<String, Object>) provList.get(0)).get("category"));
+
+        Map<String, Object> plans = c.plans();
+        assertEquals(BASE + "/plans.json", fetcher.calls.get(3));
+        Map<String, Object> plansByVendor = (Map<String, Object>) plans.get("plans");
+        List<Object> anthropic = (List<Object>) plansByVendor.get("anthropic");
+        assertEquals(Boolean.TRUE, ((Map<String, Object>) anthropic.get(0)).get("indicative"));
+
+        Map<String, Object> aliases = c.aliases();
+        assertEquals(BASE + "/aliases.json", fetcher.calls.get(4));
+        Map<String, Object> target = (Map<String, Object>) ((Map<String, Object>) aliases.get("aliases")).get("gpt-4o-latest");
+        assertEquals("openai", target.get("vendor"));
+        assertEquals("gpt-4o", target.get("id"));
     }
 
     @Test

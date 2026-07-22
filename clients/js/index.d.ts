@@ -131,6 +131,118 @@ export interface CatalogEnvelope {
   [key: string]: unknown;
 }
 
+/** Per-field fill metric — how many entries carry a field and the resulting rate. */
+export interface CoverageMetric {
+  filled: number;
+  rate: number;
+}
+
+/** Aggregate metrics (`stats.json`) — pre-computed counts + field coverage, derived at emit. */
+export interface Stats {
+  version: number;
+  lastUpdated: string;
+  source: string;
+  totals: {
+    models: number;
+    vendors: number;
+    kinds: number;
+    capabilities: number;
+  };
+  byVendor: Record<string, number>;
+  byKind: Record<string, number>;
+  byCapability: Record<string, number>;
+  byInputModality: Record<string, number>;
+  byOutputModality: Record<string, number>;
+  coverage: { total: number; fields: Record<string, CoverageMetric> };
+  [key: string]: unknown;
+}
+
+/** Per-vendor (and overall) field-coverage breakdown (`coverage.json`). */
+export interface Coverage {
+  version: number;
+  lastUpdated: string;
+  source: string;
+  /** The field order the `fields` maps use. */
+  fields: string[];
+  overall: { total: number; fields: Record<string, CoverageMetric> };
+  byVendor: Record<string, { total: number; fields: Record<string, CoverageMetric> }>;
+  [key: string]: unknown;
+}
+
+/** A provider pricing-source registry entry (`providers.json`). URLs only — no prices. */
+export interface Provider {
+  id: string;
+  name: string;
+  category: "model-creator" | "hyperscaler" | "inference-provider" | "aggregator";
+  /** The catalog vendor key this provider maps to, or `null` when not yet in the catalog. */
+  catalogVendor?: string | null;
+  apiPricingUrl?: string;
+  consumerPlansUrl?: string;
+  note?: string;
+  [key: string]: unknown;
+}
+
+/** The provider pricing-source registry (`providers.json`). */
+export interface ProvidersRegistry {
+  $schema?: string;
+  version: number;
+  lastUpdated: string;
+  source: string;
+  disclaimer?: string;
+  providers: Provider[];
+  [key: string]: unknown;
+}
+
+/**
+ * A consumer subscription plan (`plans.json`). Carries an INDICATIVE US list price
+ * (a reference only — verify with the vendor); provenance-gated, never invented.
+ */
+export interface Plan {
+  id: string;
+  name: string;
+  product?: string;
+  tier?: string;
+  priceMonthlyUSD?: number;
+  annualMonthlyUSD?: number;
+  currency?: "USD";
+  features?: string[];
+  url?: string;
+  /** Always `true` — an indicative US list reference, not authoritative. */
+  indicative: true;
+  note?: string;
+  source: string;
+  lastVerified: string;
+  vendor: string;
+  [key: string]: unknown;
+}
+
+/** The consumer subscription-plans dataset (`plans.json`), keyed by consumer brand. */
+export interface PlansDataset {
+  $schema?: string;
+  version: number;
+  lastUpdated: string;
+  source: string;
+  disclaimer?: string;
+  plans: Record<string, Plan[]>;
+  [key: string]: unknown;
+}
+
+/** An alias resolution target — the canonical `(vendor, id)` an alias points to. */
+export interface AliasTarget {
+  vendor: string;
+  id: string;
+}
+
+/** The alias resolution map (`aliases.json`) — alias id → its canonical entry. */
+export interface Aliases {
+  version: number;
+  lastUpdated: string;
+  source: string;
+  count: number;
+  aliases: Record<string, AliasTarget>;
+  [key: string]: unknown;
+}
+
 /** The `endpoints.json` discovery manifest. */
 export interface EndpointsManifest {
   version: number;
@@ -184,6 +296,16 @@ export declare class ModelCatalogClient {
   fetchByVendor(vendor: string): Promise<ModelEntry[]>;
   /** The discovery manifest (`endpoints.json`). */
   endpoints(): Promise<EndpointsManifest>;
+  /** Pre-computed aggregate metrics (`stats.json`). */
+  stats(): Promise<Stats>;
+  /** Per-vendor field-coverage breakdown (`coverage.json`). */
+  coverage(): Promise<Coverage>;
+  /** The provider pricing-source registry (`providers.json`). */
+  providers(): Promise<ProvidersRegistry>;
+  /** The consumer subscription-plans dataset (`plans.json`). */
+  plans(): Promise<PlansDataset>;
+  /** The alias resolution map (`aliases.json`). */
+  aliases(): Promise<Aliases>;
 }
 
 export default ModelCatalogClient;

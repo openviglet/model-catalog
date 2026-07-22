@@ -57,6 +57,29 @@ BY_KIND_EMBEDDING = {
 
 ENDPOINTS = {"version": 1, "latest": BASE + "/catalog.json", "byKind": {}, "byVendor": {}}
 
+# Aggregate & registry artifacts (T47) — trimmed to the shape the accessors return.
+STATS = {
+    "version": 1,
+    "totals": {"models": 3, "vendors": 2, "kinds": 2, "capabilities": 0},
+    "byVendor": {"openai": 2, "anthropic": 1},
+    "coverage": {"total": 3, "fields": {"pricing": {"filled": 1, "rate": 0.3333}}},
+}
+COVERAGE = {
+    "version": 1,
+    "fields": ["pricing"],
+    "overall": {"total": 3, "fields": {"pricing": {"filled": 1, "rate": 0.3333}}},
+    "byVendor": {"openai": {"total": 2, "fields": {"pricing": {"filled": 1, "rate": 0.5}}}},
+}
+PROVIDERS = {
+    "version": 1,
+    "providers": [{"id": "openai", "name": "OpenAI", "category": "model-creator", "catalogVendor": "openai"}],
+}
+PLANS = {
+    "version": 1,
+    "plans": {"anthropic": [{"id": "claude-pro", "name": "Claude Pro", "indicative": True, "source": "anthropic.com", "lastVerified": "2026-07-20", "vendor": "anthropic"}]},
+}
+ALIASES = {"version": 1, "count": 1, "aliases": {"gpt-4o-latest": {"vendor": "openai", "id": "gpt-4o"}}}
+
 
 def make_fetch():
     """A fake fetch that records calls and serves the fixtures above."""
@@ -67,6 +90,11 @@ def make_fetch():
         BASE + "/index.json": CATALOG,
         BASE + "/by-kind/EMBEDDING.json": BY_KIND_EMBEDDING,
         BASE + "/endpoints.json": ENDPOINTS,
+        BASE + "/stats.json": STATS,
+        BASE + "/coverage.json": COVERAGE,
+        BASE + "/providers.json": PROVIDERS,
+        BASE + "/plans.json": PLANS,
+        BASE + "/aliases.json": ALIASES,
     }
 
     def fetch(url):
@@ -163,6 +191,30 @@ class ClientTest(unittest.TestCase):
         self.assertEqual(len(emb), 1)
         self.assertEqual(fetch.calls[0], BASE + "/by-kind/EMBEDDING.json")
         self.assertEqual(c.endpoints()["latest"], BASE + "/catalog.json")
+
+    def test_aggregate_and_registry_accessors(self):
+        fetch = make_fetch()
+        c = ModelCatalogClient(base_url=BASE, fetch=fetch)
+        stats = c.stats()
+        self.assertEqual(fetch.calls[0], BASE + "/stats.json")
+        self.assertEqual(stats["totals"]["models"], 3)
+        self.assertEqual(stats["coverage"]["fields"]["pricing"]["filled"], 1)
+
+        coverage = c.coverage()
+        self.assertEqual(fetch.calls[1], BASE + "/coverage.json")
+        self.assertEqual(coverage["byVendor"]["openai"]["total"], 2)
+
+        providers = c.providers()
+        self.assertEqual(fetch.calls[2], BASE + "/providers.json")
+        self.assertEqual(providers["providers"][0]["category"], "model-creator")
+
+        plans = c.plans()
+        self.assertEqual(fetch.calls[3], BASE + "/plans.json")
+        self.assertIs(plans["plans"]["anthropic"][0]["indicative"], True)
+
+        aliases = c.aliases()
+        self.assertEqual(fetch.calls[4], BASE + "/aliases.json")
+        self.assertEqual(aliases["aliases"]["gpt-4o-latest"], {"vendor": "openai", "id": "gpt-4o"})
 
     def test_base_url_trailing_slashes_normalized(self):
         fetch = make_fetch()

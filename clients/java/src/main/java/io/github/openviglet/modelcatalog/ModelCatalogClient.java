@@ -177,6 +177,36 @@ public final class ModelCatalogClient {
         return Json.parseObject(fetch("endpoints.json"));
     }
 
+    // --- aggregate & registry documents ---------------------------------------
+    // Separate published artifacts (not ModelEntry lists), returned as their raw
+    // published shape (a Map) — like endpoints(). Fetched directly, bypassing the
+    // catalog cache.
+
+    /** Pre-computed aggregate metrics ({@code stats.json}) — totals, per-facet counts, coverage. */
+    public Map<String, Object> stats() {
+        return Json.parseObject(fetch("stats.json"));
+    }
+
+    /** Per-vendor field-coverage breakdown ({@code coverage.json}) — where the data has gaps. */
+    public Map<String, Object> coverage() {
+        return Json.parseObject(fetch("coverage.json"));
+    }
+
+    /** The provider pricing-source registry ({@code providers.json}) — official pricing pages. */
+    public Map<String, Object> providers() {
+        return Json.parseObject(fetch("providers.json"));
+    }
+
+    /** The consumer subscription-plans dataset ({@code plans.json}) — indicative US list prices. */
+    public Map<String, Object> plans() {
+        return Json.parseObject(fetch("plans.json"));
+    }
+
+    /** The alias resolution map ({@code aliases.json}) — alias id to canonical {@code {vendor, id}}. */
+    public Map<String, Object> aliases() {
+        return Json.parseObject(fetch("aliases.json"));
+    }
+
     // --- internals ------------------------------------------------------------
 
     private List<ModelEntry> entries() {

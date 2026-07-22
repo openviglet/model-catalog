@@ -67,13 +67,6 @@ here is additive, read-only and zero-dep — no new schema, no envelope-shape ch
 existing T13 publish workflows (auto-incrementing patch) ship the result, so no new release
 plumbing is needed.
 
-### §K2 — T47 · Aggregate & registry endpoint accessors
-The clients expose the catalog and its facet slices but none of the aggregate/registry artifacts
-emitted since. Add typed read-only loaders for `stats.json`, `coverage.json`, `providers.json`,
-`plans.json` and `aliases.json`, each returning the published shape. These are separate documents
-(not `ModelEntry` lists), so they get their own methods and return types rather than folding into
-the flatten path.
-
 ### §K3 — T48 · Faceted-slice + change-feed accessors + manifest refresh
 Round out endpoint parity: `fetchByCapability` / `fetchByModality` mirror the existing
 `fetchByKind` / `fetchByVendor` slice loaders, and a `changes.json` accessor exposes the change

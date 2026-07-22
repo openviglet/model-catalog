@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T47 SHIPPED** (Block K §K2 — aggregate & registry endpoint accessors across all three SDKs: stats/coverage/providers/plans/aliases loaders fetched direct like endpoints(); JS typed returns [Stats/Coverage/ProvidersRegistry+Provider/PlansDataset+Plan/Aliases+AliasTarget/CoverageMetric] + methods, Python dict-returning methods, Java Map-returning methods; READMEs + 1 accessor test each [JS 12/Python 12/Java 13 green]) — 2026-07-22.
 - **T58 CREATED** (📋, Block G §G2 — first-class per-model page: promote emitted T26 page to a scannable reference styled to SPA tokens — header + at-a-glance stat tiles + populated-only cited sections + always-on provenance + derived related models; omit empty sections; drawer "Open full page ↗"; deps — [T26 shipped]) — 2026-07-22.
 - **T57 CREATED** (💭, Block L §L8 — mobile & render perf: restore mobile nav (compact menu) + card view <720px + debounce keystroke re-render; deps T51) — 2026-07-22.
 - **T56 CREATED** (💭, Block L §L7 — facet rail + shareable presets: grouped/collapsible rail w/ per-chip counts + clear-all + labelled AND/OR; copy-this-view + curated preset links; deps T51,T52) — 2026-07-22.

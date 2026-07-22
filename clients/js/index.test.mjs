@@ -45,6 +45,30 @@ const BY_KIND_EMBEDDING = {
 
 const ENDPOINTS = { version: 1, latest: `${BASE}/catalog.json`, byKind: {}, byVendor: {} };
 
+// Aggregate & registry artifacts (T47) — trimmed to the shape the accessors return.
+const STATS = {
+  version: 1,
+  totals: { models: 3, vendors: 2, kinds: 2, capabilities: 0 },
+  byVendor: { openai: 2, anthropic: 1 },
+  byKind: { CHAT: 2, EMBEDDING: 1 },
+  coverage: { total: 3, fields: { pricing: { filled: 1, rate: 0.3333 } } },
+};
+const COVERAGE = {
+  version: 1,
+  fields: ["pricing"],
+  overall: { total: 3, fields: { pricing: { filled: 1, rate: 0.3333 } } },
+  byVendor: { openai: { total: 2, fields: { pricing: { filled: 1, rate: 0.5 } } } },
+};
+const PROVIDERS = {
+  version: 1,
+  providers: [{ id: "openai", name: "OpenAI", category: "model-creator", catalogVendor: "openai" }],
+};
+const PLANS = {
+  version: 1,
+  plans: { anthropic: [{ id: "claude-pro", name: "Claude Pro", indicative: true, source: "anthropic.com", lastVerified: "2026-07-20", vendor: "anthropic" }] },
+};
+const ALIASES = { version: 1, count: 1, aliases: { "gpt-4o-latest": { vendor: "openai", id: "gpt-4o" } } };
+
 /** Build a fake fetch that counts calls and serves the fixtures above. */
 function fakeFetch() {
   const calls = [];
@@ -54,6 +78,11 @@ function fakeFetch() {
     [`${BASE}/index.json`]: CATALOG,
     [`${BASE}/by-kind/EMBEDDING.json`]: BY_KIND_EMBEDDING,
     [`${BASE}/endpoints.json`]: ENDPOINTS,
+    [`${BASE}/stats.json`]: STATS,
+    [`${BASE}/coverage.json`]: COVERAGE,
+    [`${BASE}/providers.json`]: PROVIDERS,
+    [`${BASE}/plans.json`]: PLANS,
+    [`${BASE}/aliases.json`]: ALIASES,
   };
   const fn = async (url) => {
     calls.push(url);
@@ -159,6 +188,31 @@ test("faceted slice loaders and endpoints() hit their own paths", async () => {
   assert.equal(fetch.calls[0], `${BASE}/by-kind/EMBEDDING.json`);
   const manifest = await c.endpoints();
   assert.equal(manifest.latest, `${BASE}/catalog.json`);
+});
+
+test("aggregate & registry accessors hit their own paths and return the published shape", async () => {
+  const fetch = fakeFetch();
+  const c = new ModelCatalogClient({ baseUrl: BASE, fetch });
+  const stats = await c.stats();
+  assert.equal(fetch.calls[0], `${BASE}/stats.json`);
+  assert.equal(stats.totals.models, 3);
+  assert.equal(stats.coverage.fields.pricing.filled, 1);
+
+  const coverage = await c.coverage();
+  assert.equal(fetch.calls[1], `${BASE}/coverage.json`);
+  assert.equal(coverage.byVendor.openai.total, 2);
+
+  const providers = await c.providers();
+  assert.equal(fetch.calls[2], `${BASE}/providers.json`);
+  assert.equal(providers.providers[0].category, "model-creator");
+
+  const plans = await c.plans();
+  assert.equal(fetch.calls[3], `${BASE}/plans.json`);
+  assert.equal(plans.plans.anthropic[0].indicative, true);
+
+  const aliases = await c.aliases();
+  assert.equal(fetch.calls[4], `${BASE}/aliases.json`);
+  assert.deepEqual(aliases.aliases["gpt-4o-latest"], { vendor: "openai", id: "gpt-4o" });
 });
 
 test("a non-ok response throws with the url and status", async () => {

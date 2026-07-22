@@ -79,6 +79,11 @@ new ModelCatalogClient({
 | `fetchByKind(kind)` | Fetch the `by-kind/<KIND>.json` slice directly (smaller payload). |
 | `fetchByVendor(vendor)` | Fetch the `by-vendor/<vendor>.json` slice directly. |
 | `endpoints()` | The `endpoints.json` discovery manifest. |
+| `stats()` | Aggregate metrics (`stats.json`) — totals, per-facet counts, field coverage. |
+| `coverage()` | Per-vendor field-coverage breakdown (`coverage.json`). |
+| `providers()` | The provider pricing-source registry (`providers.json`). |
+| `plans()` | The consumer subscription-plans dataset (`plans.json`, indicative US list prices). |
+| `aliases()` | The alias resolution map (`aliases.json`) — alias id → `{ vendor, id }`. |
 
 `byKind`/`byVendor` filter the cached full catalog; `fetchByKind`/`fetchByVendor`
 download a pre-filtered slice instead, for consumers that only ever need one facet.

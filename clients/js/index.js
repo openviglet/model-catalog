@@ -184,6 +184,35 @@ export class ModelCatalogClient {
   async endpoints() {
     return this.#fetchJson("endpoints.json");
   }
+
+  // --- Aggregate & registry documents: separate published artifacts (not
+  //     `ModelEntry` lists), returned as their published shape. Fetched directly,
+  //     bypassing the catalog cache — like endpoints(). ---
+
+  /** Pre-computed aggregate metrics (`stats.json`) — totals, per-facet counts, field coverage. */
+  async stats() {
+    return this.#fetchJson("stats.json");
+  }
+
+  /** Per-vendor field-coverage breakdown (`coverage.json`) — where the data has gaps. */
+  async coverage() {
+    return this.#fetchJson("coverage.json");
+  }
+
+  /** The provider pricing-source registry (`providers.json`) — official pricing pages, URLs only. */
+  async providers() {
+    return this.#fetchJson("providers.json");
+  }
+
+  /** The consumer subscription-plans dataset (`plans.json`) — indicative US list prices, verify with the vendor. */
+  async plans() {
+    return this.#fetchJson("plans.json");
+  }
+
+  /** The alias resolution map (`aliases.json`) — alias id → its canonical `{ vendor, id }`. */
+  async aliases() {
+    return this.#fetchJson("aliases.json");
+  }
 }
 
 export default ModelCatalogClient;
