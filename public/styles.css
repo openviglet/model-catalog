@@ -320,7 +320,9 @@
 
       /* ── Ask the catalog (T61) ───────────────────────── */
       /* flex-end → the Ask button stays bottom-aligned as the textarea grows. */
-      .ask-form { display: flex; gap: .7rem; max-width: 46rem; margin: 0 auto; align-items: flex-end; }
+      /* flex-end → the Ask button stays bottom-aligned as the textarea grows;
+         the top margin separates the input from the chips / thread above it. */
+      .ask-form { display: flex; gap: .7rem; max-width: 46rem; margin: 1rem auto 0; align-items: flex-end; }
       .ask-input { flex: 1 1 auto; position: relative; }
       .ask-input svg { position: absolute; left: .85rem; top: .95rem;
         width: 1.05rem; height: 1.05rem; color: var(--muted); pointer-events: none; }
@@ -338,6 +340,9 @@
       #ask-send:disabled { opacity: .6; cursor: progress; }
       .ask-examples { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center;
         justify-content: center; max-width: 46rem; margin: .9rem auto 0; }
+      /* `hidden` must beat the author display above (as .nav-menu / .sort-menu do),
+         or the example chips + reset button never actually toggle (T63). */
+      .ask-examples[hidden], #ask-clear[hidden] { display: none; }
       .ask-ex-label { color: var(--muted); font-size: .82rem; font-weight: 600; }
       .ask-ex {
         padding: .35rem .7rem; font-size: .82rem; font-family: var(--sans);
