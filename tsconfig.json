@@ -15,18 +15,12 @@
     // emitted public/app/) resolves at compile time to src/sdk/model-catalog-client.d.ts
     // — a declaration-only file (no emit), so it may sit outside rootDir. tsc leaves
     // the import string untouched, so the browser still loads public/sdk/ at runtime.
+    // Full strict mode (T66). The page owns the DOM it queries, so getElementById/
+    // querySelector results are asserted non-null through the typed dom.ts helpers
+    // (byId/qs/…) rather than guarded at every call site; everything else — data
+    // model, function signatures, nullable narrowing — is strictly typed.
     "strict": true,
-    // The page owns the DOM it queries; getElementById/querySelector results are
-    // asserted non-null via the typed dom.ts helpers rather than guarded at every
-    // call site. Leaving strictNullChecks off keeps that ergonomic; the data model
-    // (types.ts) is fully, strictly typed — that is where types earn their keep.
-    "strictNullChecks": false,
-    // Migration baseline (T65): the DATA model (types.ts) is fully typed and drives
-    // inference across the page; noImplicitAny + strictNullChecks are deferred so the
-    // extracted DOM/callback code compiles without a guard/annotation at every site.
-    // Both are intended future tightening once the module split settles.
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUnusedParameters": false,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

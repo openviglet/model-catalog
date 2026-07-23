@@ -12,7 +12,7 @@ import { render } from "./table.js";
 import { writeCurrentState, buildFilters, buildGroupBy } from "./controls.js";
 import { classify } from "../sdk/model-catalog-client.js";
 
-export function openModel(key) {
+export function openModel(key: string) {
   const m = state.byKey.get(key);
   if (!m) return;
   state.drawerModel = m;
@@ -49,10 +49,10 @@ export function closeDrawerByUser() {
 }
 // Deep-link to the "Propose or correct a model" issue form, pre-filled with
 // this model's vendor + id (query params match the form field ids). T28.
-export function renderDetail(m) {
-  const rows = [];
-  const add = (dt, dd) => { if (dd || dd === 0) rows.push(`<dt>${dt}</dt><dd>${dd}</dd>`); };
-  const chips = (xs) => xs.map((x) => `<span class="chip">${x}</span>`).join(" ");
+export function renderDetail(m: ModelEntry) {
+  const rows: string[] = [];
+  const add = (dt: string, dd: string | number | null | undefined) => { if (dd || dd === 0) rows.push(`<dt>${dt}</dt><dd>${dd}</dd>`); };
+  const chips = (xs: string[]) => xs.map((x) => `<span class="chip">${x}</span>`).join(" ");
   const kc = KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN;
   const cl = classify(m);
   add("Vendor", `${vendorGlyph(m.vendor, 12)} ${vendorLabel(m.vendor)} <span class="lbl">${m.vendor}</span>`);
@@ -75,7 +75,7 @@ export function renderDetail(m) {
   if (m.modalities && m.modalities.output && m.modalities.output.length) add("Output", chips(m.modalities.output));
   if (m.aliases && m.aliases.length) add("Aliases", chips(m.aliases));
   const caps = (m.capabilities || []).length
-    ? `<div class="dsection-label">Capabilities</div><div style="margin-bottom:1.4rem">${chips(m.capabilities)}</div>`
+    ? `<div class="dsection-label">Capabilities</div><div style="margin-bottom:1.4rem">${chips(m.capabilities || [])}</div>`
     : "";
   const srcs = (m.sources || []).map((s) => `<span class="src">${s}</span>`).join("");
   const prov = `<div class="prov">
@@ -95,13 +95,13 @@ export function renderDetail(m) {
     ${prov}`;
 }
 
-export function togglePin(key) {
+export function togglePin(key: string) {
   if (pinned.has(key)) pinned.delete(key);
   else if (pinned.size >= 4) { toast("Compare up to 4 models"); return; }
   else pinned.add(key);
   syncPinButtons(); updateTray();
 }
-export function unpin(key) {
+export function unpin(key: string) {
   pinned.delete(key); syncPinButtons(); updateTray();
   if (!byId("compare-modal").classList.contains("show")) return;
   if (pinned.size >= 2) {
@@ -114,7 +114,7 @@ export function unpin(key) {
 export function syncPinButtons() {
   qsa("[data-pin]").forEach((b) => {
     const tr = b.closest("tr[data-key]");
-    if (tr) b.setAttribute("aria-pressed", String(pinned.has((tr as HTMLElement).dataset.key)));
+    if (tr) b.setAttribute("aria-pressed", String(pinned.has((tr as HTMLElement).dataset.key ?? "")));
   });
 }
 export function updateTray() {
@@ -129,7 +129,7 @@ export function updateTray() {
   go.disabled = pinned.size < 2;
   byId("compare-tray").classList.toggle("show", pinned.size > 0);
 }
-export function openCompare(keys) {
+export function openCompare(keys: string[]) {
   const valid = keys.filter((k) => state.byKey.has(k)).slice(0, 4);
   if (valid.length < 2) return;
   pinned.clear(); valid.forEach((k) => pinned.add(k));
@@ -146,11 +146,11 @@ export function closeCompareByUser() {
   if (!byId("compare-modal").classList.contains("show")) return;
   hideCompare(); writeCurrentState();
 }
-export function renderCompare(keys) {
-  const models = keys.map((k) => ({ k, m: state.byKey.get(k) })).filter((x) => x.m);
-  const chips = (xs) => (xs || []).map((x) => `<span class="chip">${x}</span>`).join(" ");
-  const tokens = (n) => n ? `${fmtTokens(n)} <span class="lbl">${n.toLocaleString("en-US")}</span>` : "";
-  const spec = [
+export function renderCompare(keys: string[]) {
+  const models = keys.map((k) => ({ k, m: state.byKey.get(k) })).filter((x): x is { k: string; m: ModelEntry } => !!x.m);
+  const chips = (xs?: string[]) => (xs || []).map((x) => `<span class="chip">${x}</span>`).join(" ");
+  const tokens = (n?: number | null) => n ? `${fmtTokens(n)} <span class="lbl">${n.toLocaleString("en-US")}</span>` : "";
+  const spec: Array<[string, (row: { k: string; m: ModelEntry }) => string]> = [
     ["Vendor", ({ m }) => vendorLabel(m.vendor)],
     ["Kind", ({ m }) => `<span class="badge" style="--kc:${KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN}">${KIND_LABEL[m.kind] || m.kind}</span>`],
     ["Use case", ({ m }) => useCaseChips(classify(m).tags)],
@@ -189,8 +189,8 @@ export function renderCompare(keys) {
 
 export function buildPaletteIndex() {
   state.palIndex = [];
-  const present = new Set();
-  for (const [v, ms] of Object.entries(state.catalog.vendors)) {
+  const present = new Set<string>();
+  for (const [v, ms] of Object.entries(state.catalog!.vendors)) {
     state.palIndex.push({ type: "vendor", vendor: v, text: (vendorLabel(v) + " " + v).toLowerCase() });
     for (const m of ms) {
       present.add(m.kind);
@@ -203,7 +203,7 @@ export function buildPaletteIndex() {
   for (const k of KINDS) if (present.has(k)) state.palIndex.unshift({ type: "kind", kind: k, text: ("kind " + KIND_LABEL[k] + " " + k).toLowerCase() });
 }
 // Subsequence fuzzy match: -1 if q not a subsequence of hay, else higher = better.
-export function fuzzyScore(hay, q) {
+export function fuzzyScore(hay: string, q: string) {
   let hi = 0, score = 0, streak = 0;
   for (const ch of q) {
     const idx = hay.indexOf(ch, hi);
@@ -213,10 +213,10 @@ export function fuzzyScore(hay, q) {
   }
   return score - hay.length * 0.04;   // nudge shorter matches up
 }
-export function palSearch(raw) {
+export function palSearch(raw: string): PaletteEntry[] {
   const q = raw.trim().toLowerCase().replace(/\s+/g, "");
   if (!q) return state.palIndex.filter((e) => e.type !== "model").slice(0, 40);   // quick jumps: kinds + vendors
-  const scored = [];
+  const scored: [number, PaletteEntry][] = [];
   for (const e of state.palIndex) { const s = fuzzyScore(e.text, q); if (s >= 0) scored.push([s, e]); }
   scored.sort((a, b) => b[0] - a[0]);
   return scored.slice(0, 40).map((x) => x[1]);
@@ -228,16 +228,16 @@ export function renderPalette() {
   if (!state.palResults.length) { ul.innerHTML = `<li class="pal-empty">No matches</li>`; return; }
   ul.innerHTML = state.palResults.map((e, i) => {
     let ic, cls, title, sub, bg = "";
-    if (e.type === "model") { ic = "◈"; cls = "model"; title = e.label && e.label !== e.id ? e.label : e.id; sub = `<code>${e.id}</code> · ${vendorLabel(e.vendor)}`; }
-    else if (e.type === "vendor") { ic = initials(e.vendor); cls = "vendor"; title = vendorLabel(e.vendor); sub = `${vendorGlyph(e.vendor, 10)} Vendor`; bg = ` style="background:${vendorColor(e.vendor)}"`; }
-    else { ic = "⬡"; cls = "kind"; title = KIND_LABEL[e.kind] || e.kind; sub = "Kind filter"; }
+    if (e.type === "model") { ic = "◈"; cls = "model"; title = e.label && e.label !== e.id ? e.label : e.id; sub = `<code>${e.id}</code> · ${vendorLabel(e.vendor!)}`; }
+    else if (e.type === "vendor") { ic = initials(e.vendor!); cls = "vendor"; title = vendorLabel(e.vendor!); sub = `${vendorGlyph(e.vendor!, 10)} Vendor`; bg = ` style="background:${vendorColor(e.vendor!)}"`; }
+    else { ic = "⬡"; cls = "kind"; title = KIND_LABEL[e.kind!] || e.kind; sub = "Kind filter"; }
     return `<li role="option" data-i="${i}" aria-selected="${i === 0}" class="pal-item${i === 0 ? " active" : ""}">
         <span class="pal-ic ${cls}"${bg}>${ic}</span>
         <span class="pal-main"><span class="pal-title">${title}</span><span class="pal-sub">${sub}</span></span>
       </li>`;
   }).join("");
 }
-export function palMove(d) {
+export function palMove(d: number) {
   if (!state.palResults.length) return;
   state.palActive = (state.palActive + d + state.palResults.length) % state.palResults.length;
   const items = [...qsa("#pal-results .pal-item")];
@@ -255,19 +255,19 @@ export function closePalette() {
 }
 // A palette pick is a thin UI over existing state: models → permalink (opens drawer),
 // kinds → the kind filter, vendors → scroll to that vendor's section.
-export function selectEntry(e) {
+export function selectEntry(e: PaletteEntry) {
   closePalette();
-  if (e.type === "model") { location.hash = "#" + encodeURI(e.key); return; }
+  if (e.type === "model") { location.hash = "#" + encodeURI(e.key!); return; }
   hideDrawer(); hideCompare();
   if (e.type === "kind") {
-    state.activeKind = e.kind; byId("q").value = ""; buildFilters(); render(); writeCurrentState();
+    state.activeKind = e.kind!; byId("q").value = ""; buildFilters(); render(); writeCurrentState();
     byId("browse").scrollIntoView({ behavior: "smooth" });
     return;
   }
   state.activeKind = null; byId("q").value = "";
   state.groupBy = "vendor"; collapsed.delete("vendor:" + e.vendor);   // ensure the vendor's group head exists to scroll to
   buildFilters(); buildGroupBy(); render(); writeCurrentState();
-  const vh = qs(`.vendor-head[data-group="${CSS.escape(e.vendor)}"]`);
+  const vh = qs(`.vendor-head[data-group="${CSS.escape(e.vendor!)}"]`);
   if (vh) vh.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 

@@ -27,7 +27,7 @@ export function writeCurrentState() {
   // replaceState: no history entry per keystroke, and never re-fires hashchange
   history.replaceState(null, "", hash ? "#" + hash : location.pathname + location.search);
 }
-export function setFromParam(set, str) { set.clear(); (str || "").split(",").filter(Boolean).forEach((x) => set.add(x)); }
+export function setFromParam(set: Set<string>, str: string | null) { set.clear(); (str || "").split(",").filter(Boolean).forEach((x) => set.add(x)); }
 export function resetFilters() {
   byId("q").value = ""; state.activeKind = null;
   activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
@@ -48,14 +48,15 @@ export function applyHash() {
     const p = new URLSearchParams(rawEnc);
     byId("q").value = p.get("q") || "";
     const kind = p.get("kind");
-    state.activeKind = KINDS.includes(kind) ? kind : null;
+    state.activeKind = kind && KINDS.includes(kind) ? kind : null;
     setFromParam(activeCaps, p.get("cap"));
     setFromParam(activeInMods, p.get("in"));
     setFromParam(activeOutMods, p.get("out"));
     setFromParam(activeTags, p.get("tag"));
     setFromParam(activeTiers, p.get("tier"));
     setFromParam(activeHas, p.get("has"));
-    state.groupBy = ["vendor", "kind", "tier"].includes(p.get("group")) ? p.get("group") : null;
+    const grp = p.get("group");
+    state.groupBy = grp && ["vendor", "kind", "tier"].includes(grp) ? grp : null;
     state.colChoice = p.has("cols") ? (p.get("cols") || "").split(",").filter(Boolean).filter((k) => COLS[k]) : null;
     const srt = p.get("sort");
     if (srt) { const [k, d] = srt.split(":"); state.sortKey = k; state.sortDir = +d || 1; } else { state.sortKey = null; state.sortDir = 1; }
@@ -77,8 +78,8 @@ export function applyHash() {
 
 export function buildFilters() {
   const f = byId("filters");
-  const present = new Set(Object.values(state.catalog.vendors).flat().map((m) => m.kind));
-  const mk = (kind, label) => {
+  const present = new Set(Object.values(state.catalog!.vendors).flat().map((m) => m.kind));
+  const mk = (kind: string | null, label: string) => {
     const b = document.createElement("button");
     b.textContent = label;
     b.setAttribute("aria-pressed", String(state.activeKind === kind));
@@ -110,7 +111,7 @@ export function buildColMenu() {
     `<div class="col-menu-foot"><button type="button" class="linkish" data-cols-default>Reset to default</button></div>`;
 }
 
-export function facetChip(label, count, active, onToggle) {
+export function facetChip(label: string, count: number, active: boolean, onToggle: () => void) {
   const b = document.createElement("button");
   b.type = "button"; b.className = "facet-chip";
   b.innerHTML = `${label} <span class="chip-count">${count}</span>`;
@@ -118,14 +119,18 @@ export function facetChip(label, count, active, onToggle) {
   b.onclick = onToggle;
   return b;
 }
+interface FacetGroup {
+  key: string; label: string; mode: string; set: Set<string>; values: string[];
+  labelOf?: (v: string) => string; count: (v: string) => number;
+}
 export function buildFacets() {
-  const all = Object.values(state.catalog.vendors).flat();
+  const all = Object.values(state.catalog!.vendors).flat();
   const caps = [...new Set(all.flatMap((m) => m.capabilities || []))].sort();
   const insM = [...new Set(all.flatMap((m) => (m.modalities && m.modalities.input) || []))].sort();
   const outM = [...new Set(all.flatMap((m) => (m.modalities && m.modalities.output) || []))].sort();
   const tags = [...new Set(all.flatMap((m) => classify(m).tags))].sort();
   const tiers = TIER_ORDER.filter((t) => all.some((m) => classify(m).tier === t));
-  const groups = [
+  const groups: FacetGroup[] = [
     { key: "tag", label: "Use case", mode: "AND", set: activeTags, values: tags, count: (v) => all.filter((m) => classify(m).tags.includes(v)).length },
     { key: "tier", label: "Tier", mode: "OR", set: activeTiers, values: tiers, count: (v) => all.filter((m) => classify(m).tier === v).length },
     { key: "has", label: "Has data", mode: "AND", set: activeHas, values: ["price", "benchmark", "speed"], labelOf: (v) => "Has " + v, count: (v) => all.filter((m) => HAS_FN[v](m)).length },

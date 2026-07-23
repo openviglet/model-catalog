@@ -53,13 +53,13 @@ import { ModelCatalogClient } from "../sdk/model-catalog-client.js";
   }
 })();
 
-export function countUp(el, target) {
-  if (!isFinite(target)) { el.textContent = target; return; }
+export function countUp(el: HTMLElement, target: number) {
+  if (!isFinite(target)) { el.textContent = String(target); return; }
   const dur = 900, t0 = performance.now();
-  (function step(t) {
+  (function step(t: number) {
     const p = Math.min(1, (t - t0) / dur);
     const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(target * eased);
+    el.textContent = String(Math.round(target * eased));
     if (p < 1) requestAnimationFrame(step);
   })(t0);
 }
@@ -95,7 +95,7 @@ client.load()
       if (th) { onHeader(th); return; }
       if (elClosest(e, ".permalink") || elClosest(e, "[data-pin]") || elClosest(e, ".vendor-head")) return;
       const tr = elClosest(e, "tr[data-key]");
-      if (tr) location.hash = "#" + encodeURI(tr.dataset.key);
+      if (tr) location.hash = "#" + encodeURI(tr.dataset.key ?? "");
     });
     byId("list").addEventListener("keydown", (e) => {
       const th = elClosest(e, "th[data-col]");
@@ -114,7 +114,7 @@ client.load()
     if (renderFrontier()) byId("decide").hidden = false;
     client.leaderboards().then((l) => { if (renderLeaderboards(l)) byId("decide").hidden = false; }).catch(() => {});
     // A dot or leaderboard row opens the model's drawer via its permalink.
-    const toDrawer = (e) => { const el = elClosest(e, "[data-key]"); if (el) location.hash = "#" + encodeURI(el.dataset.key); };
+    const toDrawer = (e: Event) => { const el = elClosest(e, "[data-key]"); if (el) location.hash = "#" + encodeURI(el.dataset.key ?? ""); };
     byId("frontier").addEventListener("click", toDrawer);
     byId("leaderboards").addEventListener("click", toDrawer);
   })
@@ -141,7 +141,7 @@ qsa(".tabbed").forEach((box) => {
 document.addEventListener("click", (e) => {
   const btn = elClosest(e, "[data-copy]");
   if (!btn) return;
-  const code = btn.parentElement.querySelector("code");
+  const code = btn.parentElement!.querySelector("code") as HTMLElement;
   navigator.clipboard.writeText(code.innerText).then(() => {
     const old = btn.textContent;
     btn.textContent = "Copied ✓";
@@ -172,7 +172,7 @@ document.addEventListener("click", (e) => {
   } else if (state.drawerModel && elClosest(e, "[data-pin-drawer]")) {
     const key = state.drawerModel.vendor + "/" + state.drawerModel.id;
     togglePin(key);
-    const b = elClosest(e, "[data-pin-drawer]");
+    const b = elClosest(e, "[data-pin-drawer]")!;
     const on = pinned.has(key);
     b.setAttribute("aria-pressed", String(on));
     b.textContent = on ? "✓ Comparing" : "⇄ Compare";
@@ -189,9 +189,9 @@ byId("tray-go").onclick = () => {
 // Pin / unpin via delegation (row buttons + tray/modal ✕ chips).
 document.addEventListener("click", (e) => {
   const pinBtn = elClosest(e, "[data-pin]");
-  if (pinBtn) { const tr = pinBtn.closest("tr[data-key]"); if (tr) togglePin((tr as HTMLElement).dataset.key); return; }
+  if (pinBtn) { const tr = pinBtn.closest("tr[data-key]"); if (tr) togglePin((tr as HTMLElement).dataset.key ?? ""); return; }
   const un = elClosest(e, "[data-unpin]");
-  if (un) unpin(un.getAttribute("data-unpin"));
+  if (un) unpin(un.getAttribute("data-unpin") ?? "");
 });
 
 /* ── Column chooser wiring (T52) ───────────────── */
@@ -226,7 +226,7 @@ document.addEventListener("click", (e) => {
 /* ── Analytics tab wiring (T55) ────────────────── */
 byId("atabs").addEventListener("click", (e) => {
   const t = elClosest(e, ".atab");
-  if (t) selectAnalyticsTab(t.dataset.atab);
+  if (t) selectAnalyticsTab(t.dataset.atab ?? "");
 });
 
 /* ── Compact mobile menu (T57) ─────────────────── */
@@ -261,7 +261,7 @@ byId("pal-q").addEventListener("keydown", (e) => {
 });
 byId("pal-results").addEventListener("click", (e) => {
   const li = elClosest(e, ".pal-item"); if (!li) return;
-  const en = state.palResults[+li.dataset.i]; if (en) selectEntry(en);
+  const en = state.palResults[+(li.dataset.i ?? "0")]; if (en) selectEntry(en);
 });
 // ⌘K / Ctrl-K opens the palette from anywhere.
 document.addEventListener("keydown", (e) => {

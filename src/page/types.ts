@@ -115,7 +115,7 @@ export interface Stats {
 export interface Coverage {
   fields: string[];
   overall: CoverageBucket;
-  byVendor: Array<{ vendor: string } & CoverageBucket>;
+  byVendor: Record<string, CoverageBucket>;
 }
 
 export interface Plan {
@@ -134,28 +134,25 @@ export interface PlansDataset { plans: Record<string, Plan[]>; disclaimer?: stri
 export interface Provider {
   category: string;
   name?: string;
-  label?: string;
+  note?: string;
   catalogVendor?: string;
-  apiPricing?: string;
-  consumerPlans?: string;
-  url?: string;
-  [extra: string]: unknown;
+  apiPricingUrl?: string;
+  consumerPlansUrl?: string;
 }
 export interface ProvidersRegistry { providers: Provider[]; disclaimer?: string; }
 
 export interface LeaderboardEntry {
   vendor: string;
   id: string;
-  label?: string;
-  value?: number;
-  [extra: string]: unknown;
+  value: number;
 }
 export interface Leaderboard {
-  key: string;
-  title?: string;
-  unit?: string;
-  population?: number;
-  total?: number;
+  label: string;
+  metric: string;
+  unit: string;
+  order: string;
+  population: number;
+  total: number;
   entries: LeaderboardEntry[];
 }
-export interface Leaderboards { boards: Leaderboard[]; [extra: string]: unknown; }
+export interface Leaderboards { leaderboards: Leaderboard[]; }

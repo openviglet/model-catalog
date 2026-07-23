@@ -1,6 +1,6 @@
 /* Analytics home (dashboard/coverage/plans/sources) + Decide (frontier/leaderboards) (T65). */
 import type {
-  Stats, Coverage, PlansDataset, ProvidersRegistry, Leaderboards,
+  Stats, Coverage, CoverageBucket, PlansDataset, ProvidersRegistry, Leaderboards, Leaderboard,
 } from "./types.js";
 import { byId, qs, qsa } from "./dom.js";
 import { state } from "./state.js";
@@ -14,12 +14,12 @@ import {
 
 let analyticsActive: string | null = null;
 
-export function selectAnalyticsTab(name) {
+export function selectAnalyticsTab(name: string) {
   analyticsActive = name;
   qsa(".atab").forEach((t) => t.classList.toggle("active", t.dataset.atab === name));
   qsa(".apanel").forEach((p) => { p.hidden = p.dataset.apanel !== name; });
 }
-export function enableAnalyticsTab(name) {
+export function enableAnalyticsTab(name: string) {
   byId("analytics").hidden = false;
   const tab = qs(`.atab[data-atab="${name}"]`);
   if (tab) tab.hidden = false;
@@ -52,9 +52,10 @@ export function contextHistogram() {
   const edges = [8192, 32768, 131072, 1048576];
   const labels = ["≤ 8K", "8–32K", "32–128K", "128K–1M", "≥ 1M"];
   const counts = [0, 0, 0, 0, 0];
-  for (const m of Object.values(state.catalog.vendors).flat()) {
-    if (!m.contextWindow) continue;
-    let b = edges.findIndex((e) => m.contextWindow <= e);
+  for (const m of Object.values(state.catalog!.vendors).flat()) {
+    const cw = m.contextWindow;
+    if (!cw) continue;
+    let b = edges.findIndex((e) => cw <= e);
     if (b < 0) b = edges.length;
     counts[b]++;
   }
@@ -93,10 +94,10 @@ export function renderDashboard(stats: Stats) {
 }
 
 export function renderFrontier() {
-  const chat = Object.values(state.catalog.vendors).flat().filter((m) => m.kind === "CHAT");
+  const chat = Object.values(state.catalog!.vendors).flat().filter((m) => m.kind === "CHAT");
   const pts = chat
     .filter((m) => m.pricing && m.pricing.inputPer1M != null && m.benchmarks && m.benchmarks.intelligenceIndex != null)
-    .map((m) => ({ key: m.vendor + "/" + m.id, x: m.pricing.inputPer1M, y: m.benchmarks.intelligenceIndex,
+    .map((m) => ({ key: m.vendor + "/" + m.id, x: m.pricing!.inputPer1M!, y: m.benchmarks!.intelligenceIndex!,
       label: m.label && m.label !== m.id ? m.label : m.id, vendor: m.vendor }));
   byId("frontier-denom").textContent = `${pts.length} of ${chat.length} chat models with both`;
   const host = byId("frontier");
@@ -109,16 +110,16 @@ export function renderFrontier() {
   const W = 680, H = 404, ML = 52, MR = 16, MT = 16, MB = 60;
   const plotW = W - ML - MR, plotH = H - MT - MB;
   const lg = Math.log10, lgMin = lg(minP), lgMax = lg(maxP);
-  const xPix = (v) => ML + (lgMax === lgMin ? 0.5 : (lg(v) - lgMin) / (lgMax - lgMin)) * plotW;
+  const xPix = (v: number) => ML + (lgMax === lgMin ? 0.5 : (lg(v) - lgMin) / (lgMax - lgMin)) * plotW;
   const yPad = (maxI - minI) * 0.08 || 1, y0 = minI - yPad, y1 = maxI + yPad;
-  const yPix = (v) => MT + (1 - (v - y0) / (y1 - y0)) * plotH;
+  const yPix = (v: number) => MT + (1 - (v - y0) / (y1 - y0)) * plotH;
   // Pareto frontier: cheapest-first, keep those strictly smarter than all cheaper.
-  const front = new Set();
-  [...pts].sort((a, b) => a.x - b.x || b.y - a.y).reduce((best, p) => {
+  const front = new Set<string>();
+  [...pts].sort((a, b) => a.x - b.x || b.y - a.y).reduce((best: number, p) => {
     if (p.y > best) { front.add(p.key); return p.y; } return best;
   }, -Infinity);
-  const fmtP = (v) => "$" + (v >= 1000 ? v / 1000 + "k" : v);
-  const decades = [];
+  const fmtP = (v: number) => "$" + (v >= 1000 ? v / 1000 + "k" : v);
+  const decades: number[] = [];
   for (let e = Math.floor(lgMin); e <= Math.ceil(lgMax); e++) decades.push(Math.pow(10, e));
   const xAxis = decades.filter((v) => lg(v) >= lgMin - 1e-3 && lg(v) <= lgMax + 1e-3).map((v) =>
     `<line x1="${xPix(v).toFixed(1)}" y1="${MT}" x2="${xPix(v).toFixed(1)}" y2="${MT + plotH}" stroke="var(--border)" stroke-width=".5"/>`
@@ -133,7 +134,7 @@ export function renderFrontier() {
   // is what keeps 12 vendors apart where colour alone blurs. Frontier models
   // keep their vendor identity but gain a brand ring + full size/opacity.
   const dark = document.documentElement.getAttribute("data-theme") === "dark";
-  const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const dots = pts.map((p) => {
     const on = front.has(p.key);
     const cx = xPix(p.x), cy = yPix(p.y), r = on ? 5.5 : 4;
@@ -145,17 +146,17 @@ export function renderFrontier() {
     + `<text class="c-l" x="13" y="${MT + plotH / 2}" text-anchor="middle" transform="rotate(-90 13 ${MT + plotH / 2})">Intelligence index (cited)</text>`;
   // Legend: only vendors present, most models first; each row is its glyph +
   // label + count and highlights its own dots on hover. Plus the frontier key.
-  const counts = {};
+  const counts: Record<string, number> = {};
   pts.forEach((p) => { counts[p.vendor] = (counts[p.vendor] || 0) + 1; });
   const legend = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || vendorLabel(a).localeCompare(vendorLabel(b)))
     .map((v) => `<li class="lg-item" data-vendor="${v}">${vendorGlyph(v)}${vendorLabel(v)} <b>${counts[v]}</b></li>`).join("");
   host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Price versus cited intelligence scatter of chat models, coloured and shaped by vendor">${yAxis}${xAxis}${frontLine}${dots}${labels}</svg>`
     + `<ul class="chart-legend">${legend}<li class="lg-item lg-front"><span class="lg-ring"></span>On the frontier</li></ul>`;
   // Hover a legend vendor → spotlight its dots (dim the rest).
-  const svg = host.querySelector("svg"), legendEl = host.querySelector(".chart-legend");
+  const svg = host.querySelector("svg")!, legendEl = host.querySelector(".chart-legend")!;
   legendEl.querySelectorAll(".lg-item[data-vendor]").forEach((item) => {
     const v = (item as HTMLElement).dataset.vendor;
-    const spotlight = (on) => {
+    const spotlight = (on: boolean) => {
       svg.classList.toggle("dim-others", on);
       legendEl.classList.toggle("has-hover", on);
       item.classList.toggle("active", on);
@@ -167,7 +168,7 @@ export function renderFrontier() {
   return true;
 }
 
-export function lbValue(b, v) {
+export function lbValue(b: Leaderboard, v: number) {
   if (b.metric.includes("contextWindow")) return fmtTokens(v);
   // Only the cheapest-* boards are a dollar price; intelligence-per-$ also mentions
   // inputPer1M in its metric expression but is an index-points-per-dollar ratio.
@@ -188,7 +189,7 @@ export function renderLeaderboards(data: Leaderboards | null) {
 
 export function renderPlans(data: PlansDataset) {
   if (!data || !data.plans || !Object.keys(data.plans).length) return;
-  const money = (v) => (v == null ? null : v === 0 ? "Free" : "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 }));
+  const money = (v?: number | null) => (v == null ? null : v === 0 ? "Free" : "$" + Number(v).toLocaleString("en-US", { maximumFractionDigits: 2 }));
   const cards = Object.entries(data.plans).map(([vendor, plans]) => {
     const rows = plans.map((p) => {
       const price = money(p.priceMonthlyUSD);
@@ -196,7 +197,7 @@ export function renderPlans(data: PlansDataset) {
         : price === "Free" ? "Free"
         : `<span class="mono">${price}</span><span class="lbl">/mo</span>`;
       const annual = p.annualMonthlyUSD != null ? ` <span class="lbl">($${p.annualMonthlyUSD}/mo billed annually)</span>` : "";
-      const feats = (p.features || []).length ? `<div class="lbl" style="margin-top:.3rem">${p.features.join(" · ")}</div>` : "";
+      const feats = (p.features || []).length ? `<div class="lbl" style="margin-top:.3rem">${(p.features || []).join(" · ")}</div>` : "";
       const prov = `${p.url || p.source ? `<a href="${p.url || p.source}" target="_blank" rel="noopener" style="white-space:nowrap">source ↗</a> ` : ""}<span class="lbl" style="white-space:nowrap">${p.lastVerified || ""}</span>`;
       return `<tr>
         <td><strong>${p.name}</strong>${p.tier ? ` <span class="chip">${p.tier}</span>` : ""}${feats}</td>
@@ -255,13 +256,13 @@ export function coverageGapUrl(vendor: string) {
   return `${ISSUE_NEW}?${p.toString()}`;
 }
 export function renderCoverage(cov: Coverage) {
-  const pct = (r) => Math.round((r || 0) * 100);
+  const pct = (r?: number) => Math.round((r || 0) * 100);
   // Data hygiene (T53): hide columns that are 0% across the WHOLE catalog — an
   // all-empty column advertises a field we don't actually carry, which erodes the
   // trust this view exists to build. They return automatically once data arrives.
   const shownFields = cov.fields.filter((f) => (cov.overall.fields[f] || {}).rate > 0);
   const hiddenCount = cov.fields.length - shownFields.length;
-  const cell = (vendor, field, o) => {
+  const cell = (vendor: string | null, field: string, o: CoverageBucket) => {
     const c = o.fields[field] || { filled: 0, rate: 0 };
     const bg = `color-mix(in srgb, var(--brand) ${pct(c.rate)}%, transparent)`;
     const gap = c.rate === 0 ? " gap" : "";
@@ -275,7 +276,7 @@ export function renderCoverage(cov: Coverage) {
     return `<td><span class="cov-cell${gap}" style="background:${bg}" title="${title}">${pct(c.rate)}%</span></td>`;
   };
   const head = `<tr><th class="cov-vendor">Vendor</th>${shownFields.map((f) => `<th title="${f}">${COV_LABEL[f] || f}</th>`).join("")}</tr>`;
-  const rowFor = (vendor, o, cls) =>
+  const rowFor = (vendor: string | null, o: CoverageBucket, cls: string) =>
     `<tr class="${cls}"><th class="cov-vendor">${vendor ? vendorLabel(vendor) : "All vendors"} <span class="lbl">${o.total}</span></th>${shownFields.map((f) => cell(vendor, f, o)).join("")}</tr>`;
   const body = rowFor(null, cov.overall, "cov-overall") +
     Object.entries(cov.byVendor).map(([v, o]) => rowFor(v, o, "")).join("");
