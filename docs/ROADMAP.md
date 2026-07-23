@@ -113,18 +113,21 @@
 > became a **responsive card grid**, each card showing all of a model's recorded
 > fields, with sorting moved to an explicit field + direction control and the filter
 > rail collapsed by default (T68) (see [CHANGELOG.md](CHANGELOG.md) → Block O).
+>
+> **Block P — Trust, compliance & project health** shipped in full — non-code
+> hardening from an outside legal/OSS-analyst review: neutral wording
+> ("cheapest" → "Lowest price" labels, board ids kept) (T71), a trademark /
+> non-affiliation notice on the site + emitted pages (T72), an explicit **CC-BY
+> 4.0** data licence distinct from the Apache-2.0 code + a no-accuracy warranty
+> (T73), an Ask-widget privacy note disclosing the one surface that leaves the
+> page (T74), self-hosted web fonts dropping the runtime Google Fonts request
+> (T75), and the community-health/governance files SECURITY.md +
+> CODE_OF_CONDUCT.md + GOVERNANCE.md (T76). All respect the guardrails — zero
+> runtime dependency, no envelope break, propose-and-review (see
+> [CHANGELOG.md](CHANGELOG.md) → Block P).
 
-## Block P — Trust, compliance & project health
-
-> First active backlog after Blocks A–O shipped. Non-code hardening from an
-> outside review (legal/OSS-analyst lens): neutral wording, third-party-mark and
-> data-licence clarity, a privacy note for the one surface that leaves the page,
-> and the community-health files a "community-owned reference" is expected to
-> carry. All respect the guardrails — zero runtime dependency, no envelope break,
-> propose-and-review. The design rationale is in [IMPROVEMENTS.md](IMPROVEMENTS.md)
-> → §P.
-
-- 📋 **T76** — **Project-health & governance files.** Add `SECURITY.md` + `CODE_OF_CONDUCT.md` and a short governance/maintainer note (who maintains it, how decisions are made) — expected signals of maturity for a community-owned reference. deps — → §P6
+_No active backlog — the next block starts at letter **Q** (see
+[last-task.md](last-task.md))._
 
 ## Non-goals
 

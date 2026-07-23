@@ -11,22 +11,6 @@
 > by Block F). Consumer artifacts stay *derived* from the canonical file at emit time, so
 > they can never drift from the source of truth.
 
-## §P — Trust, compliance & project health
-
-> Non-code hardening surfaced by an outside review (legal + open-source-project
-> lens). The catalog already nails the hard part — provenance and the
-> "indicative, verify at the source" pricing discipline. What's thin is
-> everything *around* the data: third-party-mark attribution, the licence of the
-> data (vs the code), a privacy note for the one surface that phones home, and
-> the community-health files a "community-owned reference" is judged by. None of
-> these touch the schema or add a runtime dependency.
-
-### §P6 — Project-health & governance files
-
-The repo has `LICENSE`, `README`, `CONTRIBUTING` and a mature propose-and-review
-pipeline, but lacks the community-health files reviewers and org-adoption
-policies (and OpenSSF scorecards) look for: **`SECURITY.md`** (how to report a
-vulnerability) and **`CODE_OF_CONDUCT.md`**. Add both, plus a short governance
-note making the "community-owned, by Viglet" relationship explicit — who
-maintains it and how decisions are made — so the neutrality claim is backed by
-visible process, not just assertion.
+_No active (unshipped) sections — the backlog is clear. Shipped design rationale
+lives in `git log` + [CHANGELOG.md](CHANGELOG.md); status in
+[ROADMAP.md](ROADMAP.md)._

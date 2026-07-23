@@ -86,6 +86,15 @@ from upstream — publishing only serves the already-reviewed canonical file.
 The pipeline, emit step and browsable page use only Node built-ins + global `fetch`
 and inline HTML/CSS/JS. There is nothing to `npm install`. Requires Node ≥ 20.
 
+## Community & governance
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to propose or correct a model (no code
+  required) and how a proposal becomes a catalog entry.
+- [GOVERNANCE.md](GOVERNANCE.md) — who maintains this community-owned reference
+  and how decisions are made (the neutrality guarantees).
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — Contributor Covenant.
+- [SECURITY.md](SECURITY.md) — how to report a vulnerability privately.
+
 ## License
 
 - **Code** — [Apache-2.0](LICENSE) (the pipeline, emit step, page and SDKs).
