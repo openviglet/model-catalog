@@ -419,6 +419,18 @@
       .ask-cite:hover { border-color: var(--brand); background: var(--brand-wash); text-decoration: none; }
       .ask-cite .mid { font-family: var(--mono); font-size: .84rem; font-weight: 500; color: var(--text); }
       .ask-cite-plain { color: var(--muted); cursor: default; }
+      /* Numbered footnote badge on each cited chip (T77) — matches the inline [n]. */
+      .ask-cite-num { display: inline-flex; align-items: center; justify-content: center;
+        min-width: 1.35em; height: 1.35em; padding: 0 .3em; border-radius: .4rem;
+        background: var(--brand-wash); color: var(--brand-3); font-size: .72rem; font-weight: 700; }
+      /* Inline citation footnote in the answer prose (T77): a small superscript link
+         to the matching cited model; the number mirrors its "Cited models" chip. */
+      .ask-cite-ref { display: inline-block; min-width: 1.1em; padding: 0 .32em; margin: 0 .08em;
+        font-size: .68em; font-weight: 700; line-height: 1.5; vertical-align: super;
+        border-radius: .35em; background: var(--brand-wash); color: var(--brand-3);
+        text-decoration: none; text-align: center; }
+      .ask-cite-ref:hover { background: var(--brand); color: #fff; text-decoration: none; }
+      .ask-cite-ref-plain { background: var(--bg-alt); color: var(--muted); }
       .ask-summary { margin: .2rem 0 .9rem; font-size: .82rem; font-style: italic; }
       .ask-caveat { margin: 1rem 0 0; font-size: .8rem; }
       @media (max-width: 560px) {

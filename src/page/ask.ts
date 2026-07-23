@@ -281,18 +281,51 @@ function resolveKey(cit: string): string | null {
   return matches.length === 1 ? matches[0] : null;
 }
 
-/** Render one citation: a deep-link into the drawer when the id resolves, else the
- * backend's own url/title, else plain text — so a claim always shows its evidence. */
-function citeChip(c: Citation): string {
+/** Render one citation as a numbered chip: a deep-link into the drawer when the id
+ * resolves, else the backend's own url/title, else plain text — so a claim always
+ * shows its evidence. The leading number is the footnote `n` that the inline `[n]`
+ * markers (T77) point at — chip and marker share it (the citations array is 1-based
+ * in answer order, guaranteed by Turing T800). */
+function citeChip(c: Citation, n: number): string {
+  const num = `<span class="ask-cite-num">${n}</span>`;
   const key = resolveKey(c.id);
   if (key) {
     const m = state.byKey.get(key)!;
-    return `<a class="ask-cite" href="#${encodeURI(key)}"><span class="mid">${esc(m.id)}</span> <span class="lbl">${esc(vendorLabel(m.vendor))}</span></a>`;
+    return `<a class="ask-cite" href="#${encodeURI(key)}">${num}<span class="mid">${esc(m.id)}</span> <span class="lbl">${esc(vendorLabel(m.vendor))}</span></a>`;
   }
   const label = esc(c.title || c.id);
   return c.url
-    ? `<a class="ask-cite" href="${esc(c.url)}" target="_blank" rel="noopener">${label} <span class="lbl">↗</span></a>`
-    : `<span class="ask-cite ask-cite-plain">${label}</span>`;
+    ? `<a class="ask-cite" href="${esc(c.url)}" target="_blank" rel="noopener">${num}${label} <span class="lbl">↗</span></a>`
+    : `<span class="ask-cite ask-cite-plain">${num}${label}</span>`;
+}
+
+/** T77 — turn each compact `[n]` footnote the copilot emits into a superscript
+ * citation linking to the n-th cited model (the T17 drawer when the id resolves,
+ * else the backend's own url, else a bare number). `cites` is 1-based in answer
+ * order (Turing T800), so `[n]` → `cites[n-1]`; a marker with no backing citation
+ * is left as plain text. Runs on the already-escaped, Markdown-rendered HTML —
+ * `[1]` survives both esc() and mdInline() untouched, so this is the only place
+ * that consumes it. */
+function linkCitations(html: string, cites: Citation[]): string {
+  if (!cites.length) return html;
+  return html.replace(/\[(\d{1,4})\]/g, (marker, digits: string) => {
+    const c = cites[Number(digits) - 1];
+    if (!c) return marker; // dangling footnote — no such citation, leave as text
+    const key = resolveKey(c.id);
+    const href = key ? `#${encodeURI(key)}` : (c.url || null);
+    if (!href) return `<sup class="ask-cite-ref ask-cite-ref-plain">${digits}</sup>`;
+    const title = key ? state.byKey.get(key)!.id : (c.title || c.id);
+    const ext = key ? "" : ` target="_blank" rel="noopener"`;
+    return `<a class="ask-cite-ref" href="${esc(href)}"${ext} title="${attr(title)}">${digits}</a>`;
+  });
+}
+
+/** Defensive: strip any narrative source label the model still emits despite the
+ * prompt (Turing T800 forbids `[Source: …]` — the `[n]` footnotes are the only
+ * citation form). Consumes a trailing separator so no orphan comma is left behind.
+ * A no-op against the fixed backend; resilience against an older/other one. */
+function stripSourceLabels(s: string): string {
+  return s.replace(/\[\s*sources?\s*:[^\]]*\]\s*,?\s*/gi, " ").replace(/[ \t]{2,}/g, " ");
 }
 
 /* Minimal, safe Markdown → HTML for the LLM answer (T63). The text is UNTRUSTED
@@ -336,7 +369,9 @@ function renderAnswer(data: unknown): string {
 
   let body: string;
   if (text) {
-    body = `<div class="ask-text">${renderMarkdown(text)}</div>`;
+    // Render Markdown first, then resolve the [n] footnotes to citation links (T77);
+    // strip any stray [Source: …] label the model emitted (Turing T800 forbids them).
+    body = `<div class="ask-text">${linkCitations(renderMarkdown(stripSourceLabels(text)), cites)}</div>`;
   } else if (rec.available === false) {
     // The copilot can't run (e.g. no default LLM configured) — surface its reason.
     body = `<div class="ask-error">The catalog copilot is unavailable${errMsg ? ` (${esc(errMsg)})` : ""}. Browse the catalog below or press <kbd>⌘K</kbd>.</div>`;
@@ -350,7 +385,7 @@ function renderAnswer(data: unknown): string {
   const summary = typeof rec.groundedQuerySummary === "string" && rec.groundedQuerySummary.trim()
     ? `<p class="ask-summary lbl">Interpreted as: ${esc(rec.groundedQuerySummary)}</p>` : "";
   const citeHtml = cites.length
-    ? `<div class="ask-cites"><span class="ask-cites-label">Cited models</span><div class="ask-cite-list">${cites.map(citeChip).join("")}</div></div>`
+    ? `<div class="ask-cites"><span class="ask-cites-label">Cited models</span><div class="ask-cite-list">${cites.map((c, i) => citeChip(c, i + 1)).join("")}</div></div>`
     : "";
   // The grounding caveat is rendered once as the thread footer (renderThread), not per turn.
   return body + summary + citeHtml;

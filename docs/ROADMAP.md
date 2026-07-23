@@ -125,8 +125,15 @@
 > CODE_OF_CONDUCT.md + GOVERNANCE.md (T76). All respect the guardrails — zero
 > runtime dependency, no envelope break, propose-and-review (see
 > [CHANGELOG.md](CHANGELOG.md) → Block P).
+>
+> **Block Q — Ask copilot answer rendering** shipped in full — the inline `[n]`
+> markers the copilot emits are now compact, clickable footnotes that open the
+> cited model, mirrored by numbered "Cited models" chips, and stray `[Source: …]`
+> labels are stripped (T77; pairs with Turing T800, which renumbers the markers
+> and forbids narrative source labels at the source) (see
+> [CHANGELOG.md](CHANGELOG.md) → Block Q).
 
-_No active backlog — the next block starts at letter **Q** (see
+_No active backlog — the next block starts at letter **R** (see
 [last-task.md](last-task.md))._
 
 ## Non-goals
