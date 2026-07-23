@@ -43,6 +43,13 @@ interface Citation {
 
 let busy = false;
 
+/** Multi-turn conversation state (T63). `wire` is what the backend sees — only the
+ * user turns and SUCCESSFUL assistant answers (errors are shown but not replayed as
+ * context); `items` is the rendered chat bubbles, newest last. */
+interface ChatMsg { role: "user" | "assistant"; content: string; }
+const wire: ChatMsg[] = [];
+const items: string[] = [];
+
 /** Resolve the configured endpoint: empty/unset → null (stay hidden). */
 function resolveEndpoint(raw: string | undefined): string | null {
   const v = (raw ?? "").trim();
@@ -124,34 +131,61 @@ function attr(s: string): string {
   return esc(s).replace(/"/g, "&quot;");
 }
 
+/** A chat bubble. User turns are the plain question; assistant turns wrap the
+ * rendered answer (markdown + citations). */
+function turnHtml(role: "user" | "assistant", inner: string): string {
+  return `<div class="ask-turn ${role}"><div class="ask-bubble">${inner}</div></div>`;
+}
+/** Repaint the whole conversation into #ask-answer — the turns so far, an optional
+ * pending "…" assistant bubble, and the single grounding caveat footer. */
+function renderThread(pending: boolean): void {
+  const answer = byId("ask-answer");
+  const spinner = pending
+    ? turnHtml("assistant", `<div class="ask-loading"><span class="ask-spin" aria-hidden="true"></span> Asking the catalog…</div>`)
+    : "";
+  answer.innerHTML =
+    `<div class="ask-thread">${items.join("")}${spinner}</div>` +
+    `<p class="ask-caveat lbl">Grounded on the catalog — figures are indicative / cited, verify at the source. Click a cited model to open its full record.</p>`;
+}
+
 async function ask(endpoint: string, locale: string, raw: string): Promise<void> {
   const q = raw.trim();
-  const answer = byId("ask-answer");
-  if (!q) { byId("ask-q").focus(); return; }
+  const qEl = byId("ask-q");
+  if (!q) { qEl.focus(); return; }
   if (busy) return;
   busy = true;
   byId("ask-send").disabled = true;
-  answer.hidden = false;
-  answer.innerHTML = `<div class="ask-loading"><span class="ask-spin" aria-hidden="true"></span> Asking the catalog…</div>`;
+  // Show the question immediately as a chat bubble, clear the box for the next turn.
+  items.push(turnHtml("user", esc(q)));
+  wire.push({ role: "user", content: q });
+  qEl.value = ""; autoGrow();
+  byId("ask-answer").hidden = false;
+  renderThread(true);
   try {
-    // The catalog-copilot contract (Turing TurSNCatalogCopilotAPI): a multi-turn
-    // conversation body — the widget is single-shot, so one user turn — plus the
-    // site-instance locale (see DEFAULT_ASK_LOCALE). No API key: the backend holds it.
+    // The catalog-copilot contract (Turing TurSNCatalogCopilotAPI): the full
+    // multi-turn conversation so far + the site-instance locale (DEFAULT_ASK_LOCALE).
+    // No API key: the backend holds it.
     const r = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({ messages: [{ role: "user", content: q }], locale }),
+      body: JSON.stringify({ messages: wire, locale }),
     });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    answer.innerHTML = renderAnswer(await r.json());
+    const data = await r.json();
+    wire.push({ role: "assistant", content: extractText(asRecord(data)) });
+    items.push(turnHtml("assistant", renderAnswer(data)));
+    renderThread(false);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    answer.innerHTML =
+    // Show the failure in the thread but DON'T replay it to the backend as context.
+    items.push(turnHtml("assistant",
       `<div class="ask-error">Couldn't reach the answer backend (${esc(msg)}). ` +
-      `The catalog itself is fully browsable — try <a href="#browse">Explore</a> or press <kbd>⌘K</kbd>.</div>`;
+      `The catalog itself is fully browsable — try <a href="#browse">Explore</a> or press <kbd>⌘K</kbd>.</div>`));
+    renderThread(false);
   } finally {
     busy = false;
     byId("ask-send").disabled = false;
+    qEl.focus();
   }
 }
 
@@ -279,6 +313,6 @@ function renderAnswer(data: unknown): string {
   const citeHtml = cites.length
     ? `<div class="ask-cites"><span class="ask-cites-label">Cited models</span><div class="ask-cite-list">${cites.map(citeChip).join("")}</div></div>`
     : "";
-  return body + summary + citeHtml +
-    `<p class="ask-caveat lbl">Grounded on the catalog — figures are indicative / cited, verify at the source. Click a cited model to open its full record.</p>`;
+  // The grounding caveat is rendered once as the thread footer (renderThread), not per turn.
+  return body + summary + citeHtml;
 }
