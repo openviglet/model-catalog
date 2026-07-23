@@ -40,6 +40,7 @@ export const TIER_ORDER: string[] = ["Frontier", "High", "Mid", "Light"]; // T38
 export const ISSUE_NEW = "https://github.com/openviglet/model-catalog/issues/new";
 export const TIER_BG: Record<string, string> = { Frontier: "#c2410c", High: "#ea580c", Mid: "#64748b", Light: "#0891b2" };
 export const TIER_HINT = "Tier bucketed from the vendor's US list price (input / 1M) — a market signal for capability, not a benchmark or quality score.";
+export const PAGE_SIZE = 50; // rows per page in the flat (ungrouped) Browse view (T67)
 export const COL_ORDER: string[] = ["tags", "context", "output", "dims", "price", "intelligence", "speed", "params", "weights"];
 export const NUMERIC_COLS = new Set(["context", "output", "dims", "price", "intelligence", "speed", "params"]); // right-aligned
 // Kind-aware lean defaults (used when the user hasn't chosen columns explicitly).

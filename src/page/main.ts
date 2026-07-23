@@ -4,14 +4,14 @@ import { byId, qs, qsa, elClosest, toast } from "./dom.js";
 import { state, pinned } from "./state.js";
 import { COL_ORDER } from "./constants.js";
 import { debounce } from "./format.js";
-import { render, onHeader } from "./table.js";
+import { render, resetAndRender, onHeader } from "./table.js";
 import {
   closeDrawerByUser, closeCompareByUser, syncPinButtons, updateTray,
   togglePin, unpin, openPalette, closePalette, renderPalette, palMove,
   selectEntry, buildPaletteIndex,
 } from "./detail.js";
 import {
-  applyHash, writeCurrentState, clearFilters, buildPresets, buildColMenu,
+  applyHash, writeCurrentState, clearFilters, buildPresets, buildColMenu, syncRailToggle,
 } from "./controls.js";
 import {
   renderDashboard, renderCoverage, renderPlans, renderSources,
@@ -86,7 +86,7 @@ client.load()
       ` · schema v${data.version} · updated ${data.lastUpdated} · ${all.length} models`;
     // Debounce the keystroke re-render (T57): Browse rebuilds the whole table DOM,
     // so coalesce rapid typing into one render ~140ms after the last keystroke.
-    const onSearch = debounce(() => { render(); writeCurrentState(); }, 140);
+    const onSearch = debounce(() => { resetAndRender(); writeCurrentState(); }, 140);
     byId("q").addEventListener("input", onSearch);
     window.addEventListener("hashchange", applyHash);
     // Row click → navigate to the model permalink (hashchange opens the drawer).
@@ -94,6 +94,8 @@ client.load()
     byId("list").addEventListener("click", (e) => {
       const th = elClosest(e, "th[data-col]");
       if (th) { onHeader(th); return; }
+      const pg = elClosest(e, "[data-page]");   // pager button (T67)
+      if (pg) { state.page = +(pg.dataset.page ?? "1"); render(); byId("list").scrollIntoView({ block: "start" }); return; }
       if (elClosest(e, ".permalink") || elClosest(e, "[data-pin]") || elClosest(e, ".vendor-head")) return;
       const tr = elClosest(e, "tr[data-key]");
       if (tr) location.hash = "#" + encodeURI(tr.dataset.key ?? "");
@@ -243,6 +245,21 @@ byId("atabs").addEventListener("click", (e) => {
   menu.addEventListener("click", (e) => {
     if (elClosest(e, "a")) { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
   });
+})();
+
+/* ── Rail collapse toggle (T67) ────────────────── */
+/* The filters rail eats a fixed 15.5rem; collapsing it lets the table use the
+   full width. The choice persists in localStorage (a view pref, not filter state,
+   so it stays out of the shareable URL). */
+(function () {
+  const KEY = "mc-rail";
+  if (localStorage.getItem(KEY) === "1") byId("browse-layout").classList.add("rail-collapsed");
+  syncRailToggle();
+  byId("rail-toggle").onclick = () => {
+    const collapsed = byId("browse-layout").classList.toggle("rail-collapsed");
+    localStorage.setItem(KEY, collapsed ? "1" : "0");
+    syncRailToggle();
+  };
 })();
 
 /* ── Facet rail: clear-all + copy-link (T56) ───── */

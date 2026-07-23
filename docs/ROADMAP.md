@@ -98,6 +98,14 @@
 > gains one dev dependency (`typescript`) while the pipeline and SDKs stay strictly
 > zero-dependency (see [CHANGELOG.md](CHANGELOG.md) → Block N).
 
+> **Block O — Browse at scale** shipped in full — the flat Browse table became
+> usable at 246+ rows without new dependencies: client-side pagination (50/page with
+> a windowed pager, page reset on any filter/sort/search change, grouped views left
+> unpaged), a collapsible filter rail (`localStorage`-persisted, full-width table when
+> hidden, active-count surfaced on the toggle), and a denser table that fits its
+> columns (tighter padding, sticky Model column, inline Kind + tier)
+> (see [CHANGELOG.md](CHANGELOG.md) → Block O).
+
 ## Block G — Static-site expansion & indexing
 
 > The SPA is already complemented by per-model/per-vendor static pages (T26); extend

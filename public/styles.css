@@ -254,12 +254,19 @@
       table { width: 100%; border-collapse: collapse; }
       thead th {
         text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
-        color: var(--muted); padding: .6rem 1.1rem; background: var(--bg-alt); font-weight: 700;
-        border-bottom: 1px solid var(--border);
+        color: var(--muted); padding: .55rem .8rem; background: var(--bg-alt); font-weight: 700;
+        border-bottom: 1px solid var(--border); white-space: nowrap;
       }
-      tbody td { padding: .7rem 1.1rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+      tbody td { padding: .6rem .8rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
       tbody tr:last-child td { border-bottom: none; }
       tbody tr:hover { background: color-mix(in srgb, var(--brand) 5%, transparent); }
+      /* Keep the kind badge + tier chip on one line (they were stacking) — T67. */
+      td.col-kind { white-space: nowrap; }
+      /* Pin the Model column while the rest of the row scrolls horizontally (T67).
+         Scoped to #list and disabled in the mobile card view below. */
+      #list thead th:first-child { position: sticky; left: 0; z-index: 2; background: var(--bg-alt); }
+      #list tbody td:first-child { position: sticky; left: 0; z-index: 1; background: var(--card); }
+      #list tbody tr:hover td:first-child { background: color-mix(in srgb, var(--brand) 5%, var(--card)); }
       td .mid { font-family: var(--mono); font-size: .86rem; font-weight: 500; }
       td .lbl { color: var(--muted); font-size: .8rem; margin-top: .1rem; }
       .badge {
@@ -398,6 +405,21 @@
       .foot .foot-links { display: flex; flex-wrap: wrap; gap: 1.1rem; }
 
       .status { text-align: center; color: var(--muted); font-size: .9rem; padding: 1rem; }
+      /* ── Pager (T67) ─────────────────────────────────── */
+      .pager { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: .3rem; margin: 1.3rem 0 .3rem; }
+      .pg-btn {
+        min-width: 2.2rem; padding: .42rem .65rem; font-size: .84rem; font-weight: 600; font-family: var(--sans);
+        border: 1px solid var(--border-strong); border-radius: .55rem; background: var(--card); color: var(--muted); cursor: pointer;
+        transition: border-color .12s, color .12s;
+      }
+      .pg-btn:hover:not(:disabled) { border-color: var(--brand); color: var(--text); }
+      .pg-btn.current {
+        background: linear-gradient(135deg, var(--brand-2), var(--brand-3)); color: #fff; border-color: transparent;
+        box-shadow: 0 2px 8px -1px rgba(194,65,12,.4); cursor: default;
+      }
+      [data-theme="dark"] .pg-btn.current { color: #1a0e05; }
+      .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+      .pg-ellipsis { color: var(--muted); padding: 0 .15rem; }
       .skeleton { height: 4.5rem; border-radius: 1rem; background: linear-gradient(90deg, var(--bg-alt), var(--card), var(--bg-alt));
         background-size: 200% 100%; animation: shimmer 1.3s infinite; margin-bottom: 1.1rem; }
       @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -592,6 +614,10 @@
          the track past the container (which shoved the whole layout right on mobile). */
       .browse-layout { display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); gap: 1.4rem; align-items: start; }
       @media (max-width: 900px) { .browse-layout { grid-template-columns: minmax(0, 1fr); } }
+      /* Collapsed rail (T67): the table claims the full width; the rail is removed
+         from the grid entirely (not just hidden) so no empty track remains. */
+      .browse-layout.rail-collapsed { grid-template-columns: minmax(0, 1fr); }
+      .browse-layout.rail-collapsed > .rail { display: none; }
       .rail {
         position: sticky; top: 4.6rem; background: var(--card); border: 1px solid var(--border);
         border-radius: 1rem; padding: 1rem 1.1rem; box-shadow: var(--shadow-card);
@@ -670,6 +696,8 @@
           padding: .35rem .2rem; background: var(--card);
         }
         #list td { border: none !important; padding: .3rem .85rem; text-align: left !important; }
+        /* The sticky first column is meaningless once rows are block cards. */
+        #list tbody td:first-child { position: static; }
         #list td[data-label]::before {
           content: attr(data-label) ": "; color: var(--muted); font-weight: 600; font-size: .74rem;
         }

@@ -182,6 +182,7 @@
           <p class="lbl">Each model shows a <strong>use-case</strong> tag (derived from its kind, capabilities and modalities) and, when priced, a coloured <strong>tier</strong> — <span class="chip" style="background:#c2410c;color:#fff;border-color:transparent">Frontier</span> <span class="chip" style="background:#ea580c;color:#fff;border-color:transparent">High</span> <span class="chip" style="background:#64748b;color:#fff;border-color:transparent">Mid</span> <span class="chip" style="background:#0891b2;color:#fff;border-color:transparent">Light</span> — bucketed from the vendor's US list price as a market proxy for capability (not a benchmark or quality score).</p>
         </div>
         <div class="controls">
+          <button type="button" class="chooser-btn" id="rail-toggle" aria-expanded="true" aria-controls="rail" title="Show or hide the filters rail">◧ Hide filters</button>
           <div class="search-wrap">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4" stroke-linecap="round"/></svg>
             <input id="q" type="search" placeholder="Search id, label or vendor…" autocomplete="off" />
@@ -193,7 +194,7 @@
             <div class="col-menu" id="col-menu" hidden></div>
           </div>
         </div>
-        <div class="browse-layout">
+        <div class="browse-layout" id="browse-layout">
           <aside class="rail" id="rail" aria-label="Filters">
             <div class="rail-head">
               <span class="rail-title">Filters</span>

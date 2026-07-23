@@ -1,7 +1,7 @@
-# Last task number — `T66` · next block letter — `O`
+# Last task number — `T67` · next block letter — `P`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T67`; after assigning it, bump the number above and the log line below.
+> `T68`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T67 SHIPPED** (Block O §O1 — Browse at scale: client-side pagination (50/page, windowed pager, resetAndRender snaps to page 1 on result-set change, grouped views unpaged) + collapsible filter rail (localStorage-persisted, active-count on toggle) + denser table (nowrap Kind cell, sticky Model column, tighter padding); page-only zero-dep, typecheck+build+render-smoke green. **New Block O.**) — 2026-07-23.
 - **T61 SHIPPED** (Block M §M3 — "Ask the catalog" widget: optional orient-surface chat box [#ask in index.html + new src/page/ask.ts + CSS] POSTing a question to a configurable structured-RAG backend, rendering the grounded answer with cited model deep-links [citation id → T17 drawer via #vendor/id; exact vendor/id or unique bare id resolved from state.byKey]; tolerant answer/citation parsing [answer|text|message|choices[].message.content; citations|sources|models|…], loading spinner + graceful error → Explore/⌘K. Config = one attr #ask[data-ask-endpoint]: empty → hidden + self-contained [no external call, no key in page], "default" → turing-demo.viglet.org catalog copilot POST /api/sn/model-catalog/copilot, else verbatim; ENABLED with "default" per request. Example chips seeded from published qa-eval.jsonl [T62] w/ offline fallback; wired in main.ts initAsk(); typecheck+build green. **Block M shipped in full.** NOTE: turing-demo copilot currently 401s + no CORS for the Pages origin — backend fix tracked separately in Turing) — 2026-07-23.
 - **T62 SHIPPED** (Block M §M4 — grounded-answer eval set + example prompts: committed catalog/qa-eval.jsonl (8 question→expected-id(s)/filter cases, 7 flagged example:true), new pure zero-dep scripts/qa-eval.mjs [parseQaEval + validateQaEval] separating STRUCTURAL errors [malformed → fatal] from DRIFT [id/filter no longer resolves → warn at emit, fail in test], validated against the T59 query manifest so filters cite only real fields; scripts/qa-eval.test.mjs [4 node:test, incl. a live-catalog drift check] wired into npm test [41 green]; emit publishes public/qa-eval.jsonl + endpoints.json qaEval, gitignored. Seeds the T61 widget's example chips; feeds Turing nl-facet-eval) — 2026-07-23.
 - **T59-T60 SHIPPED** (Block M §M1-M2 — structured-RAG artifacts for the vectorless catalog copilot dogfood: new pure zero-dep scripts/query-manifest.mjs (node:test x3, wired into npm test) emits public/query-manifest.json (T59) — flattens each record parent_child like the RAG ingester (pricing_inputPer1M, benchmarks_intelligenceIndex, modalities_input) then per-field type/facet/multiValued/enum/min-max/sortable/description; excludes id + provenance noise; label=TEXT; verified on live 246-model catalog → 20 fields — and public/context.txt (T60) — captioned INDICATIVE digest, one decision line per model sorted vendor,id, 246 lines ~24KB ≈6k tokens under 40k budget; both wired into emit.mjs + endpoints.json. Consumed by Turing T791 ingester (+T796 flatten) / T793 stuff-all. T61 widget + T62 eval remain) — 2026-07-23.

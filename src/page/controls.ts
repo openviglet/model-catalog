@@ -5,7 +5,7 @@ import {
   activeCaps, activeInMods, activeOutMods, activeTags, activeTiers, activeHas,
 } from "./state.js";
 import { KINDS, KIND_LABEL, GROUP_OPTS, COL_ORDER, TIER_ORDER, PRESETS } from "./constants.js";
-import { render, effectiveCols, COLS, HAS_FN } from "./table.js";
+import { render, resetAndRender, effectiveCols, COLS, HAS_FN } from "./table.js";
 import { openModel, hideDrawer, openCompare, hideCompare } from "./detail.js";
 import { classify } from "../sdk/model-catalog-client.js";
 
@@ -60,7 +60,7 @@ export function applyHash() {
     state.colChoice = p.has("cols") ? (p.get("cols") || "").split(",").filter(Boolean).filter((k) => COLS[k]) : null;
     const srt = p.get("sort");
     if (srt) { const [k, d] = srt.split(":"); state.sortKey = k; state.sortDir = +d || 1; } else { state.sortKey = null; state.sortDir = 1; }
-    buildFilters(); buildGroupBy(); buildFacets(); render();
+    buildFilters(); buildGroupBy(); buildFacets(); resetAndRender();
     return;
   }
   const raw = decodeURIComponent(rawEnc);
@@ -73,7 +73,7 @@ export function applyHash() {
   }
   hideDrawer(); hideCompare();
   resetFilters();
-  buildFilters(); buildGroupBy(); buildFacets(); render();
+  buildFilters(); buildGroupBy(); buildFacets(); resetAndRender();
 }
 
 export function buildFilters() {
@@ -83,7 +83,7 @@ export function buildFilters() {
     const b = document.createElement("button");
     b.textContent = label;
     b.setAttribute("aria-pressed", String(state.activeKind === kind));
-    b.onclick = () => { state.activeKind = state.activeKind === kind ? null : kind; buildFilters(); render(); writeCurrentState(); };
+    b.onclick = () => { state.activeKind = state.activeKind === kind ? null : kind; buildFilters(); resetAndRender(); writeCurrentState(); };
     return b;
   };
   f.innerHTML = "";
@@ -99,7 +99,7 @@ export function buildGroupBy() {
     const b = document.createElement("button");
     b.type = "button"; b.textContent = label;
     b.setAttribute("aria-pressed", String(state.groupBy === val));
-    b.onclick = () => { state.groupBy = val; buildGroupBy(); render(); writeCurrentState(); };
+    b.onclick = () => { state.groupBy = val; buildGroupBy(); resetAndRender(); writeCurrentState(); };
     host.appendChild(b);
   }
 }
@@ -155,7 +155,7 @@ export function buildFacets() {
     for (const v of g.values) {
       chips.appendChild(facetChip(g.labelOf ? g.labelOf(v) : v, g.count(v), g.set.has(v), () => {
         g.set.has(v) ? g.set.delete(v) : g.set.add(v);
-        buildFacets(); render(); writeCurrentState();
+        buildFacets(); resetAndRender(); writeCurrentState();
       }));
     }
     wrapG.appendChild(chips);
@@ -172,13 +172,26 @@ export function updateRailActive() {
   const n = activeFilterCount();
   byId("rail-active").textContent = n ? `${n} active` : "";
   byId("clear-filters").disabled = n === 0;
+  syncRailToggle();
+}
+// Keep the rail toggle's label + active-count in sync (T67). When the rail is
+// collapsed its own "N active" line is hidden, so surface the count on the button.
+export function syncRailToggle() {
+  const layout = byId("browse-layout");
+  const btn = byId("rail-toggle");
+  if (!layout || !btn) return;
+  const collapsed = layout.classList.contains("rail-collapsed");
+  const n = activeFilterCount();
+  btn.setAttribute("aria-expanded", String(!collapsed));
+  btn.innerHTML = (collapsed ? "☰ Filters" : "◧ Hide filters")
+    + (collapsed && n ? ` <span class="chip-count">${n}</span>` : "");
 }
 export function clearFilters() {
   byId("q").value = "";
   state.activeKind = null;
   activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
   activeTags.clear(); activeTiers.clear(); activeHas.clear();
-  buildFilters(); buildFacets(); render(); writeCurrentState();
+  buildFilters(); buildFacets(); resetAndRender(); writeCurrentState();
 }
 // Curated preset views — each is just a shareable hash of filter/sort/column state,
 // so clicking one routes through applyHash exactly like a pasted deep link.

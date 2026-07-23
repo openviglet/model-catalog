@@ -6,7 +6,7 @@ import {
   activeCaps, activeInMods, activeOutMods, activeTags, activeTiers, activeHas,
 } from "./state.js";
 import {
-  KIND_COLOR, KIND_LABEL, TIER_BG, NUMERIC_COLS, DEFAULT_COLS,
+  KIND_COLOR, KIND_LABEL, TIER_BG, NUMERIC_COLS, DEFAULT_COLS, PAGE_SIZE,
   NUM_SORT, PRICE_CAVEAT, BENCH_CAVEAT, PERF_CAVEAT,
 } from "./constants.js";
 import {
@@ -48,7 +48,7 @@ export function rowHtml(m: ModelEntry) {
       <div class="model-cell"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
       ${vend}
     </td>
-    <td data-label="Kind"><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
+    <td class="col-kind" data-label="Kind"><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
     ${cells}
   </tr>`;
 }
@@ -76,6 +76,11 @@ export function groupHead(type: string, value: string, count: number) {
 export const tableFor = (bodyHtml: string) =>
   `<div class="table-scroll"><table><thead><tr>${theadRow()}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
 
+// Reset to the first page, then render — used by every handler that changes the
+// filtered/sorted result set (search, kind, facet, group, sort, clear). Paging
+// controls call render() directly so they keep the chosen page (T67).
+export function resetAndRender() { state.page = 1; render(); }
+
 export function render() {
   if (!state.catalog) return;
   const q = byId("q").value.trim().toLowerCase();
@@ -86,13 +91,33 @@ export function render() {
   const rows = globalSort(Object.values(state.catalog.vendors).flat().filter((m: ModelEntry) => passesFilters(m, q)));
   const shown = rows.length;
   if (!state.groupBy) {
+    // T67: paginate the flat list so the DOM stays light and the page scannable.
+    // Grouped views aren't paged — group heads already chunk the list.
+    const pages = Math.max(1, Math.ceil(shown / PAGE_SIZE));
+    if (state.page > pages) state.page = pages;
+    if (state.page < 1) state.page = 1;
+    const start = (state.page - 1) * PAGE_SIZE;
+    const pageRows = rows.slice(start, start + PAGE_SIZE);
     if (shown) {
       const sec = document.createElement("section");
       sec.className = "vendor";
-      sec.innerHTML = tableFor(rows.map(rowHtml).join(""));
+      sec.innerHTML = tableFor(pageRows.map(rowHtml).join(""));
       list.appendChild(sec);
+      if (pages > 1) {
+        const nav = document.createElement("nav");
+        nav.className = "pager";
+        nav.setAttribute("aria-label", "Pagination");
+        nav.innerHTML = pagerHtml(state.page, pages);
+        list.appendChild(nav);
+      }
     }
-  } else {
+    byId("status").innerHTML = shown
+      ? `Showing <span style="color:var(--brand-3);font-weight:600">${start + 1}–${start + pageRows.length}</span> of <span style="color:var(--brand-3);font-weight:600">${shown}</span> model${shown !== 1 ? "s" : ""}`
+      : "No models match your search.";
+    updateRailActive();
+    return;
+  }
+  {
     // Partition the already-sorted list, preserving global order within each group;
     // group display order follows first appearance in the sorted list.
     const order: (string | null)[] = [];
@@ -121,6 +146,25 @@ export function render() {
   updateRailActive();
 }
 
+// Windowed page numbers: always first + last + the current ±1, with "…" gaps (T67).
+export function pageList(page: number, pages: number): (number | "…")[] {
+  const want = new Set<number>([1, pages, page - 1, page, page + 1]);
+  const nums = [...want].filter((p) => p >= 1 && p <= pages).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  let prev = 0;
+  for (const p of nums) { if (p - prev > 1) out.push("…"); out.push(p); prev = p; }
+  return out;
+}
+export function pagerHtml(page: number, pages: number) {
+  const btn = (p: number, label: string, extra = "") =>
+    `<button type="button" class="pg-btn" data-page="${p}"${extra}>${label}</button>`;
+  const nums = pageList(page, pages).map((p) => {
+    if (p === "…") return `<span class="pg-ellipsis" aria-hidden="true">…</span>`;
+    const cur = p === page;
+    return `<button type="button" class="pg-btn${cur ? " current" : ""}" data-page="${p}"${cur ? ' aria-current="page"' : ""}>${p}</button>`;
+  }).join("");
+  return btn(page - 1, "‹ Prev", page <= 1 ? " disabled" : "") + nums + btn(page + 1, "Next ›", page >= pages ? " disabled" : "");
+}
 export const emptyCell = (m: ModelEntry) => `<a class="empty-cell" href="${correctionUrl(m)}" target="_blank" rel="noopener" title="Not recorded yet — contribute this value">—</a>`;
 export const HAS_FN: Record<string, (m: ModelEntry) => boolean> = {
   price: (m) => !!m.pricing,
@@ -213,7 +257,7 @@ export function stepSort(cycle: string[]) {
   const next = i < 0 ? cycle[0] : (i + 1 < cycle.length ? cycle[i + 1] : null);
   if (!next) { state.sortKey = null; state.sortDir = 1; }
   else { const [k, d] = next.split(":"); state.sortKey = k; state.sortDir = +d; }
-  render(); writeCurrentState();
+  resetAndRender(); writeCurrentState(); // re-sort jumps back to the first page (T67)
 }
 export function onHeader(th: HTMLElement) {
   const col = th.dataset.col;

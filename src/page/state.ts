@@ -16,6 +16,7 @@ export const state: {
   sortKey: string | null;
   sortDir: number;
   groupBy: string | null;
+  page: number;
   colChoice: string[] | null;
   palIndex: PaletteEntry[];
   palResults: PaletteEntry[];
@@ -28,6 +29,7 @@ export const state: {
   sortKey: null,
   sortDir: 1,
   groupBy: null,
+  page: 1,
   colChoice: null,
   palIndex: [],
   palResults: [],
