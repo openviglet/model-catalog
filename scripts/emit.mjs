@@ -15,6 +15,7 @@ import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildContextTxt, buildQueryManifest } from "./query-manifest.mjs";
+import { parseQaEval, validateQaEval } from "./qa-eval.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(here, "..");
@@ -25,6 +26,7 @@ const PLANS_SCHEMA_SRC = resolve(REPO_ROOT, "catalog/plans.schema.json");
 const PROVIDERS_SRC = resolve(REPO_ROOT, "catalog/providers.json"); // pricing-source registry (T35)
 const PROVIDERS_SCHEMA_SRC = resolve(REPO_ROOT, "catalog/providers.schema.json");
 const CLIENT_JS_SRC = resolve(REPO_ROOT, "clients/js/index.js"); // the JS SDK the page dogfoods (T50)
+const QA_EVAL_SRC = resolve(REPO_ROOT, "catalog/qa-eval.jsonl"); // grounded-answer eval set (T62)
 const OUT_DIR = resolve(REPO_ROOT, "public");
 // Public base URL — the GitHub Pages site for this repo. The endpoint intentionally
 // stays on this public host (a community-owned home, not a brand asset); the
@@ -154,6 +156,18 @@ if (existsSync(PROVIDERS_SRC)) {
   };
 }
 
+// Grounded-answer eval set (T62): a curated `question → expected id(s) / filter`
+// list that seeds the "Ask the catalog" widget's example prompts and doubles as a
+// drift check. Optional: absent → not published. Malformed shape is fatal (the
+// file is committed source); id/filter DRIFT is a warning only, so a legitimate
+// catalog change never blocks a publish over a stale eval anchor — the node:test
+// (`npm test`) is the hard drift gate. Validated against the query manifest built
+// from the same flat entries below, so its filters can only cite real fields.
+let qaEvalText = null;
+if (existsSync(QA_EVAL_SRC)) {
+  qaEvalText = readFileSync(QA_EVAL_SRC, "utf8");
+}
+
 // Compact index (T7): the same envelope shape, but each entry trimmed to just
 // identity + kind. A model-picker that only renders a grouped dropdown fetches a
 // fraction of the payload and lazy-loads the full record from catalog.json when a
@@ -257,6 +271,7 @@ const endpoints = {
   ndjson: `${SOURCE_URL}/catalog.ndjson`,
   queryManifest: `${SOURCE_URL}/query-manifest.json`,
   context: `${SOURCE_URL}/context.txt`,
+  ...(qaEvalText ? { qaEval: `${SOURCE_URL}/qa-eval.jsonl` } : {}),
   aliases: `${SOURCE_URL}/aliases.json`,
   badge: `${SOURCE_URL}/badge.json`,
   llms: `${SOURCE_URL}/llms.txt`,
@@ -831,13 +846,28 @@ writeFileSync(resolve(OUT_DIR, "catalog.csv"), catalogCsv, "utf8"); // flat expo
 writeFileSync(resolve(OUT_DIR, "catalog.ndjson"), catalogNdjson, "utf8"); // streaming export (T23)
 // Structured-RAG artifacts (Block M): the field manifest a vectorless/structured
 // RAG declares its schema from (T59), and the token-budgeted stuff-all digest (T60).
-write("query-manifest.json", buildQueryManifest(flat, {
+const queryManifest = buildQueryManifest(flat, {
   source: SOURCE_URL,
   schemaVersion: "1",
   generatedAt: root.lastUpdated,
-}));
+});
+write("query-manifest.json", queryManifest);
 writeFileSync(resolve(OUT_DIR, "context.txt"),
   buildContextTxt(flat, { source: SOURCE_URL, lastUpdated: root.lastUpdated }), "utf8");
+// Grounded-answer eval set (T62): validate against the manifest just built (so its
+// filters can only reference declared fields), then publish verbatim. Structural
+// errors are fatal; drift is a non-fatal warning here (see the note above).
+let qaEvalCount = 0;
+let qaEvalExamples = 0;
+if (qaEvalText) {
+  const parsed = parseQaEval(qaEvalText);
+  const { structural, drift, exampleCount } = validateQaEval(parsed, { flat, manifest: queryManifest });
+  if (structural.length) fail(`qa-eval.jsonl is malformed:\n  ${structural.join("\n  ")}`);
+  for (const w of drift) console.warn(`emit-model-catalog: qa-eval drift — ${w}`);
+  qaEvalCount = parsed.length;
+  qaEvalExamples = exampleCount;
+  writeFileSync(resolve(OUT_DIR, "qa-eval.jsonl"), qaEvalText, "utf8");
+}
 write("aliases.json", aliases); // alias → canonical map (T25)
 if (plansPublished) {
   write("plans.json", plansPublished); // consumer subscription plans (T33)
@@ -870,6 +900,7 @@ console.log("emit-model-catalog: sdk/model-catalog-client.js — self-hosted JS 
 if (droppedCsvCols.length) console.log(`emit-model-catalog: catalog.csv dropped ${droppedCsvCols.length} always-empty column(s): ${droppedCsvCols.join(", ")} (T53)`);
 console.log(`emit-model-catalog: leaderboards.json — ${leaderboards.leaderboards.length} boards (${leaderboards.leaderboards.map((b) => `${b.id}:${b.population}/${b.total}`).join(", ")}) (T54)`);
 console.log(`emit-model-catalog: badge.json — "${badge.label}: ${badge.message}"`);
+if (qaEvalText) console.log(`emit-model-catalog: qa-eval.jsonl — ${qaEvalCount} grounded-answer cases (${qaEvalExamples} example prompts) (T62)`);
 if (plansPublished) console.log(`emit-model-catalog: plans.json — ${plansCount} consumer plans across ${Object.keys(plansPublished.plans).length} vendors (indicative US list)`);
 if (providersPublished) console.log(`emit-model-catalog: providers.json — ${providersCount} provider pricing sources`);
 console.log(

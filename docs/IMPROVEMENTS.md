@@ -113,11 +113,3 @@ it — the widget only sends the question and renders the response), and the sec
 **hides entirely** when `data-ask-endpoint` is unset, so a plain checkout of the repo
 still builds and serves a fully self-contained static site. Inline JS, zero-dep,
 consumes the SDK's existing model→URL helpers for the citation links.
-
-### §M4 — T62 · Grounded-answer eval set + example prompts (💭)
-A small committed `qa-eval.jsonl` of `question → expected model id(s) / expected
-filter`, doubling as (a) the seed for the widget's example-prompt chips and (b) a
-drift check runnable locally or fed to Turing's `nl-facet-eval` harness — so as the
-catalog changes we can tell whether "cheapest long-context embedding model" still
-resolves to the right rows. Exploratory: the eval format + how tightly to couple it
-to the backend's harness want a design pass.

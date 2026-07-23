@@ -17,6 +17,7 @@ public/catalog.csv
 public/catalog.ndjson
 public/query-manifest.json
 public/context.txt
+public/qa-eval.jsonl
 public/aliases.json
 public/badge.json
 public/plans.json
