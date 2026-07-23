@@ -27,9 +27,14 @@ export function openModel(key: string) {
   d.classList.add("open"); d.setAttribute("aria-hidden", "false");
   byId("dbackdrop").classList.add("show");
   d.focus();
+  // Sync the Browse row only when it's already on screen (drawer opened from the
+  // table). Opened from the Decide chart/leaderboards — which sit above Browse —
+  // the card is below the fold: just show the drawer, don't yank the page down.
   const el = qs(`.mcard[data-key="${CSS.escape(key)}"]`);
   if (el) {
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    const r = el.getBoundingClientRect();
+    const inView = r.top < window.innerHeight && r.bottom > 0;
+    if (inView) el.scrollIntoView({ behavior: "smooth", block: "center" });
     el.classList.remove("row-hl"); el.getBoundingClientRect(); el.classList.add("row-hl");
   }
 }

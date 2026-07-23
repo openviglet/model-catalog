@@ -11,6 +11,25 @@ export const vendorColor = (v: string) => (VENDOR_STYLE[v] || VENDOR_FALLBACK).c
 export const vendorShape = (v: string) => (VENDOR_STYLE[v] || VENDOR_FALLBACK).s;
 export const initials = (v: string) => (VENDOR_LABEL[v] || v).replace(/[^A-Za-z ]/g, "").split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
+/* ── Metric icons (T68) ──────────────────────────────────────
+   Inline SVG, zero-dep on purpose — no icon font / CDN / npm package (the page
+   stays self-contained per the repo's no-runtime-dependency rule). 24px
+   Feather/Lucide-style stroke paths drawn at currentColor, so CSS owns size and
+   colour. Used label-less on the model card: an icon + the raw value. */
+const ICON_PATHS: Record<string, string> = {
+  context: '<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>',
+  output: '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>',
+  dims: '<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>',
+  price: '<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  intelligence: '<circle cx="12" cy="8" r="6"/><path d="M15.5 12.9 17 22l-5-3-5 3 1.5-9.1"/>',
+  speed: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+  params: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
+  unlock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+  lock: '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+};
+export const icon = (name: string) =>
+  `<svg class="mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[name] || ""}</svg>`;
+
 /* ── Vendor marks: one shape primitive, reused by the scatter and the inline
    glyphs (T64). shapeEl draws a shape centred at (cx,cy) sized so all four read
    at a similar visual weight; vendorGlyph wraps one in a tiny standalone SVG. */

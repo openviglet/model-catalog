@@ -1,7 +1,7 @@
-# Last task number — `T68` · next block letter — `P`
+# Last task number — `T69` · next block letter — `P`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T69`; after assigning it, bump the number above and the log line below.
+> `T70`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T69 SHIPPED** (Block O §O3 — card metric polish: label-less value chips → inline-SVG icon + bare value [zero-dep icon() set in format.ts, Feather/Lucide-style, no font/CDN; context/output/dims/price/intelligence/speed/params/weights glyphs, weights lock/unlock; meaning in title tooltip], + Sort control native <select> → themed custom button+popover [buildSortControl, closes on outside-click/Esc]; page-only zero-dep, typecheck+build+41 tests+smoke green) — 2026-07-23.
 - **T68 SHIPPED** (Block O §O2 — Browse table → responsive model card grid: each model a card with all recorded fields (absent omitted), sorting moved to an explicit field select + direction toggle (URL sort= unchanged), filter rail collapsed by default; retired column chooser/colChoice/cols param + sortable th machinery (thFor/theadRow/onHeader/stepSort/rowHtml/tableFor) + <720px row-to-card CSS; card click/flash/pin retargeted tr→.mcard; page-only zero-dep, typecheck+build+41 tests+card/sort/group smoke green) — 2026-07-23.
 - **T67 SHIPPED** (Block O §O1 — Browse at scale: client-side pagination (50/page, windowed pager, resetAndRender snaps to page 1 on result-set change, grouped views unpaged) + collapsible filter rail (localStorage-persisted, active-count on toggle) + denser table (nowrap Kind cell, sticky Model column, tighter padding); page-only zero-dep, typecheck+build+render-smoke green. **New Block O.**) — 2026-07-23.
 - **T61 SHIPPED** (Block M §M3 — "Ask the catalog" widget: optional orient-surface chat box [#ask in index.html + new src/page/ask.ts + CSS] POSTing a question to a configurable structured-RAG backend, rendering the grounded answer with cited model deep-links [citation id → T17 drawer via #vendor/id; exact vendor/id or unique bare id resolved from state.byKey]; tolerant answer/citation parsing [answer|text|message|choices[].message.content; citations|sources|models|…], loading spinner + graceful error → Explore/⌘K. Config = one attr #ask[data-ask-endpoint]: empty → hidden + self-contained [no external call, no key in page], "default" → turing-demo.viglet.org catalog copilot POST /api/sn/model-catalog/copilot, else verbatim; ENABLED with "default" per request. Example chips seeded from published qa-eval.jsonl [T62] w/ offline fallback; wired in main.ts initAsk(); typecheck+build green. **Block M shipped in full.** NOTE: turing-demo copilot currently 401s + no CORS for the Pages origin — backend fix tracked separately in Turing) — 2026-07-23.

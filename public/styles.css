@@ -289,12 +289,19 @@
       .mcard .lbl { color: var(--muted); font-size: .8rem; margin-top: .15rem; }
       /* One row of qualitative chips (kind · tier · use-case). */
       .mcard-chips { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
-      /* One row of label-less value chips — the meaning is in each chip's tooltip.
-         Pushed to the card's bottom so equal-height cards line their metrics up. */
-      .mcard-metrics { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; padding-top: .15rem; }
-      .mcard-chips .chip, .mcard-metrics .chip { margin: 0; }
-      .mcard-metrics .chip { cursor: help; }
-      .mcard-none { margin: auto 0 0; padding-top: .15rem; font-size: .82rem; }
+      .mcard-chips .chip { margin: 0; }
+      /* Label-less metrics: an inline icon + the raw value (no chip box, so the
+         numbers get the space the chip padding used to eat). Meaning is in the
+         tooltip. Pushed to the card's bottom so equal-height cards line them up. */
+      .mcard-metrics { display: flex; flex-wrap: wrap; gap: .35rem .95rem; margin-top: auto; padding-top: .2rem; }
+      .metric {
+        display: inline-flex; align-items: center; gap: .3rem; cursor: help;
+        font-family: var(--mono); font-size: .84rem; font-weight: 600; color: var(--text);
+      }
+      .metric.plain { font-family: var(--sans); }
+      .metric .mic { width: .95rem; height: .95rem; flex: none; color: var(--brand-3); }
+      .metric .mval { min-width: 0; }
+      .mcard-none { margin: auto 0 0; padding-top: .2rem; font-size: .82rem; }
       .badge {
         display: inline-flex; align-items: center; gap: .3rem; padding: .18rem .55rem; border-radius: 999px;
         font-size: .72rem; font-weight: 700; white-space: nowrap;
@@ -693,14 +700,26 @@
       }
       .chooser-btn:hover, .chooser-btn[aria-expanded="true"] { border-color: var(--brand); color: var(--text); }
       #rail-toggle { display: inline-flex; align-items: center; gap: .35rem; }
-      /* Sort control (T68) — field select + direction toggle, pushed to the right. */
-      .sort-ctl { display: flex; align-items: center; gap: .4rem; margin-left: auto; }
+      /* Sort control (T68 · custom popover T69) — a themed button + menu (a native
+         <select>'s dropdown can't be styled) + a direction toggle, pushed right. */
+      .sort-ctl { display: flex; align-items: center; gap: .5rem; margin-left: auto; }
       .sort-lbl { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; }
-      .sort-select {
-        padding: .45rem .6rem; font-size: .82rem; font-weight: 600; font-family: var(--sans);
-        border: 1px solid var(--border-strong); border-radius: 999px; background: var(--card); color: var(--text); cursor: pointer;
+      .sort-pop { position: relative; }
+      #sort-btn { display: inline-flex; align-items: center; gap: .4rem; }
+      .sort-caret { font-size: .6rem; color: var(--muted); }
+      #sort-btn[aria-expanded="true"] .sort-caret { transform: rotate(180deg); }
+      .sort-menu {
+        position: absolute; right: 0; top: calc(100% + .4rem); z-index: 60; min-width: 11rem;
+        background: var(--card); border: 1px solid var(--border-strong); border-radius: .8rem;
+        box-shadow: var(--shadow-hover); padding: .4rem; display: flex; flex-direction: column; gap: .1rem;
       }
-      .sort-select:hover { border-color: var(--brand); }
+      .sort-opt {
+        text-align: left; padding: .4rem .6rem; border-radius: .5rem; font-size: .86rem; font-family: var(--sans);
+        background: none; border: none; color: var(--text); cursor: pointer; white-space: nowrap;
+      }
+      .sort-opt:hover { background: var(--bg-alt); }
+      .sort-opt.active { background: var(--brand-wash); color: var(--brand-3); font-weight: 600; }
+      #sort-dir { min-width: 4.4rem; }
       #sort-dir:disabled { opacity: .45; cursor: not-allowed; }
       /* Honest sparsity (T53): a dimmed dash that invites a contribution. */
       a.empty-cell { color: var(--muted); opacity: .45; text-decoration: none; cursor: help; }
@@ -758,6 +777,9 @@
       .lg-front { color: var(--muted); }
       .lg-front .lg-ring { display: inline-block; width: 11px; height: 11px; border-radius: 999px;
         border: 1.8px solid var(--brand); box-sizing: border-box; }
+      /* Single active leaderboard (T68) — chip-selected, so cap its width instead
+         of letting one 3-column table stretch the full band. */
+      .lb-card { max-width: 480px; }
       table.lb { width: 100%; border-collapse: collapse; }
       table.lb td { padding: .4rem .55rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
       table.lb tr:last-child td { border-bottom: none; }

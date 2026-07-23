@@ -110,19 +110,46 @@ const SORT_OPTS: Array<[string, string]> = [
   ["context", "Context"], ["output", "Max output"], ["dims", "Embed dims"],
   ["price", "Price"], ["intelligence", "Intelligence"], ["speed", "Speed"], ["params", "Params"],
 ];
+// A native <select>'s open list is OS-drawn and can't be themed, so this is a
+// custom button + popover (T69) styled to the page, like the retired column menu.
+let sortMenuWired = false;
+function closeSortMenu() {
+  byId("sort-menu").setAttribute("hidden", "");
+  byId("sort-btn").setAttribute("aria-expanded", "false");
+}
 export function buildSortControl() {
-  const sel = byId("sort-by");
-  sel.innerHTML = SORT_OPTS.map(([v, l]) => `<option value="${v}"${(state.sortKey || "") === v ? " selected" : ""}>${l}</option>`).join("");
-  sel.onchange = () => {
-    state.sortKey = sel.value || null;
+  const cur = SORT_OPTS.find(([v]) => v === (state.sortKey || "")) ?? SORT_OPTS[0];
+  const btn = byId("sort-btn");
+  btn.innerHTML = `${cur[1]} <span class="sort-caret" aria-hidden="true">▾</span>`;
+  const menu = byId("sort-menu");
+  menu.innerHTML = SORT_OPTS.map(([v, l]) => {
+    const on = v === (state.sortKey || "");
+    return `<button type="button" class="sort-opt${on ? " active" : ""}" role="option" aria-selected="${on}" data-sort="${v}">${l}</button>`;
+  }).join("");
+  btn.onclick = () => {
+    const show = menu.hasAttribute("hidden");
+    menu.toggleAttribute("hidden", !show);
+    btn.setAttribute("aria-expanded", String(show));
+  };
+  menu.onclick = (e) => {
+    const opt = (e.target as HTMLElement).closest("[data-sort]") as HTMLElement | null;
+    if (!opt) return;
+    state.sortKey = opt.dataset.sort || null;
     if (!state.sortKey) state.sortDir = 1;
-    buildSortControl(); resetAndRender(); writeCurrentState();
+    closeSortMenu(); buildSortControl(); resetAndRender(); writeCurrentState();
   };
   const dir = byId("sort-dir");
   dir.disabled = !state.sortKey;
   dir.textContent = state.sortDir === 1 ? "↑ Asc" : "↓ Desc";
   dir.setAttribute("aria-label", state.sortDir === 1 ? "Sort ascending" : "Sort descending");
   dir.onclick = () => { state.sortDir = state.sortDir === 1 ? -1 : 1; buildSortControl(); resetAndRender(); writeCurrentState(); };
+  if (!sortMenuWired) {   // close on outside click / Esc (attached once)
+    sortMenuWired = true;
+    document.addEventListener("click", (e) => {
+      if (!byId("sort-menu").hasAttribute("hidden") && !(e.target as Element).closest(".sort-pop")) closeSortMenu();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSortMenu(); });
+  }
 }
 
 export function facetChip(label: string, count: number, active: boolean, onToggle: () => void) {

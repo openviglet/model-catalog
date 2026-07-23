@@ -14,7 +14,7 @@ import {
 } from "./constants.js";
 import {
   vendorLabel, vendorColor, initials, vendorGlyph, tierBadge, useCaseChips,
-  fmtTokens, fmtParams, priceParts, correctionUrl, tierRank,
+  fmtTokens, fmtParams, priceParts, correctionUrl, tierRank, icon,
 } from "./format.js";
 import { updateRailActive } from "./controls.js";
 import { classify } from "../sdk/model-catalog-client.js";
@@ -51,7 +51,7 @@ export function cardHtml(m: ModelEntry) {
   const metrics = FACT_KEYS.filter((k) => COLS[k].present(m)).map((k) => {
     const c = COLS[k];
     const title = c.caveat ? `${c.label} — ${c.caveat}` : c.label;
-    return `<span class="chip${c.plain ? "" : " num"}" title="${title}">${c.value(m)}</span>`;
+    return `<span class="metric${c.plain ? " plain" : ""}" title="${title}">${icon(c.icon(m))}<span class="mval">${c.value(m)}</span></span>`;
   }).join("");
   const metricsRow = metrics
     ? `<div class="mcard-metrics">${metrics}</div>`
@@ -188,16 +188,16 @@ export const HAS_FN: Record<string, (m: ModelEntry) => boolean> = {
 // Each card metric: a tooltip `label` (+ optional `caveat`), a `present` predicate
 // (absent fields are omitted from the card, never shown as "—"), and a bare `value`
 // string. `plain` renders a neutral chip instead of the orange numeric one.
-interface Column { label: string; present: (m: ModelEntry) => boolean; value: (m: ModelEntry) => string; caveat?: string; plain?: boolean; }
+interface Column { label: string; present: (m: ModelEntry) => boolean; value: (m: ModelEntry) => string; icon: (m: ModelEntry) => string; caveat?: string; plain?: boolean; }
 export const COLS: Record<string, Column> = {
-  context:      { label: "Context window (tokens)", present: (m) => !!m.contextWindow, value: (m) => fmtTokens(m.contextWindow!) },
-  output:       { label: "Max output (tokens)", present: (m) => !!m.maxOutputTokens, value: (m) => fmtTokens(m.maxOutputTokens!) },
-  dims:         { label: "Embedding dimensions", present: (m) => !!m.embeddingDimensions, value: (m) => String(m.embeddingDimensions) },
-  price:        { label: "Indicative US list price / 1M — input · output", caveat: PRICE_CAVEAT, present: (m) => priceParts(m.pricing).length > 0, value: (m) => priceParts(m.pricing).map(([v]) => v).join(" · ") },
-  intelligence: { label: "Intelligence index (cited)", caveat: BENCH_CAVEAT, present: (m) => !!(m.benchmarks && m.benchmarks.intelligenceIndex != null), value: (m) => String(m.benchmarks!.intelligenceIndex) },
-  speed:        { label: "Throughput (tokens / sec, cited)", caveat: PERF_CAVEAT, present: (m) => !!(m.performance && m.performance.throughputTps != null), value: (m) => m.performance!.throughputTps + " tok/s" },
-  params:       { label: "Parameters", present: (m) => m.parameters != null, value: (m) => fmtParams(m.parameters!) },
-  weights:      { label: "Open weights vs proprietary", present: (m) => m.openWeights != null, value: (m) => m.openWeights ? "Open" : "Proprietary", plain: true },
+  context:      { label: "Context window (tokens)", icon: () => "context", present: (m) => !!m.contextWindow, value: (m) => fmtTokens(m.contextWindow!) },
+  output:       { label: "Max output (tokens)", icon: () => "output", present: (m) => !!m.maxOutputTokens, value: (m) => fmtTokens(m.maxOutputTokens!) },
+  dims:         { label: "Embedding dimensions", icon: () => "dims", present: (m) => !!m.embeddingDimensions, value: (m) => String(m.embeddingDimensions) },
+  price:        { label: "Indicative US list price / 1M — input · output", icon: () => "price", caveat: PRICE_CAVEAT, present: (m) => priceParts(m.pricing).length > 0, value: (m) => priceParts(m.pricing).map(([v]) => v).join(" · ") },
+  intelligence: { label: "Intelligence index (cited)", icon: () => "intelligence", caveat: BENCH_CAVEAT, present: (m) => !!(m.benchmarks && m.benchmarks.intelligenceIndex != null), value: (m) => String(m.benchmarks!.intelligenceIndex) },
+  speed:        { label: "Throughput (tokens / sec, cited)", icon: () => "speed", caveat: PERF_CAVEAT, present: (m) => !!(m.performance && m.performance.throughputTps != null), value: (m) => m.performance!.throughputTps + " tok/s" },
+  params:       { label: "Parameters", icon: () => "params", present: (m) => m.parameters != null, value: (m) => fmtParams(m.parameters!) },
+  weights:      { label: "Open weights vs proprietary", icon: (m) => m.openWeights ? "unlock" : "lock", present: (m) => m.openWeights != null, value: (m) => m.openWeights ? "Open" : "Proprietary", plain: true },
 };
 
 export function globalSort(rows: ModelEntry[]) {

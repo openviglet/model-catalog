@@ -42,8 +42,8 @@
           Model Catalog
         </a>
         <div class="nav-links">
-          <a href="#browse" class="nav-hide-sm">Explore</a>
           <a href="#decide" class="nav-hide-sm">Decide</a>
+          <a href="#browse" class="nav-hide-sm">Explore</a>
           <a href="#analytics" class="nav-hide-sm">Analytics</a>
           <a href="#api" class="nav-hide-sm">API</a>
           <button type="button" class="icon-btn" id="palbtn" title="Command palette (Ctrl / ⌘ K)" aria-label="Open command palette">⌘K</button>
@@ -59,8 +59,8 @@
            plus GitHub (the "Star" button, which is hidden < 720px). SDKs / Contribute
            live in the footer on both desktop and mobile, so they stay out of here. -->
       <div class="nav-menu" id="navmenu" hidden>
-        <a href="#browse">Explore</a>
         <a href="#decide">Decide</a>
+        <a href="#browse">Explore</a>
         <a href="#analytics">Analytics</a>
         <a href="#api">API</a>
         <a href="https://github.com/openviglet/model-catalog" target="_blank" rel="noopener">GitHub ↗</a>
@@ -171,7 +171,8 @@
           <div class="chart" id="frontier"></div>
           <p class="chart-note">Log price axis. The dashed line is the <strong>price/intelligence frontier</strong> — models where nothing cheaper is also smarter. Click a dot for the full record. Intelligence is a cited third-party index, not our verdict.</p>
         </div>
-        <div class="grid grid-2" id="leaderboards"></div>
+        <div class="atabs" role="tablist" id="lb-tabs" aria-label="Leaderboards" hidden></div>
+        <div id="leaderboards"></div>
       </div>
     </section>
 
@@ -193,8 +194,11 @@
           <div class="filters" id="filters"></div>
           <div class="filters groupby-ctl" id="groupby" role="group" aria-label="Group results by"></div>
           <div class="sort-ctl">
-            <label class="sort-lbl" for="sort-by">Sort</label>
-            <select id="sort-by" class="sort-select" aria-label="Sort models by"></select>
+            <span class="sort-lbl">Sort</span>
+            <div class="sort-pop">
+              <button type="button" class="chooser-btn" id="sort-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Sort models by" title="Sort models by"></button>
+              <div class="sort-menu" id="sort-menu" role="listbox" aria-label="Sort models by" hidden></div>
+            </div>
             <button type="button" class="chooser-btn" id="sort-dir" title="Toggle sort direction">↑ Asc</button>
           </div>
         </div>

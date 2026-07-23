@@ -175,15 +175,31 @@ export function lbValue(b: Leaderboard, v: number) {
   if (b.metric === "pricing.inputPer1M") return "$" + v;
   return v >= 100 ? Math.round(v) : v;
 }
+// The 9 leaderboards are tucked behind chips (same visual as the analytics tabs)
+// so the price×intelligence scatter stays the section's focus instead of being
+// buried under a tall grid of tables — only the active board renders (T68).
+let lbActive: string | null = null;
+export function selectLeaderboardTab(key: string) {
+  lbActive = key;
+  qsa(".lbtab").forEach((t) => t.classList.toggle("active", t.dataset.lbtab === key));
+  qsa(".lbpanel").forEach((p) => { p.hidden = p.dataset.lbpanel !== key; });
+}
 export function renderLeaderboards(data: Leaderboards | null) {
   if (!data || !Array.isArray(data.leaderboards) || !data.leaderboards.length) return false;
-  byId("leaderboards").innerHTML = data.leaderboards.map((b) => {
-    const rows = b.entries.map((e, i) =>
-      `<tr data-key="${e.vendor}/${e.id}"><td class="lb-rank">${i + 1}</td><td><span class="mid">${e.id}</span><div class="lbl">${vendorGlyph(e.vendor, 11)} ${vendorLabel(e.vendor)}</div></td><td class="col-num"><span class="chip num">${lbValue(b, e.value)}</span></td></tr>`).join("");
-    return `<div class="feat chart-card"><h3>${b.label} <span class="lbl">${b.population}/${b.total}</span></h3>
+  const tabs = data.leaderboards.map((b, i) =>
+    `<button type="button" class="atab lbtab" role="tab" data-lbtab="${i}">${b.label}</button>`).join("");
+  const panels = data.leaderboards.map((b, i) => {
+    const rows = b.entries.map((e, r) =>
+      `<tr data-key="${e.vendor}/${e.id}"><td class="lb-rank">${r + 1}</td><td><span class="mid">${e.id}</span><div class="lbl">${vendorGlyph(e.vendor, 11)} ${vendorLabel(e.vendor)}</div></td><td class="col-num"><span class="chip num">${lbValue(b, e.value)}</span></td></tr>`).join("");
+    return `<div class="lbpanel" data-lbpanel="${i}" role="tabpanel" hidden>
+      <div class="feat chart-card lb-card"><h3>${b.label} <span class="lbl">${b.population}/${b.total}</span></h3>
       <div class="table-scroll"><table class="lb"><tbody>${rows}</tbody></table></div>
-      <p class="chart-note">${b.unit} · ${b.order === "asc" ? "lower is better" : "higher is better"} — indicative/cited, verify at the source</p></div>`;
+      <p class="chart-note">${b.unit} · ${b.order === "asc" ? "lower is better" : "higher is better"} — indicative/cited, verify at the source</p></div></div>`;
   }).join("");
+  byId("lb-tabs").innerHTML = tabs;
+  byId("lb-tabs").hidden = false;
+  byId("leaderboards").innerHTML = panels;
+  selectLeaderboardTab(lbActive ?? "0");
   return true;
 }
 

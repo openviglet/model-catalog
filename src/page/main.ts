@@ -14,7 +14,7 @@ import {
 } from "./controls.js";
 import {
   renderDashboard, renderCoverage, renderPlans, renderSources,
-  renderFrontier, renderLeaderboards, selectAnalyticsTab,
+  renderFrontier, renderLeaderboards, selectAnalyticsTab, selectLeaderboardTab,
 } from "./panels.js";
 import { ModelCatalogClient } from "../sdk/model-catalog-client.js";
 import { initAsk } from "./ask.js";
@@ -199,6 +199,10 @@ document.addEventListener("click", (e) => {
 byId("atabs").addEventListener("click", (e) => {
   const t = elClosest(e, ".atab");
   if (t) selectAnalyticsTab(t.dataset.atab ?? "");
+});
+byId("lb-tabs").addEventListener("click", (e) => {
+  const t = elClosest(e, ".lbtab");
+  if (t) selectLeaderboardTab(t.dataset.lbtab ?? "");
 });
 
 /* ── Compact mobile menu (T57) ─────────────────── */
