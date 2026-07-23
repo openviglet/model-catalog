@@ -84,6 +84,23 @@ export function initAsk(): void {
     autoGrow();
     ask(endpoint, locale, q);
   });
+  byId("ask-clear").addEventListener("click", resetConversation);
+}
+
+/** Reset to the initial state: empty thread, example chips back, empty input. */
+function resetConversation(): void {
+  if (busy) return;
+  items.length = 0;
+  wire.length = 0;
+  const answer = byId("ask-answer");
+  answer.innerHTML = "";
+  answer.hidden = true;
+  byId("ask-clear").hidden = true;
+  byId("ask-examples").hidden = false;
+  const qEl = byId("ask-q");
+  qEl.value = "";
+  autoGrow();
+  qEl.focus();
 }
 
 /** Grow the question textarea to fit its content (capped by its CSS max-height).
@@ -164,6 +181,8 @@ async function ask(endpoint: string, locale: string, raw: string): Promise<void>
   items.push(turnHtml("user", esc(q)));
   wire.push({ role: "user", content: q });
   qEl.value = ""; autoGrow();
+  byId("ask-examples").hidden = true; // starters give way to the conversation
+  byId("ask-clear").hidden = false;   // offer a reset once a conversation exists
   byId("ask-answer").hidden = false;
   renderThread(true);
   try {

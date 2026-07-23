@@ -345,8 +345,9 @@
         color: var(--muted); cursor: pointer; transition: all .12s;
       }
       .ask-ex:hover { border-color: var(--brand); color: var(--text); }
+      .ask-toolbar { display: flex; justify-content: flex-end; max-width: 46rem; margin: 1.2rem auto 0; }
       .ask-answer {
-        max-width: 46rem; margin: 1.4rem auto 0; padding: 1.3rem 1.5rem;
+        max-width: 46rem; margin: .6rem auto 0; padding: 1.3rem 1.5rem;
         background: var(--card); border: 1px solid var(--border); border-radius: 1rem;
         box-shadow: var(--shadow-card);
       }

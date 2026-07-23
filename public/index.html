@@ -113,6 +113,13 @@
           <h2>Ask the catalog</h2>
           <p>Ask in plain language and get a <strong>grounded</strong> answer with a <strong>cited</strong> deep-link to every model it names — one click from claim to evidence. The answer comes from a separate structured-RAG backend reading this catalog's data; nothing is invented. Prices &amp; benchmarks stay <strong>indicative / cited</strong> — verify at the source.</p>
         </div>
+        <!-- Chat layout (T63): the conversation thread sits above the input, so as
+             the dialogue grows the question box stays at the bottom like a chat app. -->
+        <div class="ask-toolbar">
+          <button type="button" class="mini-btn" id="ask-clear" hidden>↺ New conversation</button>
+        </div>
+        <div class="ask-answer" id="ask-answer" hidden aria-live="polite"></div>
+        <div class="ask-examples" id="ask-examples" aria-label="Example questions"></div>
         <form class="ask-form" id="ask-form">
           <div class="ask-input">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4" stroke-linecap="round"/></svg>
@@ -120,8 +127,6 @@
           </div>
           <button type="submit" class="btn btn-primary" id="ask-send">Ask</button>
         </form>
-        <div class="ask-examples" id="ask-examples" aria-label="Example questions"></div>
-        <div class="ask-answer" id="ask-answer" hidden aria-live="polite"></div>
       </div>
     </section>
 
