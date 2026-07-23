@@ -1,7 +1,7 @@
-# Last task number — `T69` · next block letter — `P`
+# Last task number — `T70` · next block letter — `P`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T70`; after assigning it, bump the number above and the log line below.
+> `T71`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T70 SHIPPED** (Block M — sharpen query-manifest benchmark field DESCRIPTIONS so the vectorless RAG stops treating a math sub-score (93.4) as the intelligence index (23.8): intelligenceIndex flagged THE ranking metric + domain scores flagged NOT-the-index, +math/reasoning descriptions; data/schema unchanged, 41 tests green; pairs w/ Turing T799) — 2026-07-23.
 - **T69 SHIPPED** (Block O §O3 — card metric polish: label-less value chips → inline-SVG icon + bare value [zero-dep icon() set in format.ts, Feather/Lucide-style, no font/CDN; context/output/dims/price/intelligence/speed/params/weights glyphs, weights lock/unlock; meaning in title tooltip], + Sort control native <select> → themed custom button+popover [buildSortControl, closes on outside-click/Esc]; page-only zero-dep, typecheck+build+41 tests+smoke green) — 2026-07-23.
 - **T68 SHIPPED** (Block O §O2 — Browse table → responsive model card grid: each model a card with all recorded fields (absent omitted), sorting moved to an explicit field select + direction toggle (URL sort= unchanged), filter rail collapsed by default; retired column chooser/colChoice/cols param + sortable th machinery (thFor/theadRow/onHeader/stepSort/rowHtml/tableFor) + <720px row-to-card CSS; card click/flash/pin retargeted tr→.mcard; page-only zero-dep, typecheck+build+41 tests+card/sort/group smoke green) — 2026-07-23.
 - **T67 SHIPPED** (Block O §O1 — Browse at scale: client-side pagination (50/page, windowed pager, resetAndRender snaps to page 1 on result-set change, grouped views unpaged) + collapsible filter rail (localStorage-persisted, active-count on toggle) + denser table (nowrap Kind cell, sticky Model column, tighter padding); page-only zero-dep, typecheck+build+render-smoke green. **New Block O.**) — 2026-07-23.
