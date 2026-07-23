@@ -14,6 +14,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildContextTxt, buildQueryManifest } from "./query-manifest.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(here, "..");
@@ -254,6 +255,8 @@ const endpoints = {
   feed: `${SOURCE_URL}/feed.xml`,
   csv: `${SOURCE_URL}/catalog.csv`,
   ndjson: `${SOURCE_URL}/catalog.ndjson`,
+  queryManifest: `${SOURCE_URL}/query-manifest.json`,
+  context: `${SOURCE_URL}/context.txt`,
   aliases: `${SOURCE_URL}/aliases.json`,
   badge: `${SOURCE_URL}/badge.json`,
   llms: `${SOURCE_URL}/llms.txt`,
@@ -826,6 +829,15 @@ write("changes.json", changes); // change feed (T22)
 writeFileSync(resolve(OUT_DIR, "feed.xml"), feedXml, "utf8"); // Atom feed (T22)
 writeFileSync(resolve(OUT_DIR, "catalog.csv"), catalogCsv, "utf8"); // flat export (T23)
 writeFileSync(resolve(OUT_DIR, "catalog.ndjson"), catalogNdjson, "utf8"); // streaming export (T23)
+// Structured-RAG artifacts (Block M): the field manifest a vectorless/structured
+// RAG declares its schema from (T59), and the token-budgeted stuff-all digest (T60).
+write("query-manifest.json", buildQueryManifest(flat, {
+  source: SOURCE_URL,
+  schemaVersion: "1",
+  generatedAt: root.lastUpdated,
+}));
+writeFileSync(resolve(OUT_DIR, "context.txt"),
+  buildContextTxt(flat, { source: SOURCE_URL, lastUpdated: root.lastUpdated }), "utf8");
 write("aliases.json", aliases); // alias → canonical map (T25)
 if (plansPublished) {
   write("plans.json", plansPublished); // consumer subscription plans (T33)
@@ -849,7 +861,7 @@ write("endpoints.json", endpoints); // discovery manifest
 
 console.log(
   `emit-model-catalog: wrote catalog.json + catalog-v${root.version}.json + schema + index.json + stats.json + coverage.json + ` +
-    `changes.json + feed.xml + catalog.csv + catalog.ndjson + aliases.json + ${presentKinds.length} by-kind + ${Object.keys(byVendor).length} by-vendor + ` +
+    `changes.json + feed.xml + catalog.csv + catalog.ndjson + query-manifest.json + context.txt + aliases.json + ${presentKinds.length} by-kind + ${Object.keys(byVendor).length} by-vendor + ` +
     `${presentCaps.length} by-capability + ${presentModalities.length} by-modality slices + endpoints.json ` +
     `(${Object.keys(vendors).length} vendors, ${count} models) to ${OUT_DIR}`,
 );

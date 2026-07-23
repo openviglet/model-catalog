@@ -14,7 +14,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "emit": "node scripts/emit.mjs",
     "build": "tsc -p tsconfig.json && node scripts/emit.mjs",
-    "test": "node --test pipeline/regen.test.mjs"
+    "test": "node --test pipeline/regen.test.mjs scripts/query-manifest.test.mjs"
   },
   "files": ["catalog", "pipeline", "scripts", "src/page", "public/index.html", "public/styles.css", "docs"],
   "devDependencies": {
