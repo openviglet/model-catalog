@@ -2,16 +2,15 @@
    buttons, the client boot (catalog + analytics), and all top-level event wiring. */
 import { byId, qs, qsa, elClosest, toast } from "./dom.js";
 import { state, pinned } from "./state.js";
-import { COL_ORDER } from "./constants.js";
 import { debounce } from "./format.js";
-import { render, resetAndRender, onHeader } from "./table.js";
+import { render, resetAndRender } from "./table.js";
 import {
   closeDrawerByUser, closeCompareByUser, syncPinButtons, updateTray,
   togglePin, unpin, openPalette, closePalette, renderPalette, palMove,
   selectEntry, buildPaletteIndex,
 } from "./detail.js";
 import {
-  applyHash, writeCurrentState, clearFilters, buildPresets, buildColMenu, syncRailToggle,
+  applyHash, writeCurrentState, clearFilters, buildPresets, syncRailToggle,
 } from "./controls.js";
 import {
   renderDashboard, renderCoverage, renderPlans, renderSources,
@@ -92,17 +91,16 @@ client.load()
     // Row click → navigate to the model permalink (hashchange opens the drawer).
     // Skip clicks on the permalink anchor (handled separately) and vendor headers.
     byId("list").addEventListener("click", (e) => {
-      const th = elClosest(e, "th[data-col]");
-      if (th) { onHeader(th); return; }
       const pg = elClosest(e, "[data-page]");   // pager button (T67)
       if (pg) { state.page = +(pg.dataset.page ?? "1"); render(); byId("list").scrollIntoView({ block: "start" }); return; }
       if (elClosest(e, ".permalink") || elClosest(e, "[data-pin]") || elClosest(e, ".vendor-head")) return;
-      const tr = elClosest(e, "tr[data-key]");
-      if (tr) location.hash = "#" + encodeURI(tr.dataset.key ?? "");
+      const card = elClosest(e, "[data-key]");   // model card (T68)
+      if (card) location.hash = "#" + encodeURI(card.dataset.key ?? "");
     });
     byId("list").addEventListener("keydown", (e) => {
-      const th = elClosest(e, "th[data-col]");
-      if (th && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onHeader(th); }
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = elClosest(e, ".mcard[data-key]");
+      if (card) { e.preventDefault(); location.hash = "#" + encodeURI(card.dataset.key ?? ""); }
     });
     applyHash(); // build filters + render, honoring any deep-linked state/permalink
     // Aggregate/registry datasets via the SDK's typed accessors (T47), not raw
@@ -192,39 +190,10 @@ byId("tray-go").onclick = () => {
 // Pin / unpin via delegation (row buttons + tray/modal ✕ chips).
 document.addEventListener("click", (e) => {
   const pinBtn = elClosest(e, "[data-pin]");
-  if (pinBtn) { const tr = pinBtn.closest("tr[data-key]"); if (tr) togglePin((tr as HTMLElement).dataset.key ?? ""); return; }
+  if (pinBtn) { const card = pinBtn.closest("[data-key]"); if (card) togglePin((card as HTMLElement).dataset.key ?? ""); return; }
   const un = elClosest(e, "[data-unpin]");
   if (un) unpin(un.getAttribute("data-unpin") ?? "");
 });
-
-/* ── Column chooser wiring (T52) ───────────────── */
-(function () {
-  const btn = byId("cols-btn");
-  const menu = byId("col-menu");
-  const chooser = byId("col-chooser");
-  btn.onclick = () => {
-    const opening = menu.hidden;
-    if (opening) buildColMenu();
-    menu.hidden = !opening;
-    btn.setAttribute("aria-expanded", String(opening));
-  };
-  menu.addEventListener("change", (e) => {
-    if (!elClosest(e, "[data-col-key]")) return;
-    state.colChoice = COL_ORDER.filter((k) => (menu.querySelector(`[data-col-key="${k}"]`) as HTMLInputElement).checked);
-    render(); writeCurrentState();
-  });
-  menu.addEventListener("click", (e) => {
-    if (!elClosest(e, "[data-cols-default]")) return;
-    state.colChoice = null; buildColMenu(); render(); writeCurrentState();
-  });
-  // Close on outside click / Esc.
-  document.addEventListener("click", (e) => {
-    if (!menu.hidden && !chooser.contains(e.target as Node)) { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !menu.hidden) { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); }
-  });
-})();
 
 /* ── Analytics tab wiring (T55) ────────────────── */
 byId("atabs").addEventListener("click", (e) => {
@@ -248,12 +217,13 @@ byId("atabs").addEventListener("click", (e) => {
 })();
 
 /* ── Rail collapse toggle (T67) ────────────────── */
-/* The filters rail eats a fixed 15.5rem; collapsing it lets the table use the
-   full width. The choice persists in localStorage (a view pref, not filter state,
-   so it stays out of the shareable URL). */
+/* The filters rail is COLLAPSED BY DEFAULT (T68) so the card grid gets the full
+   width; it opens on demand. The choice persists in localStorage (a view pref,
+   not filter state, so it stays out of the shareable URL) — only an explicit
+   "0" (the user expanded it) keeps it open on the next visit. */
 (function () {
   const KEY = "mc-rail";
-  if (localStorage.getItem(KEY) === "1") byId("browse-layout").classList.add("rail-collapsed");
+  if (localStorage.getItem(KEY) !== "0") byId("browse-layout").classList.add("rail-collapsed");
   syncRailToggle();
   byId("rail-toggle").onclick = () => {
     const collapsed = byId("browse-layout").classList.toggle("rail-collapsed");

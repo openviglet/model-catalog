@@ -98,13 +98,13 @@
 > gains one dev dependency (`typescript`) while the pipeline and SDKs stay strictly
 > zero-dependency (see [CHANGELOG.md](CHANGELOG.md) → Block N).
 
-> **Block O — Browse at scale** shipped in full — the flat Browse table became
-> usable at 246+ rows without new dependencies: client-side pagination (50/page with
-> a windowed pager, page reset on any filter/sort/search change, grouped views left
-> unpaged), a collapsible filter rail (`localStorage`-persisted, full-width table when
-> hidden, active-count surfaced on the toggle), and a denser table that fits its
-> columns (tighter padding, sticky Model column, inline Kind + tier)
-> (see [CHANGELOG.md](CHANGELOG.md) → Block O).
+> **Block O — Browse at scale** shipped in full — Browse was reworked for 246+
+> models without new dependencies: client-side pagination (50/page with a windowed
+> pager, page reset on any filter/sort/search change, grouped views left unpaged)
+> (T67); then the fixed-column table — whose columns overflowed and clipped price —
+> became a **responsive card grid**, each card showing all of a model's recorded
+> fields, with sorting moved to an explicit field + direction control and the filter
+> rail collapsed by default (T68) (see [CHANGELOG.md](CHANGELOG.md) → Block O).
 
 ## Block G — Static-site expansion & indexing
 

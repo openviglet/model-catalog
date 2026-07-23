@@ -27,7 +27,7 @@ export function openModel(key: string) {
   d.classList.add("open"); d.setAttribute("aria-hidden", "false");
   byId("dbackdrop").classList.add("show");
   d.focus();
-  const el = qs(`tr[data-key="${CSS.escape(key)}"]`);
+  const el = qs(`.mcard[data-key="${CSS.escape(key)}"]`);
   if (el) {
     el.scrollIntoView({ behavior: "smooth", block: "center" });
     el.classList.remove("row-hl"); el.getBoundingClientRect(); el.classList.add("row-hl");
@@ -113,8 +113,8 @@ export function unpin(key: string) {
 }
 export function syncPinButtons() {
   qsa("[data-pin]").forEach((b) => {
-    const tr = b.closest("tr[data-key]");
-    if (tr) b.setAttribute("aria-pressed", String(pinned.has((tr as HTMLElement).dataset.key ?? "")));
+    const card = b.closest("[data-key]");
+    if (card) b.setAttribute("aria-pressed", String(pinned.has((card as HTMLElement).dataset.key ?? "")));
   });
 }
 export function updateTray() {

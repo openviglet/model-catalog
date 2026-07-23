@@ -102,8 +102,11 @@
          page module (src/page/ask.ts); citation ids resolve to the T17 drawer.
          Enabled with "default" → the turing-demo.viglet.org catalog copilot (which
          already ingests this catalog's query-manifest.json/context.txt); clear the
-         attribute to disable and keep the site fully self-contained. -->
-    <section class="block" id="ask" hidden data-ask-endpoint="default">
+         attribute to disable and keep the site fully self-contained.
+         `data-ask-locale` MUST match the backend site-instance locale the catalog is
+         ingested under (default en-US) — retrieval is locale-scoped, so a mismatch
+         (e.g. sending the visitor's browser language) returns zero hits. -->
+    <section class="block" id="ask" hidden data-ask-endpoint="default" data-ask-locale="en-US">
       <div class="wrap">
         <div class="sec-head">
           <div class="kicker">Ask</div>
@@ -178,20 +181,21 @@
         <div class="sec-head">
           <div class="kicker">Explore</div>
           <h2>Browse the catalog</h2>
-          <p>Search, filter by kind, capability or modality, and click a column header to sort <strong>across every vendor at once</strong>. Optionally group the results by vendor, kind or tier — or press <kbd>⌘K</kbd> to jump anywhere.</p>
+          <p>Search, filter by kind, capability or modality, and use <strong>Sort</strong> to rank <strong>across every vendor at once</strong>. Each model is a card showing all of its recorded fields; optionally group the results by vendor, kind or tier — or press <kbd>⌘K</kbd> to jump anywhere.</p>
           <p class="lbl">Each model shows a <strong>use-case</strong> tag (derived from its kind, capabilities and modalities) and, when priced, a coloured <strong>tier</strong> — <span class="chip" style="background:#c2410c;color:#fff;border-color:transparent">Frontier</span> <span class="chip" style="background:#ea580c;color:#fff;border-color:transparent">High</span> <span class="chip" style="background:#64748b;color:#fff;border-color:transparent">Mid</span> <span class="chip" style="background:#0891b2;color:#fff;border-color:transparent">Light</span> — bucketed from the vendor's US list price as a market proxy for capability (not a benchmark or quality score).</p>
         </div>
         <div class="controls">
-          <button type="button" class="chooser-btn" id="rail-toggle" aria-expanded="true" aria-controls="rail" title="Show or hide the filters rail">◧ Hide filters</button>
+          <button type="button" class="chooser-btn" id="rail-toggle" aria-expanded="false" aria-controls="rail" title="Show or hide the filters rail">☰ Filters</button>
           <div class="search-wrap">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4" stroke-linecap="round"/></svg>
             <input id="q" type="search" placeholder="Search id, label or vendor…" autocomplete="off" />
           </div>
           <div class="filters" id="filters"></div>
           <div class="filters groupby-ctl" id="groupby" role="group" aria-label="Group results by"></div>
-          <div class="col-chooser" id="col-chooser">
-            <button type="button" class="chooser-btn" id="cols-btn" aria-expanded="false" aria-haspopup="true" title="Choose columns">⋮ Columns</button>
-            <div class="col-menu" id="col-menu" hidden></div>
+          <div class="sort-ctl">
+            <label class="sort-lbl" for="sort-by">Sort</label>
+            <select id="sort-by" class="sort-select" aria-label="Sort models by"></select>
+            <button type="button" class="chooser-btn" id="sort-dir" title="Toggle sort direction">↑ Asc</button>
           </div>
         </div>
         <div class="browse-layout" id="browse-layout">

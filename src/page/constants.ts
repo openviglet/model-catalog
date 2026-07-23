@@ -40,17 +40,10 @@ export const TIER_ORDER: string[] = ["Frontier", "High", "Mid", "Light"]; // T38
 export const ISSUE_NEW = "https://github.com/openviglet/model-catalog/issues/new";
 export const TIER_BG: Record<string, string> = { Frontier: "#c2410c", High: "#ea580c", Mid: "#64748b", Light: "#0891b2" };
 export const TIER_HINT = "Tier bucketed from the vendor's US list price (input / 1M) — a market signal for capability, not a benchmark or quality score.";
-export const PAGE_SIZE = 50; // rows per page in the flat (ungrouped) Browse view (T67)
+export const PAGE_SIZE = 50; // models per page in the flat (ungrouped) Browse view (T67)
+// Order of the decision fields shown on each model card (T68); "tags" renders as
+// a chip row, the rest as label/value facts.
 export const COL_ORDER: string[] = ["tags", "context", "output", "dims", "price", "intelligence", "speed", "params", "weights"];
-export const NUMERIC_COLS = new Set(["context", "output", "dims", "price", "intelligence", "speed", "params"]); // right-aligned
-// Kind-aware lean defaults (used when the user hasn't chosen columns explicitly).
-export const DEFAULT_COLS: Record<string, string[]> = {
-  CHAT: ["tags", "context", "price", "intelligence"],
-  EMBEDDING: ["dims", "context", "price"],
-  RERANK: ["context", "price"],
-  IMAGE: ["tags", "price"],
-  _: ["tags", "context", "price"],
-};
 export const PRICE_CAVEAT = "Indicative US list price per 1M tokens — a reference only, verify with the vendor.";
 export const BENCH_CAVEAT = "Cited third-party capability index — a reference to a public leaderboard, not our verdict. Verify at the source.";
 export const PERF_CAVEAT = "Cited speed metrics — a reference to a public measurement, not our benchmark. Verify at the source.";
@@ -72,9 +65,9 @@ export const PRESETS: Array<{ label: string; params: Record<string, string> }> =
   { label: "Frontier reasoning", params: { tag: "Reasoning", tier: "Frontier" } },
   { label: "Open weights", params: { tag: "Open weights" } },
   { label: "Multimodal chat", params: { kind: "CHAT", tag: "Multimodal" } },
-  { label: "Cheapest chat", params: { kind: "CHAT", has: "price", sort: "price:1", cols: "tags,context,price" } },
-  { label: "Embeddings by dimension", params: { kind: "EMBEDDING", sort: "dims:-1", cols: "dims,context,price" } },
-  { label: "Fastest", params: { has: "speed", sort: "speed:-1", cols: "tags,speed,price" } },
+  { label: "Cheapest chat", params: { kind: "CHAT", has: "price", sort: "price:1" } },
+  { label: "Embeddings by dimension", params: { kind: "EMBEDDING", sort: "dims:-1" } },
+  { label: "Fastest", params: { has: "speed", sort: "speed:-1" } },
 ];
 export const NUM_SORT: Record<string, (m: ModelEntry) => number | null | undefined> = {
   context: (m) => m.contextWindow,

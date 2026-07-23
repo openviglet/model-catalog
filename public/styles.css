@@ -249,8 +249,7 @@
       }
       .vendor-head .chev { color: var(--muted); transition: transform .18s; font-size: .8rem; }
       .vendor.collapsed .chev { transform: rotate(-90deg); }
-      .vendor.collapsed .table-scroll { display: none; }
-      .table-scroll { overflow-x: auto; }
+      .vendor.collapsed .mcard-grid { display: none; }
       table { width: 100%; border-collapse: collapse; }
       thead th {
         text-align: left; font-size: .68rem; text-transform: uppercase; letter-spacing: .06em;
@@ -260,15 +259,42 @@
       tbody td { padding: .6rem .8rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
       tbody tr:last-child td { border-bottom: none; }
       tbody tr:hover { background: color-mix(in srgb, var(--brand) 5%, transparent); }
-      /* Keep the kind badge + tier chip on one line (they were stacking) — T67. */
-      td.col-kind { white-space: nowrap; }
-      /* Pin the Model column while the rest of the row scrolls horizontally (T67).
-         Scoped to #list and disabled in the mobile card view below. */
-      #list thead th:first-child { position: sticky; left: 0; z-index: 2; background: var(--bg-alt); }
-      #list tbody td:first-child { position: sticky; left: 0; z-index: 1; background: var(--card); }
-      #list tbody tr:hover td:first-child { background: color-mix(in srgb, var(--brand) 5%, var(--card)); }
       td .mid { font-family: var(--mono); font-size: .86rem; font-weight: 500; }
       td .lbl { color: var(--muted); font-size: .8rem; margin-top: .1rem; }
+
+      /* ── Browse card grid (T68) ──────────────────────── */
+      /* Each model is a self-contained card; the grid fills the available width so
+         nothing is clipped by fixed column widths. */
+      /* stretch → every card in a row takes the row's tallest height (equal-height rows). */
+      .mcard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr)); gap: 1rem; align-items: stretch; }
+      .vendor > .mcard-grid { padding: 1rem; }
+      .mcard {
+        display: flex; flex-direction: column; gap: .7rem; min-width: 0;
+        background: var(--card); border: 1px solid var(--border); border-radius: .9rem;
+        padding: 1rem 1.05rem; box-shadow: var(--shadow-card); cursor: pointer;
+        transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+      }
+      .vendor > .mcard-grid .mcard { box-shadow: none; }
+      .mcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover);
+        border-color: color-mix(in srgb, var(--brand) 40%, var(--border)); }
+      .mcard:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+      .mcard-top { display: flex; align-items: flex-start; gap: .6rem; }
+      .mcard-top .avatar { width: 1.9rem; height: 1.9rem; border-radius: .5rem; font-size: .74rem; }
+      .mcard-title { min-width: 0; flex: 1; }
+      /* The id gets the full card width (badges now sit on their own row); break long
+         monospace ids only when they'd otherwise overflow. */
+      .mcard-idrow { display: flex; align-items: baseline; gap: .4rem; }
+      .mcard .mid { font-family: var(--mono); font-size: .9rem; font-weight: 600; overflow-wrap: anywhere; min-width: 0; }
+      .mcard-idrow .permalink, .mcard-idrow .pin { flex: none; }
+      .mcard .lbl { color: var(--muted); font-size: .8rem; margin-top: .15rem; }
+      /* One row of qualitative chips (kind · tier · use-case). */
+      .mcard-chips { display: flex; flex-wrap: wrap; gap: .3rem; align-items: center; }
+      /* One row of label-less value chips — the meaning is in each chip's tooltip.
+         Pushed to the card's bottom so equal-height cards line their metrics up. */
+      .mcard-metrics { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: auto; padding-top: .15rem; }
+      .mcard-chips .chip, .mcard-metrics .chip { margin: 0; }
+      .mcard-metrics .chip { cursor: help; }
+      .mcard-none { margin: auto 0 0; padding-top: .15rem; font-size: .82rem; }
       .badge {
         display: inline-flex; align-items: center; gap: .3rem; padding: .18rem .55rem; border-radius: 999px;
         font-size: .72rem; font-weight: 700; white-space: nowrap;
@@ -424,20 +450,19 @@
         background-size: 200% 100%; animation: shimmer 1.3s infinite; margin-bottom: 1.1rem; }
       @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-      /* ── Permalinks · row highlight · toast (T16) ────── */
-      td .model-cell { display: flex; align-items: baseline; gap: .5rem; }
+      /* ── Permalinks · card highlight · toast (T16 · T68) ── */
       .permalink {
         opacity: 0; font-family: var(--mono); font-weight: 700; color: var(--muted);
         text-decoration: none; padding: 0 .3rem; border-radius: .35rem; line-height: 1;
         transition: opacity .12s, color .12s, background .12s;
       }
-      tbody tr:hover .permalink, .permalink:focus-visible { opacity: 1; }
+      .mcard:hover .permalink, .mcard:focus-within .permalink, .permalink:focus-visible { opacity: 1; }
       .permalink:hover { color: var(--brand-3); background: var(--brand-wash); text-decoration: none; }
-      @keyframes rowFlash {
-        0%, 12% { background: color-mix(in srgb, var(--brand) 28%, transparent); }
-        100%    { background: transparent; }
+      @keyframes cardFlash {
+        0%, 12% { border-color: var(--brand); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 28%, transparent); }
+        100%    { border-color: var(--border); box-shadow: var(--shadow-card); }
       }
-      tbody tr.row-hl > td { animation: rowFlash 2.4s ease-out; }
+      .mcard.row-hl { animation: cardFlash 2.4s ease-out; }
       #toast {
         position: fixed; left: 50%; bottom: 1.6rem; transform: translateX(-50%) translateY(1.4rem);
         background: var(--text); color: var(--bg); font-size: .86rem; font-weight: 600;
@@ -506,7 +531,7 @@
         font-size: .82rem; line-height: 1; display: grid; place-items: center;
         transition: opacity .12s, color .12s, background .12s, border-color .12s;
       }
-      tbody tr:hover .pin, .pin[aria-pressed="true"], .pin:focus-visible { opacity: 1; }
+      .mcard:hover .pin, .mcard:focus-within .pin, .pin[aria-pressed="true"], .pin:focus-visible { opacity: 1; }
       .pin:hover { border-color: var(--brand); color: var(--brand-3); }
       .pin[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
       [data-theme="dark"] .pin[aria-pressed="true"] { color: #1a0e05; }
@@ -660,51 +685,23 @@
         font-weight: 700; margin-right: .1rem;
       }
       @media (max-width: 620px) { .groupby-ctl { border-left: none; padding-left: 0; } }
-      /* Column chooser (T52) — a popover of checkboxes; choice persists in the URL. */
-      .col-chooser { position: relative; margin-left: auto; }
+      /* Pill-style control buttons (rail toggle · sort direction). */
       .chooser-btn {
         padding: .45rem .8rem; font-size: .82rem; font-weight: 600; font-family: var(--sans);
         border: 1px solid var(--border-strong); border-radius: 999px; background: var(--card);
         color: var(--muted); cursor: pointer; white-space: nowrap;
       }
       .chooser-btn:hover, .chooser-btn[aria-expanded="true"] { border-color: var(--brand); color: var(--text); }
-      .col-menu {
-        position: absolute; right: 0; top: calc(100% + .45rem); z-index: 60; min-width: 12.5rem;
-        background: var(--card); border: 1px solid var(--border-strong); border-radius: .8rem;
-        box-shadow: var(--shadow-hover); padding: .5rem;
+      #rail-toggle { display: inline-flex; align-items: center; gap: .35rem; }
+      /* Sort control (T68) — field select + direction toggle, pushed to the right. */
+      .sort-ctl { display: flex; align-items: center; gap: .4rem; margin-left: auto; }
+      .sort-lbl { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; }
+      .sort-select {
+        padding: .45rem .6rem; font-size: .82rem; font-weight: 600; font-family: var(--sans);
+        border: 1px solid var(--border-strong); border-radius: 999px; background: var(--card); color: var(--text); cursor: pointer;
       }
-      .col-menu label {
-        display: flex; align-items: center; gap: .55rem; padding: .38rem .5rem; border-radius: .5rem;
-        font-size: .88rem; cursor: pointer;
-      }
-      .col-menu label:hover { background: var(--bg-alt); }
-      .col-menu input { accent-color: var(--brand); width: .95rem; height: .95rem; }
-      .col-menu-foot { border-top: 1px solid var(--border); margin-top: .4rem; padding-top: .5rem; padding-left: .5rem; }
-      .col-menu .linkish { background: none; border: none; color: var(--brand-3); font-size: .8rem; font-weight: 600; cursor: pointer; padding: 0; }
-      .col-menu .linkish:hover { text-decoration: underline; }
-      /* Numeric decision columns read better right-aligned. */
-      th.col-num, td.col-num { text-align: right; }
-      /* Card view on phones (T57) — an 8-column scrolling table is hostile < 720px, so
-         each browse row collapses into a labelled card. Scoped to #list so the analytics
-         / leaderboard / compare tables are untouched. */
-      @media (max-width: 720px) {
-        #list .table-scroll { overflow-x: visible; }
-        #list table, #list tbody, #list tr, #list td { display: block; width: auto; }
-        #list thead { display: none; }
-        #list tr[data-key] {
-          border: 1px solid var(--border); border-radius: .8rem; margin-bottom: .7rem;
-          padding: .35rem .2rem; background: var(--card);
-        }
-        #list td { border: none !important; padding: .3rem .85rem; text-align: left !important; }
-        /* The sticky first column is meaningless once rows are block cards. */
-        #list tbody td:first-child { position: static; }
-        #list td[data-label]::before {
-          content: attr(data-label) ": "; color: var(--muted); font-weight: 600; font-size: .74rem;
-        }
-        /* Let long monospace ids wrap inside the card instead of overflowing it. */
-        #list .model-cell { flex-wrap: wrap; }
-        #list .mid { word-break: break-all; }
-      }
+      .sort-select:hover { border-color: var(--brand); }
+      #sort-dir:disabled { opacity: .45; cursor: not-allowed; }
       /* Honest sparsity (T53): a dimmed dash that invites a contribution. */
       a.empty-cell { color: var(--muted); opacity: .45; text-decoration: none; cursor: help; }
       a.empty-cell:hover { opacity: 1; color: var(--brand-3); }

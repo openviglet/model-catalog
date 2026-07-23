@@ -4,8 +4,8 @@ import {
   state, facetCollapsed,
   activeCaps, activeInMods, activeOutMods, activeTags, activeTiers, activeHas,
 } from "./state.js";
-import { KINDS, KIND_LABEL, GROUP_OPTS, COL_ORDER, TIER_ORDER, PRESETS } from "./constants.js";
-import { render, resetAndRender, effectiveCols, COLS, HAS_FN } from "./table.js";
+import { KINDS, KIND_LABEL, GROUP_OPTS, TIER_ORDER, PRESETS } from "./constants.js";
+import { render, resetAndRender, HAS_FN } from "./table.js";
 import { openModel, hideDrawer, openCompare, hideCompare } from "./detail.js";
 import { classify } from "../sdk/model-catalog-client.js";
 
@@ -21,7 +21,6 @@ export function writeCurrentState() {
   if (activeTiers.size) p.set("tier", [...activeTiers].join(","));
   if (activeHas.size) p.set("has", [...activeHas].join(","));
   if (state.groupBy) p.set("group", state.groupBy);
-  if (state.colChoice !== null) p.set("cols", state.colChoice.join(","));
   if (state.sortKey) p.set("sort", state.sortKey + ":" + state.sortDir);
   const hash = p.toString();
   // replaceState: no history entry per keystroke, and never re-fires hashchange
@@ -32,14 +31,14 @@ export function resetFilters() {
   byId("q").value = ""; state.activeKind = null;
   activeCaps.clear(); activeInMods.clear(); activeOutMods.clear();
   activeTags.clear(); activeTiers.clear(); activeHas.clear();
-  state.groupBy = null; state.colChoice = null; state.sortKey = null; state.sortDir = 1;
+  state.groupBy = null; state.sortKey = null; state.sortDir = 1;
 }
 // Route the hash: explorer state (#q=…&kind=…&cap=…&in=…&out=…&tag=…&tier=…&sort=…),
 // model permalink (#vendor/id), or a bare section anchor / empty → baseline.
 export function applyHash() {
   const rawEnc = location.hash.slice(1);
   if (rawEnc.startsWith("compare=")) {   // shareable comparison #compare=v/id,v/id
-    if (!byId("list").children.length) { buildFilters(); buildGroupBy(); buildFacets(); render(); }
+    if (!byId("list").children.length) { buildFilters(); buildGroupBy(); buildSortControl(); buildFacets(); render(); }
     openCompare(rawEnc.slice(8).split(",").map((s) => decodeURIComponent(s)).filter(Boolean));
     return;
   }
@@ -57,23 +56,22 @@ export function applyHash() {
     setFromParam(activeHas, p.get("has"));
     const grp = p.get("group");
     state.groupBy = grp && ["vendor", "kind", "tier"].includes(grp) ? grp : null;
-    state.colChoice = p.has("cols") ? (p.get("cols") || "").split(",").filter(Boolean).filter((k) => COLS[k]) : null;
     const srt = p.get("sort");
     if (srt) { const [k, d] = srt.split(":"); state.sortKey = k; state.sortDir = +d || 1; } else { state.sortKey = null; state.sortDir = 1; }
-    buildFilters(); buildGroupBy(); buildFacets(); resetAndRender();
+    buildFilters(); buildGroupBy(); buildSortControl(); buildFacets(); resetAndRender();
     return;
   }
   const raw = decodeURIComponent(rawEnc);
   if (raw.includes("/")) {
     // model permalink → make sure the table exists to scroll to, then open the drawer
     hideCompare();
-    if (!byId("list").children.length) { buildFilters(); buildGroupBy(); buildFacets(); render(); }
+    if (!byId("list").children.length) { buildFilters(); buildGroupBy(); buildSortControl(); buildFacets(); render(); }
     openModel(raw);
     return;
   }
   hideDrawer(); hideCompare();
   resetFilters();
-  buildFilters(); buildGroupBy(); buildFacets(); resetAndRender();
+  buildFilters(); buildGroupBy(); buildSortControl(); buildFacets(); resetAndRender();
 }
 
 export function buildFilters() {
@@ -104,11 +102,27 @@ export function buildGroupBy() {
   }
 }
 
-export function buildColMenu() {
-  const eff = new Set(effectiveCols());
-  byId("col-menu").innerHTML =
-    COL_ORDER.map((k) => `<label><input type="checkbox" data-col-key="${k}"${eff.has(k) ? " checked" : ""}> ${COLS[k].label}</label>`).join("") +
-    `<div class="col-menu-foot"><button type="button" class="linkish" data-cols-default>Reset to default</button></div>`;
+// Sort control (T68): with the column headers gone, sorting moves to an explicit
+// field <select> + a direction toggle. Both write the same state.sortKey/sortDir
+// the URL already persists (sort=key:dir), so deep links and presets still work.
+const SORT_OPTS: Array<[string, string]> = [
+  ["", "Vendor (default)"], ["id", "Model id"], ["kind", "Kind"], ["tier", "Tier"],
+  ["context", "Context"], ["output", "Max output"], ["dims", "Embed dims"],
+  ["price", "Price"], ["intelligence", "Intelligence"], ["speed", "Speed"], ["params", "Params"],
+];
+export function buildSortControl() {
+  const sel = byId("sort-by");
+  sel.innerHTML = SORT_OPTS.map(([v, l]) => `<option value="${v}"${(state.sortKey || "") === v ? " selected" : ""}>${l}</option>`).join("");
+  sel.onchange = () => {
+    state.sortKey = sel.value || null;
+    if (!state.sortKey) state.sortDir = 1;
+    buildSortControl(); resetAndRender(); writeCurrentState();
+  };
+  const dir = byId("sort-dir");
+  dir.disabled = !state.sortKey;
+  dir.textContent = state.sortDir === 1 ? "↑ Asc" : "↓ Desc";
+  dir.setAttribute("aria-label", state.sortDir === 1 ? "Sort ascending" : "Sort descending");
+  dir.onclick = () => { state.sortDir = state.sortDir === 1 ? -1 : 1; buildSortControl(); resetAndRender(); writeCurrentState(); };
 }
 
 export function facetChip(label: string, count: number, active: boolean, onToggle: () => void) {

@@ -1,4 +1,7 @@
-/* The Browse table: filtering, columns, the render pass, and global sort (T65). */
+/* The Browse view: filtering, the card render pass, and global sort (T65).
+ * T68 replaced the fixed-column table with a responsive card grid — each model
+ * shows all of its recorded decision fields, so nothing is clipped by column
+ * width and sorting moves to an explicit control (no header cells to click). */
 import type { ModelEntry } from "./types.js";
 import { byId } from "./dom.js";
 import {
@@ -6,14 +9,14 @@ import {
   activeCaps, activeInMods, activeOutMods, activeTags, activeTiers, activeHas,
 } from "./state.js";
 import {
-  KIND_COLOR, KIND_LABEL, TIER_BG, NUMERIC_COLS, DEFAULT_COLS, PAGE_SIZE,
+  KIND_COLOR, KIND_LABEL, TIER_BG, COL_ORDER, PAGE_SIZE,
   NUM_SORT, PRICE_CAVEAT, BENCH_CAVEAT, PERF_CAVEAT,
 } from "./constants.js";
 import {
   vendorLabel, vendorColor, initials, vendorGlyph, tierBadge, useCaseChips,
-  fmtTokens, fmtParams, numChip, priceParts, correctionUrl, tierRank,
+  fmtTokens, fmtParams, priceParts, correctionUrl, tierRank,
 } from "./format.js";
-import { updateRailActive, writeCurrentState } from "./controls.js";
+import { updateRailActive } from "./controls.js";
 import { classify } from "../sdk/model-catalog-client.js";
 
 export function passesFilters(m: ModelEntry, q: string) {
@@ -33,24 +36,37 @@ export function passesFilters(m: ModelEntry, q: string) {
   if (!q) return true;
   return (m.id + " " + (m.label || "") + " " + m.vendor).toLowerCase().includes(q);
 }
-// One row of the model table: model + kind, then the active decision columns (T52).
-export function rowHtml(m: ModelEntry) {
+// The numeric decision fields, rendered as label-less value chips (the meaning
+// lives in each chip's tooltip). "tags" is qualitative and shown in the chip row.
+const FACT_KEYS = COL_ORDER.filter((k) => k !== "tags");
+// One model as a minimalist card (T68): identity, one row of qualitative chips
+// (kind · tier · use-case), then one row of value chips for every recorded metric
+// — no field labels, each chip's tooltip explains it. Absent fields are omitted.
+export function cardHtml(m: ModelEntry) {
   const kc = KIND_COLOR[m.kind] || KIND_COLOR.UNKNOWN;
   const cl = classify(m);
   const key = m.vendor + "/" + m.id;
-  // A flat (ungrouped) table drops the vendor context of a group head, so show the
-  // vendor inline under the id; grouped views already carry it in the head.
-  const vend = !state.groupBy ? `<div class="lbl">${vendorLabel(m.vendor)}${m.label && m.label !== m.id ? " · " + m.label : ""}</div>`
-    : (m.label && m.label !== m.id ? `<div class="lbl">${m.label}</div>` : "");
-  const cells = effectiveCols().map((ck) => `<td class="${NUMERIC_COLS.has(ck) ? "col-num" : ""}" data-label="${COLS[ck].label}">${COLS[ck].cell(m)}</td>`).join("");
-  return `<tr data-key="${key}">
-    <td>
-      <div class="model-cell"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
-      ${vend}
-    </td>
-    <td class="col-kind" data-label="Kind"><span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span> ${tierBadge(cl.tier)}</td>
-    ${cells}
-  </tr>`;
+  const label = m.label && m.label !== m.id ? " · " + m.label : "";
+  const chips = `<span class="badge" style="--kc:${kc}">${KIND_LABEL[m.kind] || m.kind}</span>${tierBadge(cl.tier)}${useCaseChips(cl.tags)}`;
+  const metrics = FACT_KEYS.filter((k) => COLS[k].present(m)).map((k) => {
+    const c = COLS[k];
+    const title = c.caveat ? `${c.label} — ${c.caveat}` : c.label;
+    return `<span class="chip${c.plain ? "" : " num"}" title="${title}">${c.value(m)}</span>`;
+  }).join("");
+  const metricsRow = metrics
+    ? `<div class="mcard-metrics">${metrics}</div>`
+    : `<p class="mcard-none"><a href="${correctionUrl(m)}" target="_blank" rel="noopener">Add data ↗</a></p>`;
+  return `<article class="mcard" data-key="${key}" tabindex="0" role="button" aria-label="${m.id}">
+    <div class="mcard-top">
+      <span class="avatar" style="background:${vendorColor(m.vendor)}">${initials(vendorLabel(m.vendor))}</span>
+      <div class="mcard-title">
+        <div class="mcard-idrow"><span class="mid">${m.id}</span><a class="permalink" href="#${encodeURI(key)}" title="Copy permalink" aria-label="Permalink to ${m.id}">#</a><button type="button" class="pin" data-pin aria-pressed="${pinned.has(key)}" title="Add to compare" aria-label="Add ${m.id} to compare">⇄</button></div>
+        <div class="lbl">${vendorLabel(m.vendor)}${label}</div>
+      </div>
+    </div>
+    <div class="mcard-chips">${chips}</div>
+    ${metricsRow}
+  </article>`;
 }
 // The group key for a model under the active group-by (null → single flat list).
 export function groupOf(m: ModelEntry): string | null {
@@ -73,8 +89,7 @@ export function groupHead(type: string, value: string, count: number) {
     <span class="chev">▾</span>
   </div>`;
 }
-export const tableFor = (bodyHtml: string) =>
-  `<div class="table-scroll"><table><thead><tr>${theadRow()}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`;
+export const cardGridFor = (cardsHtml: string) => `<div class="mcard-grid">${cardsHtml}</div>`;
 
 // Reset to the first page, then render — used by every handler that changes the
 // filtered/sorted result set (search, kind, facet, group, sort, clear). Paging
@@ -99,10 +114,10 @@ export function render() {
     const start = (state.page - 1) * PAGE_SIZE;
     const pageRows = rows.slice(start, start + PAGE_SIZE);
     if (shown) {
-      const sec = document.createElement("section");
-      sec.className = "vendor";
-      sec.innerHTML = tableFor(pageRows.map(rowHtml).join(""));
-      list.appendChild(sec);
+      const grid = document.createElement("div");
+      grid.className = "mcard-grid";
+      grid.innerHTML = pageRows.map(cardHtml).join("");
+      list.appendChild(grid);
       if (pages > 1) {
         const nav = document.createElement("nav");
         nav.className = "pager";
@@ -132,7 +147,7 @@ export function render() {
       const gkey = state.groupBy + ":" + g;
       const sec = document.createElement("section");
       sec.className = "vendor" + (collapsed.has(gkey) ? " collapsed" : "");
-      sec.innerHTML = groupHead(state.groupBy!, g as string, items.length) + tableFor(items.map(rowHtml).join(""));
+      sec.innerHTML = groupHead(state.groupBy!, g as string, items.length) + cardGridFor(items.map(cardHtml).join(""));
       (sec.querySelector(".vendor-head") as HTMLElement).onclick = () => {
         collapsed.has(gkey) ? collapsed.delete(gkey) : collapsed.add(gkey);
         render();
@@ -165,41 +180,25 @@ export function pagerHtml(page: number, pages: number) {
   }).join("");
   return btn(page - 1, "‹ Prev", page <= 1 ? " disabled" : "") + nums + btn(page + 1, "Next ›", page >= pages ? " disabled" : "");
 }
-export const emptyCell = (m: ModelEntry) => `<a class="empty-cell" href="${correctionUrl(m)}" target="_blank" rel="noopener" title="Not recorded yet — contribute this value">—</a>`;
 export const HAS_FN: Record<string, (m: ModelEntry) => boolean> = {
   price: (m) => !!m.pricing,
   benchmark: (m) => !!(m.benchmarks && m.benchmarks.intelligenceIndex != null),
   speed: (m) => !!(m.performance && m.performance.throughputTps != null),
 };
-export function priceColCell(m: ModelEntry) {
-  const bits = priceParts(m.pricing);
-  return bits.length ? `<span class="chip num" title="${PRICE_CAVEAT}">${bits.map(([v]) => v).join(" · ")}</span>` : emptyCell(m);
-}
-export function benchColCell(m: ModelEntry) {
-  const v = m.benchmarks && m.benchmarks.intelligenceIndex;
-  return v == null ? emptyCell(m) : `<span class="chip num" title="${BENCH_CAVEAT}">${v}</span>`;
-}
-export function speedColCell(m: ModelEntry) {
-  const v = m.performance && m.performance.throughputTps;
-  return v == null ? emptyCell(m) : `<span class="chip num" title="${PERF_CAVEAT}">${v} tok/s</span>`;
-}
-// Each optional column: display cell + (optional) global sort key.
-interface Column { label: string; cell: (m: ModelEntry) => string; sort?: string; }
+// Each card metric: a tooltip `label` (+ optional `caveat`), a `present` predicate
+// (absent fields are omitted from the card, never shown as "—"), and a bare `value`
+// string. `plain` renders a neutral chip instead of the orange numeric one.
+interface Column { label: string; present: (m: ModelEntry) => boolean; value: (m: ModelEntry) => string; caveat?: string; plain?: boolean; }
 export const COLS: Record<string, Column> = {
-  tags:         { label: "Use case",     cell: (m) => useCaseChips(classify(m).tags) || emptyCell(m) },
-  context:      { label: "Context",      cell: (m) => m.contextWindow ? numChip(fmtTokens(m.contextWindow)) : emptyCell(m), sort: "context" },
-  output:       { label: "Max output",   cell: (m) => m.maxOutputTokens ? numChip(fmtTokens(m.maxOutputTokens)) : emptyCell(m), sort: "output" },
-  dims:         { label: "Embed dims",   cell: (m) => m.embeddingDimensions ? numChip(m.embeddingDimensions) : emptyCell(m), sort: "dims" },
-  price:        { label: "Price /1M",    cell: (m) => priceColCell(m), sort: "price" },
-  intelligence: { label: "Intelligence", cell: (m) => benchColCell(m), sort: "intelligence" },
-  speed:        { label: "Speed",        cell: (m) => speedColCell(m), sort: "speed" },
-  params:       { label: "Params",       cell: (m) => m.parameters != null ? numChip(fmtParams(m.parameters)) : emptyCell(m), sort: "params" },
-  weights:      { label: "Weights",      cell: (m) => m.openWeights == null ? emptyCell(m) : `<span class="chip">${m.openWeights ? "Open" : "Proprietary"}</span>` },
+  context:      { label: "Context window (tokens)", present: (m) => !!m.contextWindow, value: (m) => fmtTokens(m.contextWindow!) },
+  output:       { label: "Max output (tokens)", present: (m) => !!m.maxOutputTokens, value: (m) => fmtTokens(m.maxOutputTokens!) },
+  dims:         { label: "Embedding dimensions", present: (m) => !!m.embeddingDimensions, value: (m) => String(m.embeddingDimensions) },
+  price:        { label: "Indicative US list price / 1M — input · output", caveat: PRICE_CAVEAT, present: (m) => priceParts(m.pricing).length > 0, value: (m) => priceParts(m.pricing).map(([v]) => v).join(" · ") },
+  intelligence: { label: "Intelligence index (cited)", caveat: BENCH_CAVEAT, present: (m) => !!(m.benchmarks && m.benchmarks.intelligenceIndex != null), value: (m) => String(m.benchmarks!.intelligenceIndex) },
+  speed:        { label: "Throughput (tokens / sec, cited)", caveat: PERF_CAVEAT, present: (m) => !!(m.performance && m.performance.throughputTps != null), value: (m) => m.performance!.throughputTps + " tok/s" },
+  params:       { label: "Parameters", present: (m) => m.parameters != null, value: (m) => fmtParams(m.parameters!) },
+  weights:      { label: "Open weights vs proprietary", present: (m) => m.openWeights != null, value: (m) => m.openWeights ? "Open" : "Proprietary", plain: true },
 };
-export function effectiveCols() {
-  if (state.colChoice !== null) return state.colChoice.filter((k) => COLS[k]);
-  return (state.activeKind && DEFAULT_COLS[state.activeKind]) || DEFAULT_COLS._;
-}
 
 export function globalSort(rows: ModelEntry[]) {
   const isNum = !!(state.sortKey && NUM_SORT[state.sortKey]);
@@ -227,42 +226,5 @@ export function globalSort(rows: ModelEntry[]) {
     if (av !== bv) return av < bv ? -1 : 1;   // stable tiebreak: vendor, then id
     return a.id.localeCompare(b.id);
   });
-}
-export const sortArrow = () => (state.sortDir === 1 ? " ▲" : " ▼");
-// Header cell for a column key: "model" | "kind" | one of COL_ORDER.
-export function thFor(colKey: string) {
-  if (colKey === "model") {
-    const on = state.sortKey === "id";
-    return `<th class="sortable" data-col="model" role="button" tabindex="0" aria-sort="${on ? (state.sortDir === 1 ? "ascending" : "descending") : "none"}">Model${on ? sortArrow() : ""}</th>`;
-  }
-  if (colKey === "kind") {
-    const onKind = state.sortKey === "kind", onTier = state.sortKey === "tier";
-    const aria = onKind || onTier ? (state.sortDir === 1 ? "ascending" : "descending") : "none";
-    const label = onTier ? "Tier" + sortArrow() : "Kind" + (onKind ? sortArrow() : "");
-    return `<th class="sortable" data-col="kind" role="button" tabindex="0" aria-sort="${aria}" title="Sort by kind, then by price tier">${label}</th>`;
-  }
-  const c = COLS[colKey];
-  const numCls = NUMERIC_COLS.has(colKey) ? " col-num" : "";
-  if (!c.sort) return `<th class="${numCls.trim()}">${c.label}</th>`;
-  const on = state.sortKey === c.sort;
-  return `<th class="sortable${numCls}" data-col="col" data-key="${c.sort}" role="button" tabindex="0" aria-sort="${on ? (state.sortDir === 1 ? "ascending" : "descending") : "none"}">${c.label}${on ? sortArrow() : ""}</th>`;
-}
-export function theadRow() {
-  return thFor("model") + thFor("kind") + effectiveCols().map(thFor).join("");
-}
-// Cycle a column's sort states (last state clears the sort).
-export function stepSort(cycle: string[]) {
-  const cur = state.sortKey ? state.sortKey + ":" + state.sortDir : null;
-  const i = cycle.indexOf(cur as string);
-  const next = i < 0 ? cycle[0] : (i + 1 < cycle.length ? cycle[i + 1] : null);
-  if (!next) { state.sortKey = null; state.sortDir = 1; }
-  else { const [k, d] = next.split(":"); state.sortKey = k; state.sortDir = +d; }
-  resetAndRender(); writeCurrentState(); // re-sort jumps back to the first page (T67)
-}
-export function onHeader(th: HTMLElement) {
-  const col = th.dataset.col;
-  if (col === "model") stepSort(["id:1", "id:-1"]);
-  else if (col === "kind") stepSort(["kind:1", "kind:-1", "tier:-1", "tier:1"]);
-  else if (col === "col") { const k = th.dataset.key ?? ""; stepSort([k + ":-1", k + ":1"]); } // numeric: high→low first
 }
 
