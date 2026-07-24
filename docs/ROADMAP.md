@@ -133,7 +133,16 @@
 > and forbids narrative source labels at the source) (see
 > [CHANGELOG.md](CHANGELOG.md) → Block Q).
 
-_No active backlog — the next block starts at letter **R** (see
+> **Block R — Aggregator & self-host library coverage** shipped in full — the
+> OpenRouter gateway and the Ollama self-host library, previously thin curated-cap
+> rows (Block H / T37), are now ingested whole via two first-class adapters:
+> `openrouter-api` (public `/api/v1/models` JSON — a vendor source anchoring the
+> full listing incl. context/pricing/modalities) and `ollama-library` (a fail-soft
+> `ollama.com/library` HTML crawler, `partial`). Catalog ≈295 → 862 models. A
+> deliberate reversal of the cap — rationale + trade-off in
+> [STRATEGY.md](STRATEGY.md) §IV (see [CHANGELOG.md](CHANGELOG.md) → Block R).
+
+_No active backlog — the next block starts at letter **S** (see
 [last-task.md](last-task.md))._
 
 ## Non-goals

@@ -147,3 +147,36 @@ export async function fetchOrReplay(sourceId, url, { headers = {}, offline = fal
     return null;
   }
 }
+
+/**
+ * Like {@link fetchOrReplay} but for text/HTML sources (a crawled page has no JSON
+ * contract). The raw body is stored as a string in the snapshot so `--offline`
+ * replays byte-for-byte and the adapter's `normalize` does the parsing. Same
+ * fail-soft contract: returns { raw, fetchedAt, fromCache } or null, never throws.
+ */
+export async function fetchTextOrReplay(sourceId, url, { headers = {}, offline = false, when } = {}) {
+  if (offline) {
+    const snap = loadSnapshot(sourceId);
+    if (!snap) {
+      warn(`${sourceId}: --offline but no cached snapshot at ${snapshotPath(sourceId)}; skipping`);
+      return null;
+    }
+    return { raw: snap.raw, fetchedAt: snap.fetchedAt, fromCache: true };
+  }
+  try {
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      warn(`${sourceId}: ${url} -> HTTP ${res.status}; skipping`);
+      return null;
+    }
+    const raw = await res.text();
+    saveSnapshot(sourceId, url, raw, when);
+    return { raw, fetchedAt: when, fromCache: false };
+  } catch (e) {
+    warn(`${sourceId}: fetch failed (${e.message}); trying cached snapshot`);
+    const snap = loadSnapshot(sourceId);
+    if (snap) return { raw: snap.raw, fetchedAt: snap.fetchedAt, fromCache: true };
+    warn(`${sourceId}: no cached snapshot; skipping`);
+    return null;
+  }
+}

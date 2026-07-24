@@ -16,10 +16,12 @@ import gemini from "./gemini.mjs";
 import cohere from "./cohere.mjs";
 import mistral from "./mistral.mjs";
 import ollama from "./ollama.mjs";
+import ollamaLibrary from "./ollama-library.mjs";
+import openrouter from "./openrouter.mjs";
 import bedrock from "./bedrock.mjs";
 import huggingface from "./huggingface.mjs";
 import litellm from "./litellm.mjs";
 import benchmarks from "./benchmarks.mjs";
 import artificialAnalysis from "./artificial-analysis.mjs";
 
-export const ADAPTERS = [openai, anthropic, gemini, cohere, mistral, ollama, bedrock, huggingface, litellm, benchmarks, artificialAnalysis];
+export const ADAPTERS = [openai, anthropic, gemini, cohere, mistral, ollama, ollamaLibrary, openrouter, bedrock, huggingface, litellm, benchmarks, artificialAnalysis];

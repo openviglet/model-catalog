@@ -53,6 +53,8 @@ npm test                      # pipeline unit tests
 | `ollama-api` | ollama | `GET /api/tags` on `$OLLAMA_HOST` | `OLLAMA_HOST` | Self-hosted; locally-pulled refs, heuristic kind. **`partial`** (see below). |
 | `bedrock-api` | bedrock | `ListFoundationModels` | `AWS_ACCESS_KEY_ID` (+`AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) | SigV4-signed (hand-rolled, zero-dep); modalities → kind, `modelName` label, lifecycle → status. **`partial`** (region-scoped). |
 | `huggingface-api` | huggingface | Hub `GET /api/models` (sentence-transformers) | `HUGGINGFACE_API_TOKEN` | Local ONNX embedding models; `pipeline_tag` → kind. **`partial`** (bounded query). |
+| `ollama-library` | ollama | `ollama.com/library` (HTML) | _(none — public)_ | Full self-host library crawler; regex parse of name + capability badges → kind/caps/modalities, `openWeights: true` (except `cloud`-badged). **`partial`** (best-effort scrape, fail-soft). Complements host-scoped `ollama-api` (T78). |
+| `openrouter-api` | openrouter | `GET /api/v1/models` | _(none — public)_ | Full gateway listing; `creator/model` ids, `context_length`/pricing (USD/token → per-1M)/modalities/`supported_parameters` → caps. First-class vendor source (anchors + removal evidence). Supersedes T37's curated cap (T78). |
 | `litellm` | all | LiteLLM `model_prices_and_context_window.json` | _(none — public)_ | Vendor-agnostic enrichment (metadata + indicative pricing). |
 | `benchmarks` | all | `pipeline/benchmarks.json` (curated snapshot) | _(local)_ | Cited third-party capability index (T40 `benchmarks`). Enrichment only — never introduces an id; a leaderboard model not already in the catalog is dropped. |
 | `artificial-analysis` | all | Artificial Analysis leaderboard API (live) | `ARTIFICIAL_ANALYSIS_API_KEY` | Live auto-refresh of `benchmarks` + `performance` (T45). Resolves AA slugs → catalog ids via the curated `pipeline/artificial-analysis-map.json` **then a deterministic auto-matcher (T63)** — exact → date-stripped → order-independent token match, unique-only, so well-behaved slugs need no map entry while an ambiguous/unknown one still drops (never guessed); a map entry of `null`/`{skip:true}` blocks a slug, a `{vendor,id}` entry overrides. Enrichment only (non-anchoring); wins over the `benchmarks` snapshot when both supply a value. |
@@ -96,9 +98,12 @@ Two safety rules keep a noisy/partial run from poisoning the reference:
   existing/vendor-confirmed ids but can never introduce a brand-new id. Skipped
   LiteLLM-only ids are listed in the report.
 - **`partial` sources.** A self-hosted/aggregator source (`ollama-api`,
-  `bedrock-api`, `huggingface-api`) sees only an environment-scoped/bounded slice
-  (one host's pulls, one region, a capped query), so it *anchors* the ids it returns
-  but is **never** removal evidence — it can't drop an id it simply didn't see.
+  `bedrock-api`, `huggingface-api`, `ollama-library`) sees only an
+  environment-scoped/bounded/best-effort slice (one host's pulls, one region, a
+  capped query, a fail-soft HTML scrape), so it *anchors* the ids it returns but is
+  **never** removal evidence — it can't drop an id it simply didn't see.
+  `openrouter-api` is **not** partial: it reads OpenRouter's complete public listing,
+  so (like a live vendor API) it is positive-evidence for removal of stale ids.
 
 `overrides.json` is a claim you stand behind: set `"__pin": true` on an entry to
 force its fields above **everything**; otherwise a pin sits above LiteLLM and

@@ -13,6 +13,8 @@ import litellm from "./adapters/litellm.mjs";
 import benchmarks from "./adapters/benchmarks.mjs";
 import artificialAnalysis, { buildMatchIndex, resolveTarget } from "./adapters/artificial-analysis.mjs";
 import ollama from "./adapters/ollama.mjs";
+import ollamaLibrary, { parseLibrary } from "./adapters/ollama-library.mjs";
+import openrouter from "./adapters/openrouter.mjs";
 import bedrock from "./adapters/bedrock.mjs";
 import huggingface from "./adapters/huggingface.mjs";
 
@@ -94,6 +96,70 @@ test("ollama normalize: uses ref as id, heuristic kind, is a partial anchor", ()
   assert.deepEqual(drafts[0], { vendor: "ollama", id: "llama3:8b", kind: "CHAT" });
   assert.equal(drafts[1].kind, "EMBEDDING", "embed in the name → EMBEDDING");
   assert.equal(drafts[0].label, undefined, "no guessed label");
+});
+
+test("openrouter normalize: keeps creator/model id, per-1M pricing, caps/modalities, non-partial vendor anchor", () => {
+  assert.equal(openrouter.vendor, "openrouter");
+  assert.ok(!openrouter.partial, "the live listing is authoritative → removal evidence");
+  const drafts = openrouter.normalize({
+    data: [
+      {
+        id: "anthropic/claude-x",
+        name: "Claude X",
+        context_length: 200000,
+        architecture: { input_modalities: ["text", "image", "file"], output_modalities: ["text"] },
+        top_provider: { max_completion_tokens: 64000 },
+        supported_parameters: ["tools", "reasoning"],
+        knowledge_cutoff: "2025-03",
+        pricing: { prompt: "0.000003", completion: "0.000015" },
+      },
+      { id: "meta/free-model", pricing: { prompt: "0", completion: "0" }, architecture: { input_modalities: ["text"], output_modalities: ["text"] } },
+      { name: "no id — dropped" },
+    ],
+  });
+  assert.equal(drafts.length, 2);
+  const cx = drafts[0];
+  assert.equal(cx.id, "anthropic/claude-x", "creator/model id kept verbatim (the gateway ref)");
+  assert.equal(cx.label, "Claude X");
+  assert.equal(cx.kind, "CHAT");
+  assert.equal(cx.contextWindow, 200000);
+  assert.equal(cx.maxOutputTokens, 64000);
+  assert.deepEqual(cx.capabilities, ["tools", "reasoning", "vision"], "vision inferred from image input");
+  assert.deepEqual(cx.modalities, { input: ["text", "image", "pdf"], output: ["text"] }, "file→pdf");
+  assert.equal(cx.knowledgeCutoff, "2025-03");
+  assert.equal(cx.pricing.inputPer1M, 3, "0.000003/token → 3 per 1M");
+  assert.equal(cx.pricing.outputPer1M, 15);
+  assert.equal(cx.pricing.source, "openrouter");
+  assert.equal(cx.pricing.indicative, true);
+  assert.equal(drafts[1].pricing, undefined, "a free model (price 0) gets no invented price");
+});
+
+test("ollama-library parseLibrary: parses HTML blocks → kind/caps/openWeights, cloud withholds openWeights, partial anchor", () => {
+  assert.equal(ollamaLibrary.vendor, "ollama");
+  assert.equal(ollamaLibrary.partial, true, "an HTML scrape is best-effort, never removal evidence");
+  const badge = (t) => `<span class="text-indigo-600">${t}</span>`;
+  const html = `
+    <a href="/library/llama3.1">x</a> ${badge("tools")} <span class="text-blue-600">8b</span>
+    <a href="/library/deepseek-r1">x</a> ${badge("tools")} ${badge("thinking")}
+    <a href="/library/gemma3">x</a> ${badge("vision")}
+    <a href="/library/nomic-embed-text">x</a> ${badge("embedding")}
+    <a href="/library/kimi-k2-cloud">x</a> ${badge("tools")} <span class="text-teal-600">cloud</span>
+    <a href="/blog/not-a-model">x</a>
+    <a href="/library/vendor/nested">x</a>
+    <a href="/library/llama3.1">dup</a>`;
+  const drafts = parseLibrary(html);
+  const byId = Object.fromEntries(drafts.map((d) => [d.id, d]));
+  assert.equal(drafts.length, 5, "5 unique library models; blog link, nested-slash id and dup skipped");
+  assert.deepEqual(byId["llama3.1"].capabilities, ["tools"]);
+  assert.equal(byId["llama3.1"].openWeights, true);
+  assert.deepEqual(byId["deepseek-r1"].capabilities, ["tools", "reasoning"], "thinking→reasoning");
+  assert.deepEqual(byId["gemma3"].capabilities, ["vision"]);
+  assert.deepEqual(byId["gemma3"].modalities.input, ["text", "image"]);
+  assert.equal(byId["nomic-embed-text"].kind, "EMBEDDING");
+  assert.deepEqual(byId["nomic-embed-text"].modalities.output, ["embedding"]);
+  assert.equal(byId["kimi-k2-cloud"].openWeights, undefined, "cloud-hosted → openWeights withheld, not asserted");
+  assert.equal(parseLibrary("<html>no models</html>").length, 0, "unrecognised markup → [], never throws");
+  assert.equal(parseLibrary(null).length, 0);
 });
 
 test("huggingface normalize: maps pipeline_tag→kind, defaults to EMBEDDING, partial anchor", () => {

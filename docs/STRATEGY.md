@@ -96,3 +96,33 @@ cited. CC0 would maximise raw reuse but forgoes that credit loop, and for a
 data **"as is / accuracy not warranted"** line (Apache's warranty clause covers
 software, not the figures), surfaced on the site footer, README, `LICENSE-DATA`
 and the api.md contract. Tracked as **Block P** (§P3) in [ROADMAP.md](ROADMAP.md).
+
+## §IV Aggregators & self-host libraries — ingest in full, not capped (decided 2026-07-24)
+
+**The decision.** For the two *catalogue-shaped* sources — the **OpenRouter**
+gateway and the **Ollama** self-host library — the catalog now ingests the
+**whole live list**, not a hand-picked sample. This **reverses the Block H / T37
+"curated cap"** (6 anchored ids per aggregator), which was chosen so a gateway's
+pass-through list "wouldn't balloon + duplicate the per-creator catalog."
+
+**Why reverse it.** The cap made those two vendor rows misleadingly thin — a user
+who knows OpenRouter serves hundreds of models and Ollama's library lists hundreds
+more read 6–7 rows as "the catalog barely covers this." Coverage *is* the product
+for a market reference; a deliberately-truncated vendor row erodes trust more than
+a large one costs. Both sources are now first-class adapters with real,
+machine-anchored evidence rather than a LiteLLM pass-through: **`openrouter-api`**
+reads the public `GET /api/v1/models` JSON (context length, per-token USD pricing,
+modalities — a genuine vendor listing, so it *anchors* ids and its listing is
+removal evidence), and **`ollama-library`** crawls `ollama.com/library` (name +
+capability badges; `partial`, so anchor-only, never removal evidence — an HTML
+scrape is best-effort).
+
+**The trade-off, accepted.** The catalog roughly triples (≈295 → ≈860 models) and
+the gateway rows duplicate models that also exist under their creator vendor
+(`openrouter/anthropic/claude-x` alongside `anthropic/claude-x`). This is
+**intentional and disambiguated**: the duplication is *by access path* — the
+`openrouter` id is the exact ref you send the gateway, distinct from the creator's
+native id, and the vendor key keeps them separate everywhere (facets, slices,
+provenance). The guardrails still hold — indicative pricing only, additive schema
+(`version` unchanged), propose-and-review, zero runtime dependency. Shipped as
+**Block R** (T78) in [CHANGELOG.md](CHANGELOG.md).
