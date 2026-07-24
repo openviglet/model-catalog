@@ -28,7 +28,7 @@ capability*; it also carries an **optional, indicative US list price** per model
 |---|---|
 | `…/catalog.json` | Rolling latest — the current schema version. |
 | `…/catalog-v1.json` | Pinned to schema **v1** — safe for external consumers to lock. |
-| `…/index.json` | **Compact index** — the same envelope, each entry trimmed to `{ vendor, id, label, kind }`. A fraction of the payload for model-pickers that only render a grouped list; lazy-load the full record from `catalog.json` on selection. |
+| `…/index.json` | **Compact index** — the same envelope, each entry trimmed to `{ vendor, ref, id, label, kind }`. A fraction of the payload for model-pickers that only render a grouped list; lazy-load the full record from `catalog.json` on selection. |
 | `…/stats.json` | **Aggregate metrics** — pre-computed counts (models per vendor / kind / capability / input+output modality), per-field fill **coverage**, and grand `totals`. Read one number instead of re-aggregating the full catalog. Its own envelope (not a `vendors` map). |
 | `…/coverage.json` | **Per-vendor coverage** — the same per-field fill definition as `stats.json`, broken down **per vendor** (`{ filled, rate }` per field) plus an `overall`. Makes gaps explicit — "context window known for 82% of vendor X". Its own envelope (not a `vendors` map). |
 | `…/leaderboards.json` | **Decision leaderboards** — pre-computed "which model" answers: cheapest per kind, best intelligence-per-$, biggest context, fastest. Each board carries `{ population, total }` (its honest denominator) and top entries `{ vendor, id, label, kind, value }`. Derived from indicative/cited figures — a reference only, verify at the source. Its own envelope. |
@@ -89,10 +89,11 @@ are regenerated deterministically from the canonical source
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| `id` | string | ✅ | The exact id sent to the vendor (`text-embedding-3-large`). |
+| `id` | string | ✅ | The exact id sent to the vendor (`text-embedding-3-large`). **Not globally unique** — the same id can appear under different vendors (e.g. `gpt-4o` under both `openai` and `azure`; `gemini-2.5-pro` under `gemini`, `gemini-openai` and `vertex-ai`). Key on `ref`, not `id`. |
 | `label` | string | ✅ | Human-friendly display name. |
 | `kind` | enum | ✅ | `CHAT` · `EMBEDDING` · `RERANK` · `IMAGE` · `TRANSCRIPTION` · `SPEECH` · `VIDEO` · `MODERATION` · `UNKNOWN`. |
 | `vendor` | string | ✅ | Provider plugin type (echoes the map key; added in the published artifact). |
+| `ref` | string | ✅ | **Globally-unique `<vendor>/<id>` key** (added in the published artifact, like `vendor`). Use this — not the bare `id` — as the primary key when indexing, deduplicating or citing models; keying by `id` alone silently collides across vendors. |
 | `contextWindow` | integer | — | Max context tokens, when known. |
 | `embeddingDimensions` | integer | — | Output vector size — only for `kind = EMBEDDING`. |
 | `capabilities` | string[] | — | Hints such as `vision`, `tools`, `reasoning`. |

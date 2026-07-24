@@ -20,7 +20,9 @@
 
 /** Provenance/metadata leaves that are not useful query fields. */
 const NOISE_SUFFIXES = ["_note", "_source", "_lastVerified", "_indicative", "_unit"];
-const NOISE_EXACT = new Set(["lastVerified", "sources"]);
+// `ref` is the "<vendor>/<id>" identity key (the emit-added document key, T79) — like
+// the excluded `id`, it is identity, not a queryable content facet, so it stays out.
+const NOISE_EXACT = new Set(["lastVerified", "sources", "ref"]);
 /** Fields treated as full-text rather than exact/faceted. */
 const TEXT_FIELDS = new Set(["label"]);
 /** Max distinct string values before a field stops being a facet (and its enum is dropped). */

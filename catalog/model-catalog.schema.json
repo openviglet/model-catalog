@@ -68,6 +68,10 @@
           "type": "string",
           "description": "Provider plugin type. Absent in the source (it is the map key); added to each entry in the published artifact."
         },
+        "ref": {
+          "type": "string",
+          "description": "Globally-unique '<vendor>/<id>' key. The bare `id` is NOT unique across vendors (e.g. openai and azure both serve `gpt-4o`), so consumers that key/index by model should use `ref`. Absent in the source (derived from the map key + id); added to each entry in the published artifact, like `vendor` (Block R / T79)."
+        },
         "contextWindow": {
           "type": "integer",
           "minimum": 1,

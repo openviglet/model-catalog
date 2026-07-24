@@ -140,7 +140,10 @@
 > full listing incl. context/pricing/modalities) and `ollama-library` (a fail-soft
 > `ollama.com/library` HTML crawler, `partial`). Catalog ≈295 → 862 models. A
 > deliberate reversal of the cap — rationale + trade-off in
-> [STRATEGY.md](STRATEGY.md) §IV (see [CHANGELOG.md](CHANGELOG.md) → Block R).
+> [STRATEGY.md](STRATEGY.md) §IV. The coverage jump also forced a globally-unique
+> **`ref` = `<vendor>/<id>`** key on every published entry (T79) — the bare `id`
+> now repeats across vendors, so consumers must index/dedupe/cite on `ref`
+> (see [CHANGELOG.md](CHANGELOG.md) → Block R).
 
 _No active backlog — the next block starts at letter **S** (see
 [last-task.md](last-task.md))._

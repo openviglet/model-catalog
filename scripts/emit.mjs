@@ -53,7 +53,7 @@ if (typeof root.version !== "number") fail("source missing integer `version`");
 if (typeof root.lastUpdated !== "string") fail("source missing `lastUpdated`");
 if (typeof root.vendors !== "object" || root.vendors === null) fail("source missing `vendors` object");
 
-// Validate + flatten (add `vendor` to each entry).
+// Validate + flatten (add `vendor` + globally-unique `ref` to each entry).
 const vendors = {};
 let count = 0;
 for (const [vendor, entries] of Object.entries(root.vendors)) {
@@ -70,7 +70,12 @@ for (const [vendor, entries] of Object.entries(root.vendors)) {
     if (e.sources !== undefined && !Array.isArray(e.sources)) fail(`${where} (${e.id}) \`sources\` must be an array`);
     if (e.modalities !== undefined && (typeof e.modalities !== "object" || e.modalities === null || Array.isArray(e.modalities))) fail(`${where} (${e.id}) \`modalities\` must be an object`);
     count++;
-    return { ...e, vendor };
+    // `ref` = the globally-unique "<vendor>/<id>" key. The bare `id` is NOT unique
+    // across vendors (e.g. openai+azure both serve `gpt-4o`; gemini/gemini-openai/
+    // vertex-ai all serve `gemini-2.5-pro`; groq+openrouter both `openai/gpt-oss-120b`),
+    // so a consumer that keys documents by `id` alone silently collides. Emit-added
+    // like `vendor`; consumers should key on `ref` (T79).
+    return { ...e, vendor, ref: `${vendor}/${e.id}` };
   });
 }
 
@@ -181,7 +186,7 @@ const index = {
   vendors: Object.fromEntries(
     Object.entries(vendors).map(([vendor, entries]) => [
       vendor,
-      entries.map((e) => ({ vendor, id: e.id, label: e.label, kind: e.kind })),
+      entries.map((e) => ({ vendor, ref: e.ref, id: e.id, label: e.label, kind: e.kind })),
     ]),
   ),
 };
