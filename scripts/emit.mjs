@@ -534,9 +534,12 @@ ${feedEntries.length ? feedEntries.join("\n") + "\n" : ""}</feed>
 // ── Alternate export formats (T23) ────────────────────────────────────────
 // Not every consumer wants nested JSON. `catalog.csv` (one flat row per model)
 // serves spreadsheets / BI tools; `catalog.ndjson` (one JSON object per line)
-// serves streaming, `jq -c` and `grep`. Both derive from the same flattened
-// entries as catalog.json, in the same order, so they can never drift. Array
-// fields are `;`-joined in CSV; modalities are split into input/output columns.
+// serves streaming, `jq -c` and `grep` — and doubles as the search-index feed a
+// vectorless/structured-RAG ingester imports (e.g. the Viglet Cloud SN dogfood),
+// so it additionally carries conventional display aliases (title/text/abstract/url,
+// T81). Both derive from the same flattened entries as catalog.json, in the same
+// order, so they can never drift. Array fields are `;`-joined in CSV; modalities are
+// split into input/output columns.
 const CSV_COLUMNS = [
   "vendor", "id", "label", "kind", "contextWindow", "maxOutputTokens",
   "embeddingDimensions", "capabilities", "openWeights", "parameters",
@@ -592,7 +595,8 @@ const activeCsvCols = CSV_COLUMNS.filter((c) => CSV_ALWAYS.has(c) || flat.some((
 const droppedCsvCols = CSV_COLUMNS.filter((c) => !activeCsvCols.includes(c));
 const csvRow = (e) => activeCsvCols.map((c) => csvCellFor(e, c)).join(",");
 const catalogCsv = [activeCsvCols.join(","), ...flat.map(csvRow)].join("\r\n") + "\r\n";
-const catalogNdjson = flat.map((e) => JSON.stringify(e)).join("\n") + "\n";
+// `catalogNdjson` is built lower down (search-index display fields, T81) — it needs
+// `proseText` / `modelHtmlUrl`, which are defined further below.
 
 // ── GEO / citability artifacts (T26) ──────────────────────────────────────
 // To be *cited* by search engines and assistants, the catalog must be crawlable
@@ -733,6 +737,32 @@ const factRows = (e) => [
   ["Sources", (e.sources || []).join(", ") || null],
   ["Last verified", e.lastVerified || null],
 ].filter(([, v]) => v != null && v !== "");
+
+// ── Search-index display fields for the ndjson feed (T81) ──────────────────
+// A structured/vectorless-RAG search consumer (the Viglet Cloud SN "model-catalog"
+// dogfood) renders each result through conventional *default* fields — title,
+// description, text, url — that most search engines' templates expect by those exact
+// names. The catalog's native fields are `label`/`id`/`vendor`/`kind` (no `title`,
+// `abstract`, `text` or `url`), so an indexer's out-of-the-box defaults find nothing
+// and results render blank. To make the feed render correctly with ZERO consumer-side
+// config, `catalog.ndjson` (the import feed) additionally carries these standard
+// display aliases, all DERIVED from the same entry (never invented): `title` = the
+// model label, `abstract`/`text` = the same one-line prose the pages use, `url` = the
+// canonical model page. Emitted only on the ndjson feed — `catalog.json` and the
+// faceted slices stay the lean, vendor-neutral data API. A consumer that maps its own
+// default fields (or ignores these) is unaffected; the aliases are purely additive.
+const searchText = (e) => {
+  const facts = factRows(e).map(([k, v]) => `${k}: ${v}`).join(". ");
+  return facts ? `${proseText(e)} ${facts}.` : proseText(e);
+};
+const searchDisplayFields = (e) => ({
+  title: e.label,
+  abstract: proseText(e),
+  text: searchText(e),
+  url: modelHtmlUrl(e),
+});
+const catalogNdjson =
+  flat.map((e) => JSON.stringify({ ...e, ...searchDisplayFields(e) })).join("\n") + "\n";
 
 const pageHtml = (title, desc, canonical, inner) => `<!doctype html>
 <html lang="en">

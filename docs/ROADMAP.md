@@ -144,8 +144,19 @@
 > **`ref` = `<vendor>/<id>`** key on every published entry (T79) — the bare `id`
 > now repeats across vendors, so consumers must index/dedupe/cite on `ref`
 > (see [CHANGELOG.md](CHANGELOG.md) → Block R).
+>
+> **Block S — Search-index feed for SN / vectorless consumers** shipped in full —
+> `catalog.ndjson` doubles as the import feed a structured/vectorless-RAG search
+> consumer ingests (the Viglet Cloud SN "model-catalog" dogfood), whose native field
+> names (`label`/`id`/`vendor`/`kind`) don't match the conventional *default* fields a
+> search UI renders results through, so results showed blank. Each ndjson record now
+> carries SN-standard display aliases derived from the same entry — `title` (=label),
+> `abstract`/`text` (the page prose), `url` (the canonical page) — matching Turing's SN
+> template defaults so the dogfood renders with zero config; the ndjson feed only, the
+> JSON API stays lean (T81). Paired Turing-side fallbacks: that repo's Block BH
+> (see [CHANGELOG.md](CHANGELOG.md) → Block S).
 
-_No active backlog — the next block starts at letter **S** (see
+_No active backlog — the next block starts at letter **T** (see
 [last-task.md](last-task.md))._
 
 ## Non-goals
