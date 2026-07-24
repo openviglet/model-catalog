@@ -56,7 +56,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -113,7 +112,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -263,7 +261,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -315,7 +312,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -372,7 +368,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -429,7 +424,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -439,9 +433,34 @@
         "id": "claude-opus-5",
         "label": "Claude Opus 5",
         "kind": "CHAT",
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "capabilities": [
+          "tools",
+          "vision",
+          "reasoning"
+        ],
+        "modalities": {
+          "input": [
+            "image",
+            "pdf",
+            "text"
+          ]
+        },
         "releaseDate": "2026-07-24",
+        "pricing": {
+          "inputPer1M": 5,
+          "outputPer1M": 25,
+          "currency": "USD",
+          "unit": "per_1M_tokens",
+          "indicative": true,
+          "note": "Indicative US list price — verify with the vendor.",
+          "source": "litellm",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "anthropic-api"
+          "anthropic-api",
+          "litellm"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -597,7 +616,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -654,7 +672,6 @@
         },
         "sources": [
           "anthropic-api",
-          "artificial-analysis",
           "committed",
           "litellm"
         ],
@@ -1995,7 +2012,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "gemini-api",
           "litellm"
@@ -2458,7 +2474,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "gemini-api",
           "litellm"
@@ -2530,7 +2545,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "gemini-api",
           "litellm"
@@ -2631,7 +2645,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "gemini-api",
           "litellm"
@@ -2692,7 +2705,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "gemini-api",
           "litellm"
@@ -2753,7 +2765,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "gemini-api",
           "litellm"
@@ -3720,7 +3731,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
@@ -3810,7 +3820,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
@@ -3865,7 +3874,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
@@ -4034,7 +4042,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4052,6 +4060,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4067,7 +4076,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4085,6 +4094,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4104,6 +4114,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4119,7 +4130,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4134,7 +4145,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4151,8 +4162,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4169,8 +4179,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4187,8 +4196,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4203,7 +4211,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4218,7 +4226,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4233,7 +4241,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4251,6 +4259,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4266,7 +4275,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4284,6 +4293,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4302,6 +4312,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4320,6 +4331,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4338,6 +4350,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4356,6 +4369,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4370,8 +4384,16 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 3,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "ollama-library"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4386,7 +4408,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4401,7 +4423,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4416,7 +4438,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4430,8 +4452,16 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 5.1,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "ollama-library"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4446,7 +4476,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4465,6 +4495,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4484,6 +4515,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4498,8 +4530,16 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 3.6,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "ollama-library"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4513,8 +4553,16 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 6.8,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "ollama-library"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4529,7 +4577,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4547,7 +4595,21 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 21,
+          "scores": {
+            "math": {
+              "value": 49.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4566,6 +4628,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4584,6 +4647,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4602,6 +4666,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4619,7 +4684,32 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 19.2,
+          "scores": {
+            "coding": {
+              "value": 31.3
+            },
+            "math": {
+              "value": 36.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 58.329,
+          "latencyTtftSec": 0.781,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4639,7 +4729,32 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 17.4,
+          "scores": {
+            "coding": {
+              "value": 29.3
+            },
+            "math": {
+              "value": 34.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 30.239,
+          "latencyTtftSec": 0.654,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4655,7 +4770,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4670,7 +4785,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4685,7 +4800,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4700,7 +4815,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4715,7 +4830,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4730,7 +4845,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4745,7 +4860,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4760,7 +4875,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4775,7 +4890,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4790,7 +4905,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4805,7 +4920,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4820,7 +4935,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4835,7 +4950,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4853,6 +4968,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4871,6 +4987,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4891,6 +5008,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4906,7 +5024,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4921,8 +5039,7 @@
           ]
         },
         "sources": [
-          "committed",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4941,6 +5058,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4956,7 +5074,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -4977,6 +5095,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -4996,6 +5115,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5014,6 +5134,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5032,6 +5153,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5052,6 +5174,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5067,7 +5190,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5082,7 +5205,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5100,6 +5223,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5119,6 +5243,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5134,7 +5259,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5152,6 +5277,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5167,7 +5293,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5185,6 +5311,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5203,6 +5330,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5221,6 +5349,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5239,6 +5368,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5259,6 +5389,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5277,6 +5408,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5295,6 +5427,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5313,6 +5446,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5332,6 +5466,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5350,6 +5485,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5365,7 +5501,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5385,6 +5521,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5405,6 +5542,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5425,6 +5563,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5440,7 +5579,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5455,7 +5594,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5474,6 +5613,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5492,6 +5632,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5511,6 +5652,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5530,6 +5672,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5545,7 +5688,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5560,7 +5703,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5577,8 +5720,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5593,7 +5735,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5610,8 +5752,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5628,8 +5769,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5644,7 +5784,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5659,7 +5799,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5677,6 +5817,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5737,6 +5878,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5755,6 +5897,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5775,6 +5918,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5794,6 +5938,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5813,6 +5958,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5832,6 +5978,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5847,7 +5994,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5866,6 +6013,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5881,7 +6029,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5896,7 +6044,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5915,6 +6063,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5934,6 +6083,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -5949,7 +6099,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5964,7 +6114,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5979,7 +6129,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -5998,6 +6148,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6017,6 +6168,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6036,6 +6188,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6054,6 +6207,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6072,6 +6226,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6092,6 +6247,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6112,6 +6268,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6152,6 +6309,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6170,7 +6328,32 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 15.9,
+          "scores": {
+            "coding": {
+              "value": 20.1
+            },
+            "math": {
+              "value": 38
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 63.772,
+          "latencyTtftSec": 0.638,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6192,6 +6375,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6210,6 +6394,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6225,7 +6410,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6242,7 +6427,16 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 4.7,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6262,7 +6456,24 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 14.7,
+          "scores": {
+            "coding": {
+              "value": 26.3
+            },
+            "math": {
+              "value": 3.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6282,7 +6493,24 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 10.6,
+          "scores": {
+            "coding": {
+              "value": 12.5
+            },
+            "math": {
+              "value": 27
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6298,7 +6526,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6316,6 +6544,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6335,6 +6564,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6353,6 +6583,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6371,6 +6602,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6389,6 +6621,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6407,6 +6640,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6426,6 +6660,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6444,6 +6679,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6466,6 +6702,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6481,7 +6718,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6496,7 +6733,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6515,6 +6752,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6530,7 +6768,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6545,7 +6783,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6560,7 +6798,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6575,7 +6813,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6590,7 +6828,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6605,7 +6843,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6624,6 +6862,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6643,6 +6882,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6658,7 +6898,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6673,7 +6913,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6688,7 +6928,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6703,7 +6943,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6718,7 +6958,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6733,7 +6973,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6750,8 +6990,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6766,7 +7005,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6781,7 +7020,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6796,7 +7035,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6811,8 +7050,7 @@
           ]
         },
         "sources": [
-          "committed",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6827,7 +7065,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6842,7 +7080,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6859,7 +7097,32 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 6,
+          "scores": {
+            "coding": {
+              "value": 3.8
+            },
+            "math": {
+              "value": 6.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 45.988,
+          "latencyTtftSec": 0.345,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6875,7 +7138,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6890,7 +7153,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6905,7 +7168,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6920,7 +7183,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6938,6 +7201,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -6953,7 +7217,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -6990,6 +7254,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7009,6 +7274,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7028,6 +7294,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7046,6 +7313,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7064,6 +7332,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7083,6 +7352,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7104,6 +7374,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7124,6 +7395,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7145,6 +7417,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7163,6 +7436,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7177,8 +7451,16 @@
             "text"
           ]
         },
+        "benchmarks": {
+          "intelligenceIndex": 6.3,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "ollama-library"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7193,7 +7475,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7208,7 +7490,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7226,6 +7508,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7241,7 +7524,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7256,7 +7539,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7271,7 +7554,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7286,7 +7569,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7301,7 +7584,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7319,6 +7602,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7334,7 +7618,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7349,7 +7633,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7364,7 +7648,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7379,7 +7663,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7394,7 +7678,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7409,7 +7693,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7424,7 +7708,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7439,7 +7723,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7454,7 +7738,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7469,7 +7753,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7484,7 +7768,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7499,7 +7783,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7518,6 +7802,7 @@
           ]
         },
         "sources": [
+          "committed",
           "ollama-library"
         ],
         "lastVerified": "2026-07-24"
@@ -7533,7 +7818,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7550,8 +7835,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7566,7 +7850,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7581,7 +7865,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7596,7 +7880,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7611,7 +7895,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7626,7 +7910,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7641,7 +7925,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7656,7 +7940,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7671,7 +7955,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7686,7 +7970,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7701,7 +7985,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7716,7 +8000,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7731,7 +8015,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7746,7 +8030,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7764,7 +8048,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7782,7 +8066,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7800,7 +8084,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7818,7 +8102,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7836,7 +8120,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7854,7 +8138,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7873,8 +8157,7 @@
           ]
         },
         "sources": [
-          "committed",
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7892,7 +8175,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7910,7 +8193,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7928,7 +8211,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7946,7 +8229,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -7964,7 +8247,7 @@
           ]
         },
         "sources": [
-          "ollama-library"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       }
@@ -8045,7 +8328,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -8461,7 +8743,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -8559,7 +8840,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -9618,7 +9898,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -9754,7 +10033,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -9851,7 +10129,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -9911,7 +10188,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10042,7 +10318,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10210,7 +10485,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10269,7 +10543,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10366,7 +10639,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10463,7 +10735,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10636,7 +10907,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10809,7 +11079,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10868,7 +11137,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -10927,7 +11195,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "openai-api"
@@ -12834,6 +13101,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -12870,6 +13138,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -12906,6 +13175,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -12942,6 +13212,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -12980,6 +13251,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13018,6 +13290,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13052,6 +13325,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13089,6 +13363,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13126,6 +13401,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13161,6 +13437,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13193,7 +13470,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 5.3,
+          "scores": {
+            "math": {
+              "value": 2.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 53.585,
+          "latencyTtftSec": 0.923,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13227,6 +13526,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13260,6 +13560,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13293,6 +13594,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13323,7 +13625,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -13354,7 +13656,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 6.4,
+          "scores": {
+            "math": {
+              "value": 73.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13392,6 +13708,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13427,6 +13744,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13460,6 +13778,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13494,6 +13813,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13529,6 +13849,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13559,7 +13880,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -13641,6 +13962,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13677,6 +13999,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -13715,6 +14038,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -13753,6 +14077,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -13789,7 +14114,21 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 34.7,
+          "scores": {
+            "math": {
+              "value": 62.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -13827,6 +14166,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -13864,6 +14204,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -13901,6 +14242,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13937,6 +14279,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -13973,6 +14316,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14009,6 +14353,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14045,6 +14390,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14082,6 +14428,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -14159,6 +14506,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -14196,6 +14544,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14228,7 +14577,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 18.2,
+          "scores": {
+            "coding": {
+              "value": 25.8
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 141.761,
+          "latencyTtftSec": 0.489,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14262,6 +14633,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14297,6 +14669,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14333,6 +14706,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14369,6 +14743,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14405,6 +14780,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14441,6 +14817,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14475,7 +14852,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14506,7 +14883,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -14536,7 +14913,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -14569,6 +14946,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14602,6 +14980,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14632,7 +15011,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -14655,6 +15034,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14686,6 +15066,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14754,7 +15135,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14789,6 +15170,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -14824,6 +15206,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -14859,6 +15242,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -14892,7 +15276,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 9.9,
+          "scores": {
+            "math": {
+              "value": 53.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14926,7 +15324,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 21.4,
+          "scores": {
+            "math": {
+              "value": 53.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -14959,7 +15371,21 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 24.7,
+          "scores": {
+            "math": {
+              "value": 59
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -14995,6 +15421,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15028,6 +15455,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15061,6 +15489,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15133,6 +15562,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15169,6 +15599,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15208,6 +15639,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15247,6 +15679,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15286,6 +15719,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15325,6 +15759,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15363,6 +15798,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15400,6 +15836,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15435,6 +15872,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15470,6 +15908,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15505,6 +15944,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15543,6 +15983,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15580,6 +16021,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15618,6 +16060,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15657,6 +16100,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -15696,6 +16140,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15735,6 +16180,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15773,6 +16219,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15811,6 +16258,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15841,7 +16289,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -15876,6 +16324,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15911,6 +16360,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15945,6 +16395,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -15974,7 +16425,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16010,6 +16461,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16036,6 +16488,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16072,6 +16525,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16098,6 +16552,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16122,6 +16577,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16146,6 +16602,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16176,8 +16633,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16206,7 +16662,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16237,7 +16693,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 6.7,
+          "scores": {
+            "coding": {
+              "value": 9.5
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 102.537,
+          "latencyTtftSec": 0.449,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16270,7 +16748,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 21.4,
+          "scores": {
+            "coding": {
+              "value": 31.1
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 1096.748,
+          "latencyTtftSec": 3.583,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16302,7 +16802,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 26.1,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16334,7 +16843,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 14.1,
+          "scores": {
+            "coding": {
+              "value": 25.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 127.228,
+          "latencyTtftSec": 0.667,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16358,6 +16889,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16390,7 +16922,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 30.6,
+          "scores": {
+            "coding": {
+              "value": 42.8
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 127.165,
+          "latencyTtftSec": 2.089,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16421,7 +16975,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16451,7 +17005,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16483,6 +17037,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16514,7 +17069,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 33.7,
+          "scores": {
+            "coding": {
+              "value": 59.5
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 105.278,
+          "latencyTtftSec": 1.109,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16547,6 +17124,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16577,8 +17155,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16610,7 +17187,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 33.5,
+          "scores": {
+            "coding": {
+              "value": 45.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16686,7 +17277,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 6.8,
+          "scores": {
+            "math": {
+              "value": 4
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16719,7 +17324,24 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 7.6,
+          "scores": {
+            "coding": {
+              "value": 5.4
+            },
+            "math": {
+              "value": 4.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16749,8 +17371,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 1.1,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "openrouter-api"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16779,8 +17409,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 4.2,
+          "scores": {
+            "math": {
+              "value": 3.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "openrouter-api"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -16812,7 +17455,32 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 9.4,
+          "scores": {
+            "coding": {
+              "value": 11.9
+            },
+            "math": {
+              "value": 7.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 79.187,
+          "latencyTtftSec": 0.648,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16847,7 +17515,32 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 14.3,
+          "scores": {
+            "coding": {
+              "value": 16.3
+            },
+            "math": {
+              "value": 19.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 101.626,
+          "latencyTtftSec": 0.596,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16882,7 +17575,32 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 10,
+          "scores": {
+            "coding": {
+              "value": 8.2
+            },
+            "math": {
+              "value": 14
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 88.556,
+          "latencyTtftSec": 0.59,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16917,6 +17635,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16953,7 +17672,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 50.6,
+          "scores": {
+            "coding": {
+              "value": 71.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 124.125,
+          "latencyTtftSec": 0.925,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -16983,8 +17724,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 4.9,
+          "scores": {
+            "math": {
+              "value": 18
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 43.647,
+          "latencyTtftSec": 0.535,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "openrouter-api"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -17014,7 +17776,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -17048,6 +17810,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17082,6 +17845,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17115,6 +17879,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17145,7 +17910,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -17179,7 +17944,21 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 31.4,
+          "scores": {
+            "math": {
+              "value": 82.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17214,6 +17993,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17248,6 +18028,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17284,6 +18065,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17317,6 +18099,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17350,6 +18133,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17385,6 +18169,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17420,6 +18205,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17455,6 +18241,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17490,7 +18277,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17523,7 +18310,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 7.3,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17559,6 +18355,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -17594,7 +18391,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 12.5,
+          "scores": {
+            "math": {
+              "value": 30.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17630,6 +18441,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17664,7 +18476,24 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 14.7,
+          "scores": {
+            "coding": {
+              "value": 20.5
+            },
+            "math": {
+              "value": 38.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17698,6 +18527,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17730,7 +18560,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 6.4,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17761,7 +18600,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -17795,6 +18634,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17829,7 +18669,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17865,7 +18705,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17900,7 +18740,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17934,6 +18774,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17966,7 +18807,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 19.4,
+          "scores": {
+            "math": {
+              "value": 57
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -17999,7 +18854,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 23.5,
+          "scores": {
+            "math": {
+              "value": 57.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18032,7 +18901,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 32.7,
+          "scores": {
+            "math": {
+              "value": 94.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18068,6 +18951,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -18104,6 +18988,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18139,6 +19024,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18172,7 +19058,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 57.1,
+          "scores": {
+            "coding": {
+              "value": 76.2
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 33.23,
+          "latencyTtftSec": 9.893,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18202,7 +19110,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -18231,7 +19139,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -18266,6 +19174,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18300,7 +19209,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 41,
+          "scores": {
+            "coding": {
+              "value": 59.1
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 130.025,
+          "latencyTtftSec": 0.961,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18331,7 +19262,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -18360,8 +19291,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 5.1,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "openrouter-api"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -18393,6 +19332,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18425,6 +19365,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18458,6 +19399,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18480,6 +19422,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18507,6 +19450,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18539,6 +19483,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18562,6 +19507,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18595,6 +19541,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18618,6 +19565,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18642,6 +19590,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18668,6 +19617,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18691,6 +19641,7 @@
         },
         "knowledgeCutoff": "2025-03-31",
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18724,7 +19675,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18758,6 +19709,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18791,7 +19743,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18822,7 +19774,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -18855,7 +19807,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18891,6 +19843,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18924,6 +19877,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -18960,6 +19914,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -18997,6 +19952,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19034,6 +19990,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19110,6 +20067,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19147,6 +20105,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19183,6 +20142,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19219,6 +20179,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19255,6 +20216,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19285,7 +20247,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -19315,7 +20277,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -19352,6 +20314,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19389,6 +20352,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19426,6 +20390,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19463,6 +20428,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19499,6 +20465,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19536,6 +20503,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19574,6 +20542,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19612,6 +20581,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19648,6 +20618,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19683,6 +20654,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19718,6 +20690,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19753,6 +20726,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19789,6 +20763,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -19825,6 +20800,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19861,6 +20837,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19897,6 +20874,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19934,6 +20912,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -19970,6 +20949,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20006,6 +20986,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20042,6 +21023,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20078,6 +21060,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20115,6 +21098,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20152,6 +21136,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20188,6 +21173,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20225,6 +21211,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20262,6 +21249,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20299,6 +21287,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20336,6 +21325,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20373,6 +21363,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20410,6 +21401,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20447,6 +21439,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20484,6 +21477,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20518,6 +21512,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20552,6 +21547,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20587,6 +21583,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20621,6 +21618,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -20656,6 +21654,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -20681,6 +21680,7 @@
         },
         "knowledgeCutoff": "2024-06-30",
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20714,6 +21714,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20751,6 +21752,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -20788,6 +21790,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20825,6 +21828,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20861,6 +21865,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -20896,6 +21901,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -20931,7 +21937,21 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 15.6,
+          "scores": {
+            "coding": {
+              "value": 16.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -20970,6 +21990,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21007,6 +22028,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21043,6 +22065,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21080,6 +22103,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21108,6 +22132,7 @@
           ]
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -21137,6 +22162,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21155,8 +22181,7 @@
           ]
         },
         "sources": [
-          "litellm",
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -21180,6 +22205,7 @@
           ]
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -21199,7 +22225,7 @@
           ]
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -21217,7 +22243,7 @@
           ]
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -21252,6 +22278,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21283,7 +22310,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 9.5,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21315,6 +22351,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21347,7 +22384,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 9.3,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21382,6 +22428,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21414,7 +22461,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 17.8,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21448,6 +22504,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21471,6 +22528,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21504,6 +22562,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21527,6 +22586,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21560,6 +22620,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21583,6 +22644,7 @@
           ]
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21615,7 +22677,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 9.6,
+          "scores": {
+            "math": {
+              "value": 14
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21649,6 +22725,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21678,9 +22755,16 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 7.1,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
-          "litellm",
-          "openrouter-api"
+          "artificial-analysis",
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -21713,6 +22797,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21746,6 +22831,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21780,6 +22866,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21814,6 +22901,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21848,6 +22936,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21882,6 +22971,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -21915,6 +23005,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -21950,6 +23041,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -21985,6 +23077,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22017,6 +23110,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22051,6 +23145,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22085,6 +23180,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22119,6 +23215,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22152,6 +23249,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22185,7 +23283,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 13.6,
+          "scores": {
+            "math": {
+              "value": 29
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22219,6 +23331,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22251,6 +23364,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22285,6 +23399,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22318,7 +23433,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 24,
+          "scores": {
+            "math": {
+              "value": 80.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22351,7 +23480,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 31.7,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22384,7 +23522,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 13.7,
+          "scores": {
+            "math": {
+              "value": 66.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 187.432,
+          "latencyTtftSec": 1.025,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22419,6 +23579,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22453,7 +23614,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 14.3,
+          "scores": {
+            "math": {
+              "value": 70.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22490,6 +23665,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22524,7 +23700,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 10,
+          "scores": {
+            "math": {
+              "value": 72.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22561,6 +23751,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22594,7 +23785,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 11.1,
+          "scores": {
+            "math": {
+              "value": 68.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22628,7 +23833,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 8.4,
+          "scores": {
+            "math": {
+              "value": 27.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22664,6 +23883,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22699,7 +23919,29 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 32.3,
+          "scores": {
+            "coding": {
+              "value": 45.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 135.358,
+          "latencyTtftSec": 1.023,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22736,7 +23978,16 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 33.8,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22773,7 +24024,16 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 29.3,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22810,7 +24070,29 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 33.7,
+          "scores": {
+            "coding": {
+              "value": 48.2
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 65.024,
+          "latencyTtftSec": 1.48,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22847,7 +24129,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 21.4,
+          "scores": {
+            "coding": {
+              "value": 28.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 50.343,
+          "latencyTtftSec": 1.177,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22884,6 +24188,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22921,6 +24226,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -22958,6 +24264,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -22992,7 +24299,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 37.1,
+          "scores": {
+            "coding": {
+              "value": 53.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 58.427,
+          "latencyTtftSec": 1.44,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23028,7 +24357,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 31.6,
+          "scores": {
+            "coding": {
+              "value": 41.9
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 149.207,
+          "latencyTtftSec": 1.253,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23065,6 +24416,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23098,6 +24450,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23133,7 +24486,29 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 39.6,
+          "scores": {
+            "coding": {
+              "value": 54.5
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 52.808,
+          "latencyTtftSec": 1.638,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -23167,7 +24542,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 46,
+          "scores": {
+            "coding": {
+              "value": 66
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 199.573,
+          "latencyTtftSec": 1.579,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23202,7 +24599,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 39,
+          "scores": {
+            "coding": {
+              "value": 55.9
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 53.2,
+          "latencyTtftSec": 1.714,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23238,6 +24657,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23270,7 +24690,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 4.1,
+          "scores": {
+            "math": {
+              "value": 33.7
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 92.719,
+          "latencyTtftSec": 12.87,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23300,7 +24742,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23332,6 +24774,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23367,6 +24810,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23397,7 +24841,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23430,6 +24874,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23460,7 +24905,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23492,7 +24937,24 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 26,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 294.218,
+          "latencyTtftSec": 0.744,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23528,7 +24990,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 30.3,
+          "scores": {
+            "coding": {
+              "value": 39.6
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 397.589,
+          "latencyTtftSec": 0.614,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23562,6 +25046,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23594,7 +25079,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 41.2,
+          "scores": {
+            "coding": {
+              "value": 58.8
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 65.247,
+          "latencyTtftSec": 1.868,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23626,7 +25133,24 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 33.6,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 113.227,
+          "latencyTtftSec": 1.685,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23657,7 +25181,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23687,7 +25211,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23717,7 +25241,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23750,6 +25274,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23784,7 +25309,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 40.7,
+          "scores": {
+            "coding": {
+              "value": 52.1
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 57.334,
+          "latencyTtftSec": 2.399,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23815,8 +25362,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "litellm",
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23847,7 +25393,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 14.1,
+          "scores": {
+            "coding": {
+              "value": 16.2
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23877,7 +25437,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "openrouter-api"
+          "committed"
         ],
         "lastVerified": "2026-07-24"
       },
@@ -23912,7 +25472,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 37,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23948,6 +25517,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -23982,7 +25552,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 37.6,
+          "scores": {
+            "coding": {
+              "value": 42.2
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24017,7 +25601,29 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 53.8,
+          "scores": {
+            "coding": {
+              "value": 72.4
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 55.991,
+          "latencyTtftSec": 11.135,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24053,6 +25659,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24090,6 +25697,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24123,7 +25731,29 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 42.2,
+          "scores": {
+            "coding": {
+              "value": 60.2
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
+        "performance": {
+          "throughputTps": 63.458,
+          "latencyTtftSec": 2.209,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24159,6 +25789,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24193,6 +25824,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24228,7 +25860,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 7,
+          "scores": {
+            "math": {
+              "value": 15.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24263,6 +25909,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24299,7 +25946,21 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 11,
+          "scores": {
+            "math": {
+              "value": 26.3
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24334,7 +25995,24 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 33.7,
+          "scores": {
+            "coding": {
+              "value": 45.3
+            },
+            "math": {
+              "value": 95
+            }
+          },
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24371,6 +26049,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24404,7 +26083,16 @@
           "source": "litellm",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 39.5,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24438,7 +26126,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 38.1,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24472,6 +26169,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "litellm",
           "openrouter-api"
         ],
@@ -24506,6 +26204,7 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24541,7 +26240,16 @@
           "source": "openrouter",
           "lastVerified": "2026-07-24"
         },
+        "benchmarks": {
+          "intelligenceIndex": 34.5,
+          "indicative": true,
+          "note": "Cited third-party benchmark — verify at the source.",
+          "source": "Artificial Analysis",
+          "lastVerified": "2026-07-24"
+        },
         "sources": [
+          "artificial-analysis",
+          "committed",
           "openrouter-api"
         ],
         "lastVerified": "2026-07-24"
@@ -24787,7 +26495,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
@@ -25065,7 +26772,6 @@
           "lastVerified": "2026-07-24"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
@@ -25753,7 +27459,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
@@ -25807,7 +27512,6 @@
           "lastVerified": "2026-07-22"
         },
         "sources": [
-          "artificial-analysis",
           "committed",
           "litellm",
           "overrides"
