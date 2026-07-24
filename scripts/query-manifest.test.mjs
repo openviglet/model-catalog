@@ -86,6 +86,21 @@ test("buildQueryManifest infers types, enums and numeric ranges", () => {
   assert.equal(byName.label.facet, false);
 });
 
+test("buildQueryManifest promotes an integer field over int32 to LONG (parameters)", () => {
+  const m = buildQueryManifest(
+    [
+      { id: "glm-4.5", label: "GLM-4.5", kind: "CHAT", vendor: "zai", parameters: 355000000000 },
+      { id: "llama-3.1-8b-instant", label: "Llama 3.1 8B", kind: "CHAT", vendor: "groq", parameters: 8000000000 },
+    ],
+    { source: "https://x", schemaVersion: "1", generatedAt: "2026-07-24" },
+  );
+  const params = m.fields.find((f) => f.name === "parameters");
+  // 355e9 / 8e9 both exceed int32 (2,147,483,647) → LONG, not INT (Turing's Lucene
+  // INT field can't parse them). Small ints stay INT (see contextWindow above).
+  assert.equal(params.type, "LONG");
+  assert.equal(params.max, 355000000000);
+});
+
 test("buildContextTxt yields one decision line per model with a caveat header", () => {
   const txt = buildContextTxt(SAMPLE, { source: "https://x", lastUpdated: "2026-07-22" });
   const lines = txt.trim().split("\n");

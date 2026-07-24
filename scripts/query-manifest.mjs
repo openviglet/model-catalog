@@ -130,10 +130,22 @@ export function buildQueryManifest(flat, opts = {}) {
   };
 }
 
+/** 32-bit signed integer bounds — an integer field wider than this must be LONG. */
+const INT32_MAX = 2147483647;
+const INT32_MIN = -2147483648;
+
 function describeField(name, a) {
   const field = { name, description: DESCRIPTIONS[name] || humanize(name) };
   if (a.hasNumber && !a.hasString && !a.hasBool) {
-    field.type = a.allInt ? "INT" : "DOUBLE";
+    // Integer fields default to INT, but promote to LONG when a value overflows
+    // int32 — `parameters` reaches into the hundreds of billions / a trillion
+    // (e.g. GLM-4.5 = 355e9, Kimi-K2 = 1e12), which a consumer's int32 field
+    // (e.g. Turing's Lucene INT) cannot parse. Non-integer numerics stay DOUBLE.
+    const overflowsInt32 =
+      (Number.isFinite(a.max) && a.max > INT32_MAX) || (Number.isFinite(a.min) && a.min < INT32_MIN);
+    let numType = "DOUBLE";
+    if (a.allInt) numType = overflowsInt32 ? "LONG" : "INT";
+    field.type = numType;
     field.facet = false;
     field.multiValued = a.array;
     field.mandatory = false;

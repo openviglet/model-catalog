@@ -1,7 +1,7 @@
-# Last task number — `T79` · next block letter — `S`
+# Last task number — `T80` · next block letter — `S`
 
 > **Single source of truth for the next free task number.** The next new task is
-> `T80`; after assigning it, bump the number above and the log line below.
+> `T81`; after assigning it, bump the number above and the log line below.
 >
 > T-numbers are **non-contiguous across blocks** — never infer the next number
 > from a block's header range or a `git log` scan. This counter is authoritative.
@@ -18,6 +18,7 @@
 
 ## Log (most recent first)
 
+- **T80 SHIPPED** (Block R §R3 — query-manifest infers `LONG` (not `INT`) for integer fields overflowing int32: every model with `parameters` exceeds 2,147,483,647 [GLM-4.5 355e9, DeepSeek 671e9, Kimi-K2 1e12], breaking a consumer's int32 field [Turing: "Cannot parse INT value '355000000000'"]. describeField promotes all-int fields to LONG when min/max overflows int32, small ints stay INT, non-ints stay DOUBLE; LONG already in Turing's TurSEFieldType. +1 test [44 green]; emit re-verified.) — 2026-07-24.
 - **T79 SHIPPED** (Block R §R2 — globally-unique `ref` = `<vendor>/<id>` on every published entry, forced by T78's collisions [bare `id` repeats across 18 vendor pairs: gpt-4o openai+azure, gemini-2.5-pro across 3 gemini access routes, gpt-oss groq+openrouter, …]. emit.mjs stamps `ref` at the flatten choke-point [→ catalog.json/index.json/by-* slices/ndjson, 862/862 unique]; optional in schema [additive, version 1]; excluded from query-manifest as identity; api.md flags `id` non-unique + documents `ref`. Consumers key on `ref` [turing-demo: `id-field: ref`]. 43 tests green.) — 2026-07-24.
 - **T78 SHIPPED** (Block R §R1 — aggregator & self-host library coverage, reversing T37's curated cap: two new SourceAdapters ingest the OpenRouter gateway + Ollama library in full. `openrouter-api` reads public `/api/v1/models` JSON as a first-class vendor source [anchors + removal evidence] → 347 models w/ context/pricing/modalities/caps; `ollama-library` crawls `ollama.com/library` via new `fetchTextOrReplay` + fail-soft `parseLibrary` regex [partial, anchor-only] → 233 models, openWeights:true except cloud-badged. Catalog ≈295→862/22 vendors; +2 tests [43 green]; regen --apply + emit re-verified; also re-anchored 2 qa-eval cases off the removed gemini-1.5-pro. Rationale/trade-off in STRATEGY §IV. **New Block R.**) — 2026-07-24.
 - **T77 SHIPPED** (Block Q §Q1 — Ask copilot answer rendering: inline `[n]` citation footnotes + numbered chips. `ask.ts` `linkCitations()` turns each `[n]` the copilot emits into a superscript link to the n-th cited model (drawer / backend url / bare number), run on the escaped Markdown so `[1]` survives; `citeChip(c, n)` + `.ask-cite-num` give the "Cited models" chips a matching leading number so marker↔chip share `n`; citations are 1-based answer order per paired Turing T800 (renumbers `[201]`→`[1]`, forbids `[Source:…]`); defensive `stripSourceLabels()` removes any stray narrative label. New `.ask-cite-ref`/`.ask-cite-num` styles. Page-only zero-dep; typecheck+build:page+41 tests green. **New Block Q.**) — 2026-07-23.
