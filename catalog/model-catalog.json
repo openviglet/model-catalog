@@ -12243,6 +12243,8 @@
         "id": "gpt-4o-transcribe",
         "label": "gpt-4o-transcribe",
         "kind": "TRANSCRIPTION",
+        "status": "DEPRECATED",
+        "deprecated": true,
         "contextWindow": 16000,
         "maxOutputTokens": 2000,
         "modalities": {
@@ -12294,9 +12296,31 @@
         "lastVerified": "2026-07-24"
       },
       {
+        "id": "gpt-live-transcribe",
+        "label": "gpt-live-transcribe",
+        "kind": "TRANSCRIPTION",
+        "status": "GA",
+        "modalities": {
+          "input": [
+            "audio",
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "sources": [
+          "committed",
+          "overrides"
+        ],
+        "lastVerified": "2026-07-31"
+      },
+      {
         "id": "gpt-realtime-whisper",
         "label": "gpt-realtime-whisper",
         "kind": "TRANSCRIPTION",
+        "status": "DEPRECATED",
+        "deprecated": true,
         "modalities": {
           "input": [
             "audio",
@@ -12310,7 +12334,27 @@
           "committed",
           "openai-api"
         ],
-        "lastVerified": "2026-07-24"
+        "lastVerified": "2026-07-31"
+      },
+      {
+        "id": "gpt-transcribe",
+        "label": "gpt-transcribe",
+        "kind": "TRANSCRIPTION",
+        "status": "GA",
+        "modalities": {
+          "input": [
+            "audio",
+            "text"
+          ],
+          "output": [
+            "text"
+          ]
+        },
+        "sources": [
+          "committed",
+          "overrides"
+        ],
+        "lastVerified": "2026-07-31"
       },
       {
         "id": "whisper-1",
