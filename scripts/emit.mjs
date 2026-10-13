@@ -815,6 +815,9 @@ th{color:var(--muted);font-weight:600;white-space:nowrap}
 .pagelinks{margin:1.7rem 0 0;color:var(--muted);font-size:.9rem}
 .tm{margin:2.6rem 0 0;padding-top:1.2rem;border-top:1px solid var(--border);color:var(--muted);font-size:.78rem;line-height:1.55}
 </style>
+<!-- Google Analytics: page views, counted in the Viglet property beside viglet.org -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-SMSL7R3897"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-SMSL7R3897');</script>
 </head>
 <body>
 ${inner}
