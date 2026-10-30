@@ -24,7 +24,8 @@
  * admitted only if a live vendor API or an override vouches for it. LiteLLM
  * enriches existing/vendor-confirmed ids but can never introduce a brand-new id.
  * An enrichment source may anchor for named vendors only: `anchoringSources` then
- * holds `<sourceId>::<vendor>` (models.dev's creator sections, T85).
+ * holds `<sourceId>::<vendor>` (models.dev's creator sections, T85), or
+ * `<sourceId>::<vendor>::<KIND>` for one kind (LiteLLM's media creators, T89).
  *
  * @since 2026.3.4 (T768)
  */
@@ -191,7 +192,10 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
 
     const anchored =
       existingIds.has(key) ||
-      group.some((g) => anchoringSources.has(g.sourceId) || anchoringSources.has(`${g.sourceId}::${vendor}`));
+      group.some((g) =>
+        anchoringSources.has(g.sourceId) ||
+        anchoringSources.has(`${g.sourceId}::${vendor}`) ||
+        anchoringSources.has(`${g.sourceId}::${vendor}::${g.draft.kind}`));
     if (!anchored) {
       skipped.push({ vendor, id, reason: "litellm-only (not anchored by a vendor API / override / committed catalog)" });
       continue;

@@ -55,7 +55,26 @@ const PROVIDER_TO_VENDOR = {
   // pass-through lists, which would balloon and duplicate the per-creator catalog.
   openrouter: "openrouter",
   vercel_ai_gateway: "vercel",
+  // Image/video creators reached only through LiteLLM (T89). fal.ai is a host, like
+  // OpenRouter, so it stays unmapped: it would only re-list these creators' models.
+  stability: "stability",
+  black_forest_labs: "bfl",
+  recraft: "recraft",
+  runwayml: "runway",
+  volcengine: "volcengine", // ByteDance's cloud: Seedance video, Doubao chat
 };
+
+/**
+ * Where LiteLLM may anchor a new id (T89), as `vendor` (every kind) or `vendor:KIND`.
+ * Only a creator's own media API qualifies: the media-only creators whole, and the
+ * media kinds of creators whose chat ids a live API or models.dev already anchors.
+ * Merge still drops an id whose vendor's live listing covers that kind and omits it.
+ */
+const ANCHORS = [
+  "stability", "bfl", "recraft", "runway:IMAGE", "runway:VIDEO", // Runway also re-serves ElevenLabs speech
+  "volcengine:VIDEO", "qwen:VIDEO", "qwen:IMAGE", "gemini:VIDEO",
+  "minimax:VIDEO", "xai:VIDEO", "xai:IMAGE",
+];
 
 const MODE_TO_KIND = {
   chat: "CHAT",
@@ -64,6 +83,8 @@ const MODE_TO_KIND = {
   embedding: "EMBEDDING",
   rerank: "RERANK",
   image_generation: "IMAGE",
+  image_edit: "IMAGE",
+  video_generation: "VIDEO",
   audio_transcription: "TRANSCRIPTION",
   audio_speech: "SPEECH",
   moderation: "MODERATION",
@@ -132,6 +153,7 @@ export default {
   vendor: null, // multi-vendor enrichment source
   envKey: null, // public, no auth
   label: "LiteLLM registry (metadata + indicative pricing)",
+  anchorVendors: ANCHORS,
 
   async fetch(_env, ctx) {
     return fetchOrReplay(this.id, URL, { offline: ctx.offline, when: ctx.when });

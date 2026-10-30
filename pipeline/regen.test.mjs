@@ -456,6 +456,25 @@ test("elevenlabs normalize: TTS and speech-to-speech are SPEECH with their modal
   assert.equal(elevenlabs.normalize({ detail: "unauthorized" }).length, 0, "an error body yields no drafts");
 });
 
+test("litellm anchors creator media APIs by vendor or vendor:KIND only (T89)", () => {
+  const drafts = litellm.normalize({
+    "stability/sd3": { litellm_provider: "stability", mode: "image_generation" },
+    "stability/inpaint": { litellm_provider: "stability", mode: "image_edit" },
+    "dashscope/wan3.0-video": { litellm_provider: "dashscope", mode: "video_generation" },
+    "dashscope/qwen-new-chat": { litellm_provider: "dashscope", mode: "chat" },
+    "runwayml/gen4_turbo": { litellm_provider: "runwayml", mode: "video_generation" },
+    "runwayml/eleven_multilingual_v2": { litellm_provider: "runwayml", mode: "audio_speech" },
+    "fal_ai/fal-ai/flux-pro": { litellm_provider: "fal_ai", mode: "image_generation" },
+  });
+  assert.ok(!drafts.some((d) => d.id.includes("flux-pro")), "fal.ai is a host: unmapped");
+  const anchoring = new Set([...ANCHORS, ...litellm.anchorVendors.map((v) => `litellm::${v.replace(":", "::")}`)]);
+  const { vendors } = baseMerge({ anchoringSources: anchoring, sources: [{ sourceId: "litellm", drafts }] });
+  const ids = (v) => (vendors[v] || []).map((e) => `${e.id}:${e.kind}`).sort();
+  assert.deepEqual(ids("stability"), ["inpaint:IMAGE", "sd3:IMAGE"]);
+  assert.deepEqual(ids("qwen"), ["wan3.0-video:VIDEO"], "a qwen chat id is still not anchored by LiteLLM");
+  assert.deepEqual(ids("runway"), ["gen4_turbo:VIDEO"], "Runway's re-served speech model is not anchored");
+});
+
 test("evidenceSummary lists live vs carried-forward vendors and why a source did not run (T87)", () => {
   const vendors = { openai: [{}, {}], mistral: [{}], groq: [{}] };
   const text = evidenceSummary(vendors, new Set(["openai"]), [

@@ -33,15 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T89 Image and video generation sources
-
-Image and
-video generation (Stability, Ideogram, fal.ai, ByteDance Seedance, Alibaba Wan) are
-known to LiteLLM (fal.ai alone 210 ids) but blocked by anchoring. Decide per source
-whether it anchors (a creator's own API) or only enriches (fal.ai is a host, like
-OpenRouter); depends on T82 so media ids are not wrongly removed, and on T85's
-creator-anchor rule.
-
 ### §T90 Legacy ledger entries outside the grammar
 
 The roadkeep adoption (a58016d) rewrote Block T in roadkeep's grammar but left the 79

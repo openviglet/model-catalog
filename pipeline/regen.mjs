@@ -58,8 +58,9 @@ for (const adapter of ADAPTERS) {
   if (adapter.partial) missed(adapter, "partial listing (anchors, never removal evidence)");
   else if (!drafts.length) missed(adapter, "empty listing");
   sources.push({ sourceId: adapter.id, drafts });
-  // An enrichment source may anchor new ids for a curated set of vendors only (T85).
-  for (const v of adapter.anchorVendors || []) anchoringSources.add(`${adapter.id}::${v}`);
+  // An enrichment source may anchor new ids for a curated set of vendors only (T85),
+  // or for one kind of a vendor, spelled `vendor:KIND` (T89).
+  for (const v of adapter.anchorVendors || []) anchoringSources.add(`${adapter.id}::${v.replace(":", "::")}`);
   if (adapter.vendor !== null) {
     anchoringSources.add(adapter.id); // vendor-scoped = may introduce new ids
     // A non-empty listing is the authority for which ids that vendor still serves —

@@ -19,6 +19,11 @@
     { "id": "perplexity", "name": "Perplexity (Sonar)", "category": "model-creator", "catalogVendor": "perplexity", "apiPricingUrl": "https://docs.perplexity.ai/docs/getting-started/pricing" },
     { "id": "stepfun", "name": "StepFun", "category": "model-creator", "catalogVendor": "stepfun", "note": "No public per-token pricing page verified yet." },
     { "id": "elevenlabs", "name": "ElevenLabs", "category": "model-creator", "catalogVendor": "elevenlabs", "apiPricingUrl": "https://elevenlabs.io/pricing/api", "consumerPlansUrl": "https://elevenlabs.io/pricing", "note": "Speech (TTS, speech-to-speech) models; priced per character, not per token." },
+    { "id": "stability", "name": "Stability AI", "category": "model-creator", "catalogVendor": "stability", "apiPricingUrl": "https://docs.stability.ai/pricing", "note": "Image generation and editing; priced per credit, not per token." },
+    { "id": "bfl", "name": "Black Forest Labs (FLUX)", "category": "model-creator", "catalogVendor": "bfl", "apiPricingUrl": "https://bfl.ai/pricing", "note": "Image generation; priced per image." },
+    { "id": "recraft", "name": "Recraft", "category": "model-creator", "catalogVendor": "recraft", "apiPricingUrl": "https://www.recraft.ai/pricing" },
+    { "id": "runway", "name": "Runway", "category": "model-creator", "catalogVendor": "runway", "apiPricingUrl": "https://docs.dev.runwayml.com/guides/pricing/", "note": "Video and image generation; priced per credit." },
+    { "id": "volcengine", "name": "Volcengine (ByteDance Seedance)", "category": "model-creator", "catalogVendor": "volcengine", "apiPricingUrl": "https://docs.volcengine.com/docs/ark/model-pricing?lang=zh", "note": "ByteDance's cloud (Ark); only Seedance video models are in the catalog." },
     { "id": "meta", "name": "Meta (Model API)", "category": "model-creator", "catalogVendor": "meta", "note": "Muse models via the Meta Model API; no public pricing page verified yet." },
 
     { "id": "aws-bedrock", "name": "AWS Bedrock", "category": "hyperscaler", "catalogVendor": "bedrock", "apiPricingUrl": "https://aws.amazon.com/bedrock/pricing/" },

@@ -128,6 +128,10 @@ Two safety rules keep a noisy/partial run from poisoning the reference:
   minimax, deepseek, meta, stepfun, perplexity) may anchor new ids for that vendor
   only; its host/gateway sections only enrich, and it is never removal evidence
   (T85). An id spelled in another case than a committed one folds onto it.
+  Likewise `litellm` anchors the image/video creators' own APIs it alone lists
+  (`ANCHORS` in `adapters/litellm.mjs`): Stability, Black Forest Labs and Recraft
+  whole, and only the IMAGE/VIDEO ids of Runway, Volcengine (Seedance), Qwen (Wan),
+  Gemini (Veo), MiniMax and xAI. fal.ai is a host and never anchors (T89).
 - **`partial` sources.** A self-hosted/aggregator source (`ollama-api`,
   `bedrock-api`, `huggingface-api`, `ollama-library`) sees only an
   environment-scoped/bounded/best-effort slice (one host's pulls, one region, a

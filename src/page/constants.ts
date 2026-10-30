@@ -16,6 +16,7 @@ export const VENDOR_LABEL: Record<string, string> = {
   vercel:"Vercel", xai:"xAI", zai:"Z.ai",
   moonshot:"Moonshot AI (Kimi)", perplexity:"Perplexity", stepfun:"StepFun", meta:"Meta",
   elevenlabs:"ElevenLabs",
+  stability:"Stability AI", bfl:"Black Forest Labs", recraft:"Recraft", runway:"Runway", volcengine:"Volcengine (ByteDance)",
 };
 // Per-vendor visual identity: a colour AND a shape (T64). Colour alone can't
 // separate 22 vendors — several share a hue family (four Google/Azure blues,
@@ -39,6 +40,9 @@ export const VENDOR_STYLE: Record<string, { c: string; s: string }> = {
   moonshot:{c:"#0891b2",s:"square"}, perplexity:{c:"#0d9488",s:"diamond"},
   stepfun:{c:"#4f46e5",s:"triangle"}, meta:{c:"#0866ff",s:"diamond"},
   elevenlabs:{c:"#000000",s:"triangle"}, // live speech adapter (T88)
+  // Image/video creators anchored through LiteLLM (T89).
+  stability:{c:"#9333ea",s:"square"}, bfl:{c:"#475569",s:"diamond"}, recraft:{c:"#e11d48",s:"circle"},
+  runway:{c:"#65a30d",s:"diamond"}, volcengine:{c:"#2563eb",s:"square"},
 };
 export const VENDOR_FALLBACK: { c: string; s: string } = { c:"#64748b", s:"circle" };
 export const GROUP_OPTS: Array<[string | null, string]> = [[null, "None"], ["vendor", "Vendor"], ["kind", "Kind"], ["tier", "Tier"]];
