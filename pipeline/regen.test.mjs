@@ -20,6 +20,7 @@ import huggingface from "./adapters/huggingface.mjs";
 import modelsDev from "./adapters/models-dev.mjs";
 import xai from "./adapters/xai.mjs";
 import deepseek from "./adapters/deepseek.mjs";
+import elevenlabs from "./adapters/elevenlabs.mjs";
 
 const WHEN = "2026-07-21";
 const ANCHORS = new Set(["openai-api", "anthropic-api", "gemini-api", "cohere-api", "mistral-api", "overrides"]);
@@ -439,6 +440,20 @@ test("xai + deepseek normalize: live ids, kind from the id; vendor-scoped remova
   const d = deepseek.normalize({ data: [{ id: "deepseek-v4-pro" }, { id: "deepseek-v4-flash" }] });
   assert.deepEqual(d.map((e) => [e.vendor, e.id, e.kind]), [["deepseek", "deepseek-v4-pro", "CHAT"], ["deepseek", "deepseek-v4-flash", "CHAT"]]);
   assert.deepEqual(deepseek.normalize({}), [], "a malformed body yields no drafts, not a crash");
+});
+
+test("elevenlabs normalize: TTS and speech-to-speech are SPEECH with their modalities (T88)", () => {
+  const drafts = elevenlabs.normalize([
+    { model_id: "eleven_v3", name: "Eleven v3", can_do_text_to_speech: true, can_do_voice_conversion: false, maximum_text_length_per_request: 5000 },
+    { model_id: "eleven_multilingual_sts_v2", name: "Eleven Multilingual v2", can_do_text_to_speech: false, can_do_voice_conversion: true },
+    { name: "no id" },
+  ]);
+  assert.deepEqual(drafts, [
+    { vendor: "elevenlabs", id: "eleven_v3", label: "Eleven v3", kind: "SPEECH", modalities: { input: ["text"], output: ["audio"] } },
+    { vendor: "elevenlabs", id: "eleven_multilingual_sts_v2", label: "Eleven Multilingual v2 (speech-to-speech)", kind: "SPEECH",
+      modalities: { input: ["audio"], output: ["audio"] } },
+  ]);
+  assert.equal(elevenlabs.normalize({ detail: "unauthorized" }).length, 0, "an error body yields no drafts");
 });
 
 test("evidenceSummary lists live vs carried-forward vendors and why a source did not run (T87)", () => {

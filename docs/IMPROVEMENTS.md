@@ -33,11 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T88 ElevenLabs adapter
-
-VIDEO has 2 entries and IMAGE 10. ElevenLabs lists its models via API and
-its key is already provisioned — the cheapest first media adapter.
-
 ### §T89 Image and video generation sources
 
 Image and

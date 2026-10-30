@@ -17,6 +17,7 @@ import cohere from "./cohere.mjs";
 import mistral from "./mistral.mjs";
 import xai from "./xai.mjs";
 import deepseek from "./deepseek.mjs";
+import elevenlabs from "./elevenlabs.mjs";
 import ollama from "./ollama.mjs";
 import ollamaLibrary from "./ollama-library.mjs";
 import openrouter from "./openrouter.mjs";
@@ -27,4 +28,4 @@ import modelsDev from "./models-dev.mjs";
 import benchmarks from "./benchmarks.mjs";
 import artificialAnalysis from "./artificial-analysis.mjs";
 
-export const ADAPTERS = [openai, anthropic, gemini, cohere, mistral, xai, deepseek, ollama, ollamaLibrary, openrouter, bedrock, huggingface, litellm, modelsDev, benchmarks, artificialAnalysis];
+export const ADAPTERS = [openai, anthropic, gemini, cohere, mistral, xai, deepseek, elevenlabs, ollama, ollamaLibrary, openrouter, bedrock, huggingface, litellm, modelsDev, benchmarks, artificialAnalysis];

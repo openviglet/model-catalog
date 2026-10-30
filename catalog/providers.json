@@ -18,6 +18,7 @@
     { "id": "moonshot", "name": "Moonshot AI (Kimi)", "category": "model-creator", "catalogVendor": "moonshot", "apiPricingUrl": "https://platform.kimi.ai/docs/pricing/chat" },
     { "id": "perplexity", "name": "Perplexity (Sonar)", "category": "model-creator", "catalogVendor": "perplexity", "apiPricingUrl": "https://docs.perplexity.ai/docs/getting-started/pricing" },
     { "id": "stepfun", "name": "StepFun", "category": "model-creator", "catalogVendor": "stepfun", "note": "No public per-token pricing page verified yet." },
+    { "id": "elevenlabs", "name": "ElevenLabs", "category": "model-creator", "catalogVendor": "elevenlabs", "apiPricingUrl": "https://elevenlabs.io/pricing/api", "consumerPlansUrl": "https://elevenlabs.io/pricing", "note": "Speech (TTS, speech-to-speech) models; priced per character, not per token." },
     { "id": "meta", "name": "Meta (Model API)", "category": "model-creator", "catalogVendor": "meta", "note": "Muse models via the Meta Model API; no public pricing page verified yet." },
 
     { "id": "aws-bedrock", "name": "AWS Bedrock", "category": "hyperscaler", "catalogVendor": "bedrock", "apiPricingUrl": "https://aws.amazon.com/bedrock/pricing/" },

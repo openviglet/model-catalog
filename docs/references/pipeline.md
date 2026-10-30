@@ -52,6 +52,7 @@ npm test                      # pipeline unit tests
 | `mistral-api` | mistral | `GET /v1/models` | `MISTRAL_API_KEY` | `capabilities{}` → tools/vision, `max_context_length`. |
 | `xai-api` | xai | `GET /v1/models` | `XAI_API_KEY` | Ids only → kind from the id (`grok-imagine-image`/`-video`); removal evidence scoped to the kinds listed (T86). |
 | `deepseek-api` | deepseek | `GET /models` | `DEEPSEEK_API_KEY` | Ids only; all CHAT (T86). |
+| `elevenlabs-api` | elevenlabs | `GET /v1/models` | `ELEVENLABS_API_KEY` | Speech models: TTS and speech-to-speech → SPEECH + modalities. Omits Scribe, so removal never touches TRANSCRIPTION (T88). |
 | `ollama-api` | ollama | `GET /api/tags` on `$OLLAMA_HOST` | `OLLAMA_HOST` | Self-hosted; locally-pulled refs, heuristic kind. **`partial`** (see below). |
 | `bedrock-api` | bedrock | `ListFoundationModels` | `AWS_ACCESS_KEY_ID` (+`AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) | SigV4-signed (hand-rolled, zero-dep); modalities → kind, `modelName` label, lifecycle → status. **`partial`** (region-scoped). |
 | `huggingface-api` | huggingface | Hub `GET /api/models` (sentence-transformers) | `HUGGINGFACE_API_TOKEN` | Local ONNX embedding models; `pipeline_tag` → kind. **`partial`** (bounded query). |
@@ -84,6 +85,7 @@ merge/normalize change can be re-run offline without re-hitting the network.
 | `MISTRAL_API_KEY` | `mistral-api` | mistral carried forward, no removals |
 | `XAI_API_KEY` | `xai-api` | xai carried forward, no removals |
 | `DEEPSEEK_API_KEY` | `deepseek-api` | deepseek carried forward, no removals |
+| `ELEVENLABS_API_KEY` | `elevenlabs-api` | elevenlabs carried forward, no removals |
 | `OLLAMA_HOST` | `ollama-api` | local pulls not anchored (partial either way) |
 | `AWS_ACCESS_KEY_ID` (+`AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) | `bedrock-api` | bedrock relies on LiteLLM/overrides (partial either way) |
 | `HUGGINGFACE_API_TOKEN` | `huggingface-api` | ONNX embedding ids not anchored (partial either way) |
