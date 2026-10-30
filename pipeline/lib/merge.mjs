@@ -23,6 +23,8 @@
  * **Anchoring rule** — a *new* id (not already in the committed catalog) is
  * admitted only if a live vendor API or an override vouches for it. LiteLLM
  * enriches existing/vendor-confirmed ids but can never introduce a brand-new id.
+ * An enrichment source may anchor for named vendors only: `anchoringSources` then
+ * holds `<sourceId>::<vendor>` (models.dev's creator sections, T85).
  *
  * @since 2026.3.4 (T768)
  */
@@ -137,7 +139,7 @@ function committedDrafts(existing) {
  * @param sources  [{ sourceId, drafts }] — live API + litellm drafts ({ vendor, id, ...fields })
  * @param overrides [{ vendor, id, __pin?, ...fields }] curated pins (source id "overrides")
  * @param existing  committed catalog envelope — carried forward + used for anchoring
- * @param anchoringSources Set of source ids that may introduce new ids
+ * @param anchoringSources Set of source ids (or `<sourceId>::<vendor>`) that may introduce new ids
  * @param liveIdsByVendor Map<vendor, Set<id>> ids each live vendor API returned (removal evidence)
  * @param liveKindsByVendor Map<vendor, Set<kind>> kinds each live listing emitted; when given,
  *                  removal evidence is scoped to those kinds (T82)
@@ -150,12 +152,20 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
     for (const e of entries) existingIds.add(`${vendor}::${e.id}`);
   }
   const overrideIds = new Set(overrides.map((o) => `${o.vendor}::${o.id}`));
+  // A source spelling a committed id in another case (models.dev's `MiniMax-M3` for
+  // the catalog's `minimax-m3`) folds onto it rather than minting a twin (T85).
+  const existingByFold = new Map();
+  for (const key of existingIds) existingByFold.set(key.toLowerCase(), key);
 
   // Flatten every draft into per-(vendor,id) buckets, tagging source + pin.
   const buckets = new Map(); // key -> [{ sourceId, pinned, draft }]
   const push = (sourceId, draft, pinned) => {
     if (!draft?.vendor || !draft?.id) return;
-    const key = `${draft.vendor}::${draft.id}`;
+    let key = `${draft.vendor}::${draft.id}`;
+    if (!existingIds.has(key) && existingByFold.has(key.toLowerCase())) {
+      key = existingByFold.get(key.toLowerCase());
+      draft = { ...draft, id: key.slice(key.indexOf("::") + 2) };
+    }
     if (!buckets.has(key)) buckets.set(key, []);
     buckets.get(key).push({ sourceId, pinned: !!pinned, draft });
   };
@@ -177,7 +187,8 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
     const [vendor, id] = key.split("::");
 
     const anchored =
-      existingIds.has(key) || group.some((g) => anchoringSources.has(g.sourceId));
+      existingIds.has(key) ||
+      group.some((g) => anchoringSources.has(g.sourceId) || anchoringSources.has(`${g.sourceId}::${vendor}`));
     if (!anchored) {
       skipped.push({ vendor, id, reason: "litellm-only (not anchored by a vendor API / override / committed catalog)" });
       continue;

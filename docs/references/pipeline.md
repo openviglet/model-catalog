@@ -56,7 +56,7 @@ npm test                      # pipeline unit tests
 | `ollama-library` | ollama | `ollama.com/library` (HTML) | _(none — public)_ | Full self-host library crawler; regex parse of name + capability badges → kind/caps/modalities, `openWeights: true` (except `cloud`-badged). **`partial`** (best-effort scrape, fail-soft). Complements host-scoped `ollama-api` (T78). |
 | `openrouter-api` | openrouter | `GET /api/v1/models` | _(none — public)_ | Full gateway listing; `creator/model` ids, `context_length`/pricing (USD/token → per-1M)/modalities/`supported_parameters` → caps. First-class vendor source (anchors + removal evidence). Supersedes T37's curated cap (T78). |
 | `litellm` | all | LiteLLM `model_prices_and_context_window.json` | _(none — public)_ | Vendor-agnostic enrichment (metadata + indicative pricing). |
-| `models-dev` | all | `https://models.dev/api.json` | _(none — public)_ | PR-reviewed registry keyed by provider: `releaseDate`, `knowledgeCutoff`, `openWeights`, limits, modalities, caps, indicative price. Enrichment only, ranked just below LiteLLM so it fills blanks and never overrides (T84). |
+| `models-dev` | all | `https://models.dev/api.json` | _(none — public)_ | PR-reviewed registry keyed by provider: `releaseDate`, `knowledgeCutoff`, `openWeights`, limits, modalities, caps, indicative price. Ranked just below LiteLLM so it fills blanks and never overrides (T84); its creator sections anchor new ids (T85, see below). |
 | `benchmarks` | all | `pipeline/benchmarks.json` (curated snapshot) | _(local)_ | Cited third-party capability index (T40 `benchmarks`). Enrichment only — never introduces an id; a leaderboard model not already in the catalog is dropped. |
 | `artificial-analysis` | all | Artificial Analysis leaderboard API (live) | `ARTIFICIAL_ANALYSIS_API_KEY` | Live auto-refresh of `benchmarks` + `performance` (T45). Resolves AA slugs → catalog ids via the curated `pipeline/artificial-analysis-map.json` **then a deterministic auto-matcher (T63)** — exact → date-stripped → order-independent token match, unique-only, so well-behaved slugs need no map entry while an ambiguous/unknown one still drops (never guessed); a map entry of `null`/`{skip:true}` blocks a slug, a `{vendor,id}` entry overrides. Enrichment only (non-anchoring); wins over the `benchmarks` snapshot when both supply a value. |
 | `overrides` | any | `pipeline/overrides.json` | _(local)_ | Human-curated pins. |
@@ -97,7 +97,11 @@ Two safety rules keep a noisy/partial run from poisoning the reference:
 - **Anchoring rule.** A *new* id is admitted only if a live vendor API, a
   self-hosted/aggregator source, or an override vouches for it. LiteLLM enriches
   existing/vendor-confirmed ids but can never introduce a brand-new id. Skipped
-  LiteLLM-only ids are listed in the report.
+  LiteLLM-only ids are listed in the report. One exception, scoped by vendor:
+  `models-dev`'s **creator** sections (xai, mistral, moonshot, qwen, zai, cohere,
+  minimax, deepseek, meta, stepfun, perplexity) may anchor new ids for that vendor
+  only; its host/gateway sections only enrich, and it is never removal evidence
+  (T85). An id spelled in another case than a committed one folds onto it.
 - **`partial` sources.** A self-hosted/aggregator source (`ollama-api`,
   `bedrock-api`, `huggingface-api`, `ollama-library`) sees only an
   environment-scoped/bounded/best-effort slice (one host's pulls, one region, a

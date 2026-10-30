@@ -1,7 +1,7 @@
 {
   "_comment": "Provider pricing-source registry (Block H / T35). The authoritative pages to VERIFY the catalog's indicative prices against — URLs only, no prices. Categorized and cross-linked to the catalog vendor key (`catalogVendor`) where the provider's models are in the catalog; null means not yet represented. Hand-curated + review-gated. Keep `apiPricingUrl` = the developer/per-token/usage pricing page; `consumerPlansUrl` = the flat consumer subscription page when one exists (mirrors plans.json).",
   "version": 1,
-  "lastUpdated": "2026-07-22",
+  "lastUpdated": "2026-10-30",
   "schema": "https://openviglet.github.io/model-catalog/providers.schema.json",
   "source": "https://openviglet.github.io/model-catalog",
   "disclaimer": "Official vendor pricing pages, for verification. The catalog's own per-model prices are INDICATIVE US list references — always confirm against the vendor page linked here before relying on a figure.",
@@ -15,6 +15,10 @@
     { "id": "cohere", "name": "Cohere", "category": "model-creator", "catalogVendor": "cohere", "apiPricingUrl": "https://cohere.com/pricing" },
     { "id": "zai", "name": "Z.ai / Zhipu AI", "category": "model-creator", "catalogVendor": "zai", "apiPricingUrl": "https://open.bigmodel.cn/pricing", "consumerPlansUrl": "https://z.ai/subscribe", "note": "Open-platform (bigmodel.cn) developer pricing; GLM Coding Plan is the consumer subscription." },
     { "id": "alibaba-qwen", "name": "Alibaba Cloud (Qwen via Model Studio)", "category": "model-creator", "catalogVendor": "qwen", "apiPricingUrl": "https://www.alibabacloud.com/help/en/model-studio/developer-reference/billing-for-model-studio", "note": "Qwen models via Model Studio / DashScope." },
+    { "id": "moonshot", "name": "Moonshot AI (Kimi)", "category": "model-creator", "catalogVendor": "moonshot", "apiPricingUrl": "https://platform.kimi.ai/docs/pricing/chat" },
+    { "id": "perplexity", "name": "Perplexity (Sonar)", "category": "model-creator", "catalogVendor": "perplexity", "apiPricingUrl": "https://docs.perplexity.ai/docs/getting-started/pricing" },
+    { "id": "stepfun", "name": "StepFun", "category": "model-creator", "catalogVendor": "stepfun", "note": "No public per-token pricing page verified yet." },
+    { "id": "meta", "name": "Meta (Model API)", "category": "model-creator", "catalogVendor": "meta", "note": "Muse models via the Meta Model API; no public pricing page verified yet." },
 
     { "id": "aws-bedrock", "name": "AWS Bedrock", "category": "hyperscaler", "catalogVendor": "bedrock", "apiPricingUrl": "https://aws.amazon.com/bedrock/pricing/" },
     { "id": "azure-ai-foundry", "name": "Azure AI Foundry", "category": "hyperscaler", "catalogVendor": "azure", "apiPricingUrl": "https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/", "note": "Re-serves OpenAI and other models; a curated set is in the catalog." },

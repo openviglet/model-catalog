@@ -374,7 +374,7 @@ test("models-dev normalize: maps provider→vendor, dates, open weights; skips e
   assert.equal(g.openWeights, false, "a false open_weights is kept, not compacted away");
   assert.deepEqual(g.capabilities, ["tools", "vision", "reasoning"]);
   assert.equal(g.pricing.source, "models-dev");
-  assert.equal(g.kind, undefined, "enrichment never sets kind");
+  assert.equal(g.kind, undefined, "a non-creator section never sets kind");
   const e = byId["openai/text-embedding-3-small"];
   assert.equal(e.releaseDate, undefined, "a non-ISO date is omitted, not guessed");
   assert.equal(e.maxOutputTokens, undefined, "an embedding's vector size is not a token limit");
@@ -404,6 +404,25 @@ test("models-dev enriches blanks only: never anchors, never beats LiteLLM or com
   assert.ok(e.sources.includes("models-dev"));
   assert.ok(!vendors.openai.some((x) => x.id === "brand-new"), "never introduces an id");
   assert.ok(skipped.some((s) => s.id === "brand-new"));
+});
+
+test("models-dev creator sections anchor new ids for their vendor only; case twins fold (T85)", () => {
+  const drafts = modelsDev.normalize({
+    moonshotai: { id: "moonshotai", models: { "kimi-k3": { id: "kimi-k3", name: "Kimi K3" } } },
+    xai: { id: "xai", models: { "grok-imagine-video": { id: "grok-imagine-video", name: "Grok Imagine Video", type: "video" } } },
+    minimax: { id: "minimax", models: { "MiniMax-M3": { id: "MiniMax-M3", name: "MiniMax M3", release_date: "2026-05-01" } } },
+    openrouter: { id: "openrouter", models: { "acme/new": { id: "acme/new", name: "New" } } },
+  });
+  const anchoring = new Set([...ANCHORS, ...modelsDev.anchorVendors.map((v) => `models-dev::${v}`)]);
+  const existing = { version: 1, vendors: { minimax: [{ id: "minimax-m3", label: "minimax-m3", kind: "CHAT" }] } };
+  const { vendors, skipped } = baseMerge({ existing, anchoringSources: anchoring, sources: [{ sourceId: "models-dev", drafts }] });
+  assert.deepEqual(vendors.moonshot.map((e) => [e.id, e.label, e.kind]), [["kimi-k3", "Kimi K3", "CHAT"]]);
+  assert.equal(vendors.xai[0].kind, "VIDEO");
+  assert.deepEqual(vendors.minimax.map((e) => e.id), ["minimax-m3"], "MiniMax-M3 folds onto the committed id");
+  assert.equal(vendors.minimax[0].releaseDate, "2026-05-01");
+  assert.equal(vendors.minimax[0].label, "minimax-m3", "committed label kept");
+  assert.equal(vendors.openrouter, undefined, "a gateway section never anchors");
+  assert.ok(skipped.some((s) => s.id === "acme/new"));
 });
 
 test("validateEnvelope: flags bad kind, duplicate id, invalid numeric", () => {

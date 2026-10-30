@@ -14,6 +14,7 @@ export const VENDOR_LABEL: Record<string, string> = {
   azure:"Azure OpenAI", cerebras:"Cerebras", deepseek:"DeepSeek", fireworks:"Fireworks AI",
   groq:"Groq", minimax:"MiniMax", openrouter:"OpenRouter", qwen:"Qwen", together:"Together AI",
   vercel:"Vercel", xai:"xAI", zai:"Z.ai",
+  moonshot:"Moonshot AI (Kimi)", perplexity:"Perplexity", stepfun:"StepFun", meta:"Meta",
 };
 // Per-vendor visual identity: a colour AND a shape (T64). Colour alone can't
 // separate 22 vendors — several share a hue family (four Google/Azure blues,
@@ -33,6 +34,9 @@ export const VENDOR_STYLE: Record<string, { c: string; s: string }> = {
   minimax:{c:"#7c2d12",s:"triangle"}, xai:{c:"#db2777",s:"diamond"},
   together:{c:"#84cc16",s:"square"}, qwen:{c:"#f59e0b",s:"diamond"},
   deepseek:{c:"#a16207",s:"diamond"}, openrouter:{c:"#059669",s:"triangle"},
+  // Creator vendors anchored via models.dev (T85).
+  moonshot:{c:"#0891b2",s:"square"}, perplexity:{c:"#0d9488",s:"diamond"},
+  stepfun:{c:"#4f46e5",s:"triangle"}, meta:{c:"#0866ff",s:"diamond"},
 };
 export const VENDOR_FALLBACK: { c: string; s: string } = { c:"#64748b", s:"circle" };
 export const GROUP_OPTS: Array<[string | null, string]> = [[null, "None"], ["vendor", "Vendor"], ["kind", "Kind"], ["tier", "Tier"]];

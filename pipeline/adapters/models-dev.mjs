@@ -4,9 +4,15 @@
  * provider — for the metadata no vendor API and LiteLLM carry: `releaseDate`,
  * `knowledgeCutoff` and `openWeights`, plus limits, modalities and capability hints.
  *
- * Same footing as LiteLLM: enrichment only (`vendor: null`, so it never anchors a new
- * id), ranked just below LiteLLM in lib/merge.mjs so it fills blank fields and never
- * overrides a vendor API, the committed catalog or a LiteLLM price.
+ * Same footing as LiteLLM: enrichment (`vendor: null`), ranked just below LiteLLM in
+ * lib/merge.mjs so it fills blank fields and never overrides a vendor API, the
+ * committed catalog or a LiteLLM price.
+ *
+ * **Creator anchoring (T85).** models.dev's *creator* sections (xai, mistral,
+ * moonshotai, …) are curated per vendor and are the closest keyless thing to that
+ * vendor's own list, so they may introduce new ids for the vendors in
+ * `anchorVendors`. Host/gateway sections only enrich. It is never removal evidence
+ * (models.dev lags the vendor), which stays with live vendor APIs.
  *
  * @since 2026.3.4 (T84)
  */
@@ -35,6 +41,22 @@ const PROVIDER_TO_VENDOR = {
   cerebras: "cerebras",
   openrouter: "openrouter",
   vercel: "vercel",
+  moonshotai: "moonshot",
+  perplexity: "perplexity",
+  stepfun: "stepfun",
+  meta: "meta",
+};
+
+/** Catalog vendors whose models.dev section is the creator's own list, so it may anchor new ids. */
+const CREATOR_VENDORS = [
+  "xai", "mistral", "moonshot", "qwen", "zai", "cohere", "minimax", "deepseek", "meta", "stepfun", "perplexity",
+];
+
+// models.dev `type` → catalog kind; an untyped entry is a text model (CHAT). Only
+// wins where no higher source set a kind, i.e. on an id this source anchored.
+const TYPE_TO_KIND = {
+  chat: "CHAT", realtime: "CHAT", embedding: "EMBEDDING", reranking: "RERANK", image: "IMAGE",
+  video: "VIDEO", speech: "SPEECH", transcription: "TRANSCRIPTION",
 };
 
 // models.dev reports an embedding's vector size as `limit.output` and its output
@@ -46,6 +68,10 @@ const ISO_MONTH_OR_DATE = /^\d{4}-\d{2}(-\d{2})?$/;
 
 function posInt(v) {
   return Number.isInteger(v) && v >= 1 ? v : undefined;
+}
+
+function kindOf(m) {
+  return m.type === undefined ? "CHAT" : TYPE_TO_KIND[m.type];
 }
 
 function capabilitiesFrom(m) {
@@ -78,6 +104,7 @@ export default {
   vendor: null, // multi-vendor enrichment source
   envKey: null, // public, no auth
   label: "models.dev registry (release dates, cutoffs, open weights)",
+  anchorVendors: CREATOR_VENDORS,
 
   async fetch(_env, ctx) {
     return fetchOrReplay(this.id, URL, { offline: ctx.offline, when: ctx.when });
@@ -89,6 +116,7 @@ export default {
     for (const [provider, spec] of Object.entries(raw)) {
       const vendor = PROVIDER_TO_VENDOR[provider];
       if (!vendor || !spec?.models || typeof spec.models !== "object") continue;
+      const creator = CREATOR_VENDORS.includes(vendor);
       for (const [key, m] of Object.entries(spec.models)) {
         if (!m || typeof m !== "object") continue;
         const generative = !NON_GENERATIVE.has(m.type);
@@ -96,6 +124,9 @@ export default {
           compact({
             vendor,
             id: m.id || key,
+            // label + kind only where this source can anchor; elsewhere they'd only conflict.
+            label: creator && typeof m.name === "string" && m.name ? m.name : undefined,
+            kind: creator ? kindOf(m) : undefined,
             releaseDate: ISO_DATE.test(m.release_date) ? m.release_date : undefined,
             knowledgeCutoff: ISO_MONTH_OR_DATE.test(m.knowledge) ? m.knowledge : undefined,
             openWeights: typeof m.open_weights === "boolean" ? m.open_weights : undefined,

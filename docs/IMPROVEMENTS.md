@@ -33,15 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T85 models.dev as anchor for model creators
-
-The design question: models.dev is an aggregator, but its creator
-sections are curated per vendor and are the closest keyless thing to the vendor's
-own list. Proposal: a curated allowlist of models.dev provider keys → catalog vendor
-keys for creators only; those sections may anchor new ids, host/gateway sections
-only enrich. Removal evidence stays with live vendor APIs (models.dev lags). Onboard
-moonshot, perplexity, stepfun and meta as vendors (providers.json rows + page marks).
-
 ### §T86 Live xAI and DeepSeek adapters
 
 xAI and DeepSeek expose OpenAI-compatible `/v1/models` behind a key. A live

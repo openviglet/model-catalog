@@ -244,7 +244,9 @@ export function renderSources(data: ProvidersRegistry) {
       const links = [];
       if (p.apiPricingUrl) links.push(`<a href="${p.apiPricingUrl}" target="_blank" rel="noopener">API pricing ↗</a>`);
       if (p.consumerPlansUrl) links.push(`<a href="${p.consumerPlansUrl}" target="_blank" rel="noopener">plans ↗</a>`);
-      const inCatalog = p.catalogVendor
+      // ✓ only when the vendor actually has models loaded (T85): a newly mapped
+      // provider reads "—" until a reviewed regen lands its entries.
+      const inCatalog = p.catalogVendor && state.catalog?.vendors[p.catalogVendor]?.length
         ? `<span title="In the catalog as '${p.catalogVendor}'">✓</span>`
         : '<span class="lbl" title="Not yet in the catalog">—</span>';
       return `<tr>
