@@ -70,6 +70,17 @@ function posInt(v) {
   return Number.isInteger(v) && v >= 1 ? v : undefined;
 }
 
+/**
+ * models.dev dates a moving alias (`*-latest`, `qwen-plus`, `sonar`) by its first
+ * launch, so the date misdescribes the model the alias now serves (T92). Omit it for
+ * a `-latest` pointer and wherever the record's own cutoff falls after its release.
+ */
+function releaseDateOf(m, id) {
+  if (!ISO_DATE.test(m.release_date) || id.endsWith("-latest")) return undefined;
+  if (ISO_MONTH_OR_DATE.test(m.knowledge) && m.knowledge.slice(0, 7) > m.release_date.slice(0, 7)) return undefined;
+  return m.release_date;
+}
+
 function kindOf(m) {
   return m.type === undefined ? "CHAT" : TYPE_TO_KIND[m.type];
 }
@@ -120,14 +131,15 @@ export default {
       for (const [key, m] of Object.entries(spec.models)) {
         if (!m || typeof m !== "object") continue;
         const generative = !NON_GENERATIVE.has(m.type);
+        const id = m.id || key;
         drafts.push(
           compact({
             vendor,
-            id: m.id || key,
+            id,
             // label + kind only where this source can anchor; elsewhere they'd only conflict.
             label: creator && typeof m.name === "string" && m.name ? m.name : undefined,
             kind: creator ? kindOf(m) : undefined,
-            releaseDate: ISO_DATE.test(m.release_date) ? m.release_date : undefined,
+            releaseDate: releaseDateOf(m, id),
             knowledgeCutoff: ISO_MONTH_OR_DATE.test(m.knowledge) ? m.knowledge : undefined,
             openWeights: typeof m.open_weights === "boolean" ? m.open_weights : undefined,
             contextWindow: posInt(m.limit?.context),

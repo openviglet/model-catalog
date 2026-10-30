@@ -385,6 +385,21 @@ test("models-dev normalize: maps provider→vendor, dates, open weights; skips e
   assert.deepEqual(e.pricing.outputPer1M, undefined, "a zero cost is omitted");
 });
 
+test("models-dev omits a release date on moving aliases and self-contradicting records (T92)", () => {
+  const drafts = modelsDev.normalize({
+    mistral: { id: "mistral", models: {
+      "codestral-latest": { id: "codestral-latest", release_date: "2024-05-29", knowledge: "2024-10" },
+      "codestral-2508": { id: "codestral-2508", release_date: "2025-08-01", knowledge: "2025-03" },
+    } },
+    perplexity: { id: "perplexity", models: { sonar: { id: "sonar", release_date: "2024-01-01", knowledge: "2025-09-01" } } },
+  });
+  const byId = Object.fromEntries(drafts.map((d) => [d.id, d]));
+  assert.equal(byId["codestral-latest"].releaseDate, undefined, "a -latest pointer has no release date of its own");
+  assert.equal(byId["codestral-latest"].knowledgeCutoff, "2024-10", "the cutoff is kept");
+  assert.equal(byId["sonar"].releaseDate, undefined, "cutoff after release: the date is the alias's first launch");
+  assert.equal(byId["codestral-2508"].releaseDate, "2025-08-01", "a consistent fixed id keeps its date");
+});
+
 test("models-dev enriches blanks only: never anchors, never beats LiteLLM or committed (T84)", () => {
   const existing = { version: 1, vendors: { openai: [{ id: "gpt-x", label: "GPT X", kind: "CHAT", contextWindow: 100 }] } };
   const { vendors, skipped } = baseMerge({
