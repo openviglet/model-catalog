@@ -129,7 +129,7 @@
 > **Block Q — Ask copilot answer rendering** shipped in full — the inline `[n]`
 > markers the copilot emits are now compact, clickable footnotes that open the
 > cited model, mirrored by numbered "Cited models" chips, and stray `[Source: …]`
-> labels are stripped (T77; pairs with Turing T800, which renumbers the markers
+> labels are stripped (T77; pairs with Turing task 800, which renumbers the markers
 > and forbids narrative source labels at the source) (see
 > [CHANGELOG.md](CHANGELOG.md) → Block Q).
 
@@ -163,18 +163,22 @@
 > Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
 > only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
 
-- 📋 **T82** — Scope positive-evidence removal to the kinds a vendor's live listing covers — Gemini's `models.list` stopped listing Veo/Imagen, so the 2026-10-30 regen dropped `veo-3.1-*` as "removed". deps: — → §T1
-- 📋 **T83** — Idempotent regen: a same-day re-run appends `"committed"` to `sources` on ~207 unchanged entries (churn with no new data). deps: — → §T1
-- 📋 **T84** — `models-dev` enrichment adapter (public `models.dev/api.json`, no key, 233 providers / 8,925 models): fills `releaseDate`, `openWeights`, modalities, context/output limits, and an optional `knowledgeCutoff`, provenance-stamped. deps: — → §T2
-- 💭 **T85** — Let `models-dev` anchor ids in **model-creator** sections only (xai, mistral, moonshotai, alibaba, zai, cohere, minimax, deepseek, meta, stepfun, perplexity) and onboard the missing creator vendors. deps: T84 → §T2
-- 📋 **T86** — Direct live adapters for xAI and DeepSeek (`/v1/models` with key): current ids + removal evidence for two creators with no adapter today. deps: T82 → §T3
-- 📋 **T87** — Source-key coverage report: regen summary of which vendors ran without live evidence (missing key), plus an env-var → source table in `pipeline.md` (Mistral, Cohere, Bedrock, HuggingFace, Ollama keys unset today). deps: — → §T3
-- 📋 **T88** — ElevenLabs adapter (SPEECH/TRANSCRIPTION; `ELEVENLABS_API_KEY` already provisioned). deps: — → §T4
-- 💭 **T89** — Media-generation sources for IMAGE/VIDEO: Stability, Ideogram (key provisioned), fal.ai, ByteDance Seedance, Alibaba Wan — choose anchors vs enrichment per source. deps: T82, T85 → §T4
+- 📋 **T82** (deps: —) **Positive-evidence removal ignores which kinds a vendor listing covers** — Gemini models.list stopped listing Veo/Imagen, so the 2026-10-30 regen dropped veo-3.1-* as retired. → §T82
+- 📋 **T83** (deps: —) **A same-day regen re-run churns sources on unchanged entries** — It appends "committed" to sources on ~207 entries with no new data, so a no-op run is not a no-op diff. → §T83
+- 📋 **T84** (deps: —) **No models-dev enrichment adapter** — models.dev/api.json is keyless (233 providers, 8,925 models) and carries releaseDate, openWeights, modalities, limits and knowledge cutoff; only 14 of 1,028 entries have releaseDate. → §T84
+- 💭 **T85** (deps: T84) **Model creators reachable only through gateways have no anchor** — Let models-dev anchor ids in creator sections only (xai, mistral, moonshotai, alibaba, zai, cohere, minimax, deepseek, meta, stepfun, perplexity) and onboard the missing creator vendors. → §T85
+- 📋 **T86** (deps: T82) **xAI and DeepSeek have no live adapter** — Their /v1/models (keyed) would give current ids and removal evidence; xAI has 4 ids vs 61 known to LiteLLM. → §T86
+- 📋 **T87** (deps: —) **A regen run without a vendor key leaves only a WARN line** — The summary should list vendors carried forward without live evidence, with an env-var to source table in pipeline.md; Mistral, Cohere, Ollama, Bedrock and HuggingFace keys are unset today. → §T87
+- 📋 **T88** (deps: —) **No ElevenLabs adapter** — SPEECH/TRANSCRIPTION coverage is thin and ELEVENLABS_API_KEY is already provisioned. → §T88
+- 💭 **T89** (deps: T82, T85) **IMAGE and VIDEO kinds have almost no sources** — VIDEO has 2 entries and IMAGE 10; Stability, Ideogram, fal.ai, Seedance and Wan are known to LiteLLM but blocked by anchoring. → §T89
 
 ## Non-goals
 
-- **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal (Block F) the catalog carries an *optional* per-token US **list** price — flagged **indicative, not authoritative** (a reference only, verify with the vendor), provenance-gated and never invented. It is **not** a billing engine: no per-contract, per-region, negotiated or committed-use pricing.
+- **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal
+  (Block F) the catalog carries an *optional* per-token US **list** price — flagged
+  **indicative, not authoritative** (verify with the vendor), provenance-gated and never
+  invented. It is **not** a billing engine: no per-contract, per-region, negotiated or
+  committed-use pricing.
 - **No runtime dependency on the pipeline.** It is a local maintenance tool; consumers read the published JSON, not the pipeline.
 - **No auto-overwrite / no CI auto-merge.** Regeneration is always propose-and-review (`--apply` only); CI may open a PR but never merges it.
 - **No envelope-shape break.** `version` stays `1` — new fields are optional and additive.

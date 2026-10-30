@@ -11,7 +11,7 @@
 > by Block F). Consumer artifacts stay *derived* from the canonical file at emit time, so
 > they can never drift from the source of truth.
 
-## §T — Source coverage: first-party creators, media & fresh metadata
+## Block T — Source coverage: first-party creators, media & fresh metadata
 
 Gap analysis of 2026-10-30, comparing the catalog with the LiteLLM snapshot and
 models.dev. LiteLLM knows ~4,500 ids; the anchoring rule (LiteLLM enriches, never
@@ -33,9 +33,9 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T1 — Merge correctness (T82, T83)
+### §T82 Removal evidence scoped by kind
 
-**T82.** Positive-evidence removal assumes a vendor's live listing is complete. It
+Positive-evidence removal assumes a vendor's live listing is complete. It
 is not: Gemini's `models.list` returns chat, embedding, TTS and Lyria, but no longer
 Veo or Imagen, so the merge read their absence as retirement. Fix: removal evidence
 counts only for the kinds the adapter's listing actually returned for that vendor
@@ -43,12 +43,14 @@ counts only for the kinds the adapter's listing actually returned for that vendo
 per-adapter declaration of covered kinds is the alternative if inference proves
 brittle. Restore `veo-3.1-*` once fixed.
 
-**T83.** Re-running regen over its own output stamps `"committed"` into `sources`
+### §T83 Idempotent regen
+
+Re-running regen over its own output stamps `"committed"` into `sources`
 of entries whose data did not change, producing a 207-entry diff with no
 information. `committed` should only appear when the committed catalog actually
 contributed a field the live sources did not, and a no-op run should be a no-op diff.
 
-### §T2 — models.dev as a source (T84, T85)
+### §T84 models.dev enrichment adapter
 
 `https://models.dev/api.json` is public, needs no key, is maintained by reviewed PRs
 with schema validation, and carries per model: `release_date`, `knowledge`
@@ -56,34 +58,42 @@ with schema validation, and carries per model: `release_date`, `knowledge`
 (context/output) and `cost`. It is keyed by *provider*, with the model-creator
 sections (xai, mistral, moonshotai, alibaba, …) separate from inference hosts.
 
-**T84** adds it as an enrichment source, same footing as LiteLLM: it fills blank
+This task adds it as an enrichment source, same footing as LiteLLM: it fills blank
 fields on ids already anchored, never introduces an id, and never overrides a vendor
 API. The main gain is `releaseDate` (14 of 1,028 today) and `openWeights`. A new
 optional `knowledgeCutoff` (ISO month) is additive. Its `cost` is ignored where
-LiteLLM or a pin already priced the entry (committed beats new, as in T31).
+LiteLLM or a pin already priced the entry (committed beats new, as for LiteLLM pricing).
 
-**T85** is the design question: models.dev is an aggregator, but its creator
+### §T85 models.dev as anchor for model creators
+
+The design question: models.dev is an aggregator, but its creator
 sections are curated per vendor and are the closest keyless thing to the vendor's
 own list. Proposal: a curated allowlist of models.dev provider keys → catalog vendor
 keys for creators only; those sections may anchor new ids, host/gateway sections
 only enrich. Removal evidence stays with live vendor APIs (models.dev lags). Onboard
 moonshot, perplexity, stepfun and meta as vendors (providers.json rows + page marks).
 
-### §T3 — Live creator APIs and key coverage (T86, T87)
+### §T86 Live xAI and DeepSeek adapters
 
-**T86.** xAI and DeepSeek expose OpenAI-compatible `/v1/models` behind a key. A live
+xAI and DeepSeek expose OpenAI-compatible `/v1/models` behind a key. A live
 adapter gives current ids and the removal evidence models.dev cannot.
 
-**T87.** Today five adapters (Mistral, Cohere, Ollama, Bedrock, HuggingFace) skip
+### §T87 Source-key coverage report
+
+Today five adapters (Mistral, Cohere, Ollama, Bedrock, HuggingFace) skip
 for lack of a key, and the only trace is a WARN line. The regen summary should list
 which vendors ran without live evidence, so a maintainer knows the run carried them
 forward; `pipeline.md` gets the env-var → source table (and `update-data.cmd`
 echoes it).
 
-### §T4 — Media (T88, T89)
+### §T88 ElevenLabs adapter
 
-VIDEO has 2 entries and IMAGE 10. **T88**: ElevenLabs lists its models via API and
-its key is already provisioned — the cheapest first media adapter. **T89**: image and
+VIDEO has 2 entries and IMAGE 10. ElevenLabs lists its models via API and
+its key is already provisioned — the cheapest first media adapter.
+
+### §T89 Image and video generation sources
+
+Image and
 video generation (Stability, Ideogram, fal.ai, ByteDance Seedance, Alibaba Wan) are
 known to LiteLLM (fal.ai alone 210 ids) but blocked by anchoring. Decide per source
 whether it anchors (a creator's own API) or only enriches (fal.ai is a host, like

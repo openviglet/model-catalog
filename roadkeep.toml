@@ -1,0 +1,49 @@
+prefix = "T"
+
+# how a rationale section is addressed: "id" derives the pointer from the
+# task's own id, "outline" keeps a hand-numbered anchor
+ref_scheme = "id"
+
+# what jumps the queue, in order: an id or a "Block X", and nothing else
+priority = []
+
+[files]
+roadmap = "docs/ROADMAP.md"
+changelog = "docs/CHANGELOG.md"
+improvements = "docs/IMPROVEMENTS.md"
+
+[limits]
+# characters, counted in UTF-16 code units — the stricter of the two counts, so a
+# line these accept is one a gate written in Java, C# or JavaScript accepts too
+symptom = 120
+why = 200
+line = 320
+
+# a section is prose, so its budget is words; prose is the width one is filled to,
+# counted in code points — it is a wrapping column and nothing refuses it
+section = 250
+prose = 88
+
+[markers]
+open = ["📋", "💭", "⏳", "🛠"]
+shipped = "✅"
+retired = "🗑"
+
+[claims]
+# minutes a claim on a line reads as held, before a later caller steps over it
+held = 60
+
+# the roadmap's other list: declared at all means governed, and `lead` and `why`
+# are the two limits a bullet is held to — 80 and 320 characters unless set here
+[non_goals]
+
+# what must be **true** for a block to be finished, where the list above says what is
+# not built — the same two limits, declared separately: a project may govern one list
+# and not the other
+[criteria]
+
+# what has to be *present* to finish a line — hardware, an account, somebody's time.
+# Not a dep: `pick` offers a line needing one only to a caller that says it has it,
+# with `--have`. Uncomment and name your own; an undeclared word is refused.
+# [requirements]
+# declared = ["hardware"]
