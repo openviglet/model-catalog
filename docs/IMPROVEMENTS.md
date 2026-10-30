@@ -33,11 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T86 Live xAI and DeepSeek adapters
-
-xAI and DeepSeek expose OpenAI-compatible `/v1/models` behind a key. A live
-adapter gives current ids and the removal evidence models.dev cannot.
-
 ### §T87 Source-key coverage report
 
 Today five adapters (Mistral, Cohere, Ollama, Bedrock, HuggingFace) skip

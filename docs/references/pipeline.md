@@ -50,6 +50,8 @@ npm test                      # pipeline unit tests
 | `gemini-api` | gemini | `models.list` | `GEMINI_API_KEY` | **Richest**: `supportedGenerationMethods` → kind, `inputTokenLimit`/`outputTokenLimit`. |
 | `cohere-api` | cohere | `GET /v1/models` | `COHERE_API_KEY` | `endpoints[]` → kind, `context_length`. |
 | `mistral-api` | mistral | `GET /v1/models` | `MISTRAL_API_KEY` | `capabilities{}` → tools/vision, `max_context_length`. |
+| `xai-api` | xai | `GET /v1/models` | `XAI_API_KEY` | Ids only → kind from the id (`grok-imagine-image`/`-video`); removal evidence scoped to the kinds listed (T86). |
+| `deepseek-api` | deepseek | `GET /models` | `DEEPSEEK_API_KEY` | Ids only; all CHAT (T86). |
 | `ollama-api` | ollama | `GET /api/tags` on `$OLLAMA_HOST` | `OLLAMA_HOST` | Self-hosted; locally-pulled refs, heuristic kind. **`partial`** (see below). |
 | `bedrock-api` | bedrock | `ListFoundationModels` | `AWS_ACCESS_KEY_ID` (+`AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) | SigV4-signed (hand-rolled, zero-dep); modalities → kind, `modelName` label, lifecycle → status. **`partial`** (region-scoped). |
 | `huggingface-api` | huggingface | Hub `GET /api/models` (sentence-transformers) | `HUGGINGFACE_API_TOKEN` | Local ONNX embedding models; `pipeline_tag` → kind. **`partial`** (bounded query). |

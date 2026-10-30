@@ -163,7 +163,6 @@
 > Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
 > only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
 
-- 📋 **T86** (deps: T82 ✅) **xAI and DeepSeek have no live adapter** — Their /v1/models (keyed) would give current ids and removal evidence; xAI has 4 ids vs 61 known to LiteLLM. → §T86
 - 📋 **T87** (deps: —) **A regen run without a vendor key leaves only a WARN line** — The summary should list vendors carried forward without live evidence, with an env-var to source table in pipeline.md; Mistral, Cohere, Ollama, Bedrock and HuggingFace keys are unset today. → §T87
 - 📋 **T88** (deps: —) **No ElevenLabs adapter** — SPEECH/TRANSCRIPTION coverage is thin and ELEVENLABS_API_KEY is already provisioned. → §T88
 - 💭 **T89** (deps: T82 ✅, T85 ✅) **IMAGE and VIDEO kinds have almost no sources** — VIDEO has 2 entries and IMAGE 10; Stability, Ideogram, fal.ai, Seedance and Wan are known to LiteLLM but blocked by anchoring. → §T89

@@ -18,6 +18,8 @@ import openrouter from "./adapters/openrouter.mjs";
 import bedrock from "./adapters/bedrock.mjs";
 import huggingface from "./adapters/huggingface.mjs";
 import modelsDev from "./adapters/models-dev.mjs";
+import xai from "./adapters/xai.mjs";
+import deepseek from "./adapters/deepseek.mjs";
 
 const WHEN = "2026-07-21";
 const ANCHORS = new Set(["openai-api", "anthropic-api", "gemini-api", "cohere-api", "mistral-api", "overrides"]);
@@ -423,6 +425,20 @@ test("models-dev creator sections anchor new ids for their vendor only; case twi
   assert.equal(vendors.minimax[0].label, "minimax-m3", "committed label kept");
   assert.equal(vendors.openrouter, undefined, "a gateway section never anchors");
   assert.ok(skipped.some((s) => s.id === "acme/new"));
+});
+
+test("xai + deepseek normalize: live ids, kind from the id; vendor-scoped removal evidence (T86)", () => {
+  const x = xai.normalize({ object: "list", data: [
+    { id: "grok-4.6", object: "model" }, { id: "grok-imagine-image" }, { id: "grok-imagine-video" }, { id: null },
+  ] });
+  assert.deepEqual(x.map((d) => [d.vendor, d.id, d.kind]), [
+    ["xai", "grok-4.6", "CHAT"], ["xai", "grok-imagine-image", "IMAGE"], ["xai", "grok-imagine-video", "VIDEO"],
+  ]);
+  assert.equal(xai.vendor, "xai");
+  assert.ok(!xai.partial, "a full listing is removal evidence");
+  const d = deepseek.normalize({ data: [{ id: "deepseek-v4-pro" }, { id: "deepseek-v4-flash" }] });
+  assert.deepEqual(d.map((e) => [e.vendor, e.id, e.kind]), [["deepseek", "deepseek-v4-pro", "CHAT"], ["deepseek", "deepseek-v4-flash", "CHAT"]]);
+  assert.deepEqual(deepseek.normalize({}), [], "a malformed body yields no drafts, not a crash");
 });
 
 test("validateEnvelope: flags bad kind, duplicate id, invalid numeric", () => {

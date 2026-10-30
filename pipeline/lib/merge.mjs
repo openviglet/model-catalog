@@ -40,6 +40,8 @@ const PRIORITY = {
   "gemini-api": LIVE_PRIORITY,
   "cohere-api": LIVE_PRIORITY,
   "mistral-api": LIVE_PRIORITY,
+  "xai-api": LIVE_PRIORITY,
+  "deepseek-api": LIVE_PRIORITY,
   overrides: 30,
   // Live Artificial Analysis leaderboard (T45): the automated refresh of the curated
   // snapshot, so a fresh live fetch wins over a possibly-stale hand-curated snapshot,
