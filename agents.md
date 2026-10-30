@@ -55,6 +55,7 @@ npm run typecheck           # type-check the page without emitting
 npm run emit                # rebuild public JSON artifacts from the canonical file
 npm run build               # build:page + emit (what CI runs before deploy)
 npm run banner              # re-render public/og-banner*.png from scripts/og-banner.html (needs Chrome/Edge; run after emit)
+update-data.cmd             # Windows: all of the above in order (regen review+apply, test, build, banner) + flag stale plans.json/providers.json
 npm test                    # pipeline unit tests (node:test)
 ```
 
