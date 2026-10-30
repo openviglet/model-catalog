@@ -54,6 +54,7 @@ npm run build:page          # compile the page TypeScript (src/page/) -> public/
 npm run typecheck           # type-check the page without emitting
 npm run emit                # rebuild public JSON artifacts from the canonical file
 npm run build               # build:page + emit (what CI runs before deploy)
+npm run banner              # re-render public/og-banner*.png from scripts/og-banner.html (needs Chrome/Edge; run after emit)
 npm test                    # pipeline unit tests (node:test)
 ```
 

@@ -1,0 +1,118 @@
+<!doctype html>
+<!--
+  Template of the social banners public/og-banner.png (1200x630) and
+  public/og-banner-square.png (1200x1200, ?square). Rendered at 2x by scripts/og-banner.mjs
+  (`npm run banner`), which fills the {{...}} placeholders from public/stats.json and the catalog.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+{{BASE}}
+<title>Model Catalog banner</title>
+<style>
+  @font-face { font-family: "Inter"; font-weight: 400 700; font-display: block; src: url("../public/fonts/inter-latin.woff2") format("woff2"); }
+  @font-face { font-family: "Plus Jakarta Sans"; font-weight: 600 800; font-display: block; src: url("../public/fonts/plus-jakarta-sans-latin.woff2") format("woff2"); }
+  @font-face { font-family: "JetBrains Mono"; font-weight: 400 500; font-display: block; src: url("../public/fonts/jetbrains-mono-latin.woff2") format("woff2"); }
+
+  :root {
+    --bg: #100c0a; --card: #1b1512; --text: #f3ece7; --muted: #a8988c; --border: #35291f;
+    --brand: #fb923c; --brand-2: #f97316; --brand-3: #fdba74;
+    --mono: "JetBrains Mono", monospace; --sans: "Inter", sans-serif; --brand-font: "Plus Jakarta Sans", var(--sans);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: var(--bg); color: var(--text); font-family: var(--sans); }
+  body {
+    position: relative; padding: 48px 60px;
+    background:
+      radial-gradient(ellipse 60% 70% at 100% 0%, rgba(234,88,12,.22), transparent 70%),
+      radial-gradient(ellipse 50% 40% at 0% 100%, rgba(234,88,12,.12), transparent 70%),
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 40px 40px,
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px) 0 0 / 40px 40px,
+      var(--bg);
+  }
+  .top { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 16px; font-family: var(--brand-font); font-weight: 800; font-size: 31px; letter-spacing: -.03em; }
+  .brand img { width: 52px; height: 52px; }
+  .by { font-size: 16px; color: var(--muted); }
+  .by b { color: var(--brand); font-weight: 600; }
+
+  .pill { display: inline-flex; align-items: center; gap: 12px; margin-top: 30px; padding: 8px 18px; border: 1px solid var(--border);
+    border-radius: 999px; background: rgba(27,21,18,.7); color: var(--brand); font-weight: 600; font-size: 15px; }
+  .pill::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--brand-2); }
+
+  h1 { margin-top: 24px; font-family: var(--brand-font); font-weight: 800; font-size: 60px; line-height: 1; letter-spacing: -.05em; }
+  h1 span { display: block; background: linear-gradient(90deg, var(--brand-2), var(--brand-3)); -webkit-background-clip: text; color: transparent; }
+  .lede { margin-top: 22px; max-width: 560px; font-size: 18px; line-height: 1.55; color: var(--muted); }
+  .lede b { color: var(--text); font-weight: 600; }
+
+  .kinds { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; max-width: 560px; }
+  .kinds span { padding: 6px 11px; border: 1px solid var(--border); border-radius: 6px; background: rgba(27,21,18,.8);
+    font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .06em; color: var(--brand-3); }
+
+  .code { position: absolute; right: 60px; top: 180px; width: 470px; border: 1px solid var(--border); border-radius: 12px;
+    background: rgba(27,21,18,.92); box-shadow: 0 24px 60px -20px rgba(0,0,0,.7); overflow: hidden; }
+  .code .bar { display: flex; align-items: center; gap: 7px; padding: 12px 16px; border-bottom: 1px solid var(--border);
+    font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .code .bar i { width: 10px; height: 10px; border-radius: 50%; }
+  .code .bar em { font-style: normal; margin-left: 12px; }
+  .code pre { padding: 16px 20px; font-family: var(--mono); font-size: 12.5px; line-height: 1.75; color: var(--brand-3); }
+  .k { color: var(--brand-3); } .s { color: #a7d8a0; } .n { color: #7cb7ff; } .c { color: #6b5d53; }
+
+  .foot { position: absolute; left: 60px; right: 60px; bottom: 40px; padding-top: 22px; border-top: 1px solid var(--border);
+    display: flex; align-items: flex-end; justify-content: space-between; }
+  .stats { display: flex; gap: 40px; }
+  .stats div { font-family: var(--brand-font); font-weight: 800; font-size: 34px; letter-spacing: -.04em; line-height: 1; }
+  .stats div sup { color: var(--brand-2); font-size: .8em; vertical-align: 0; }
+  .stats small { display: block; margin-top: 8px; font-family: var(--sans); font-size: 12px; font-weight: 600; letter-spacing: .12em; color: var(--muted); }
+  .url { text-align: right; }
+  .url strong { font-family: var(--mono); font-size: 17px; font-weight: 500; }
+  .url strong i { font-style: normal; color: var(--brand); }
+  .url p { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+
+  /* Square variant: the code card drops below the copy, full width. */
+  html.square, html.square body { height: 1200px; }
+  html.square body { padding: 68px 70px; }
+  html.square .brand { font-size: 36px; } html.square .brand img { width: 60px; height: 60px; }
+  html.square .pill { margin-top: 48px; font-size: 17px; }
+  html.square h1 { font-size: 86px; margin-top: 40px; }
+  html.square .lede, html.square .kinds { max-width: 980px; }
+  html.square .lede { font-size: 23px; }
+  html.square .kinds span { font-size: 14px; padding: 8px 13px; }
+  html.square .code { position: static; width: auto; margin-top: 40px; }
+  html.square .code pre { font-size: 18px; padding: 22px 28px; }
+  html.square .foot { left: 70px; right: 70px; bottom: 56px; }
+  html.square .stats div { font-size: 46px; }
+</style>
+</head>
+<body>
+  <script>if (location.search.includes("square")) document.documentElement.classList.add("square");</script>
+  <div class="top">
+    <div class="brand"><img src="../public/viglet-logo.svg" alt="" />Model Catalog</div>
+    <div class="by">by <b>Viglet</b> · Apache-2.0 · open source</div>
+  </div>
+  <div class="pill">Free · unauthenticated · versioned JSON</div>
+  <h1>Every AI model.<span>One open catalog.</span></h1>
+  <p class="lede">A <b>vendor-neutral, kind-aware</b> catalog of LLM, embedding, rerank &amp; media models — the
+    <b>ids, kinds, context windows, capabilities</b> &amp; indicative pricing. No key. No server. Just clean JSON.</p>
+  <div class="kinds"><span>CHAT</span><span>EMBEDDING</span><span>RERANK</span><span>IMAGE</span><span>SPEECH</span><span>TRANSCRIPTION</span><span>VIDEO</span><span>MODERATION</span></div>
+
+  <div class="code">
+    <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><em>catalog.json</em></div>
+<pre>{{EXAMPLE}}
+<span class="c">// every id, provenance-stamped</span></pre>
+  </div>
+
+  <div class="foot">
+    <div class="stats">
+      <div>{{MODELS}}<sup>+</sup><small>MODELS</small></div>
+      <div>{{VENDORS}}<small>VENDORS</small></div>
+      <div>{{KINDS}}<small>KINDS</small></div>
+      <div>v1<small>SCHEMA</small></div>
+    </div>
+    <div class="url">
+      <strong>↗ openviglet.github.io<i>/model-catalog</i></strong>
+      <p>Python · JavaScript · Java SDKs</p>
+    </div>
+  </div>
+</body>
+</html>
