@@ -832,3 +832,13 @@ test("diffReport: counts add/remove/change", () => {
   assert.equal(stats.removed, 1);
   assert.equal(stats.changed, 1);
 });
+
+test("diffReport: a conflict-only entry is a conflict, not a change (T91)", () => {
+  const e = { id: "same", label: "Same", kind: "CHAT", contextWindow: 100 };
+  const conflict = { field: "contextWindow", winner: { value: 100, source: "openai-api" }, losers: [{ value: 200, source: "litellm" }] };
+  const { stats, text } = diffReport({ vendors: { openai: [e] } }, { vendors: { openai: [{ ...e }] } }, { "openai::same": { conflicts: [conflict] } });
+  assert.equal(stats.changed, 0, "a no-op run reads changed: 0");
+  assert.equal(stats.conflicts, 1);
+  assert.match(text, /! CONFLICT same/);
+  assert.doesNotMatch(text, /~ CHANGE same/);
+});

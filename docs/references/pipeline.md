@@ -165,7 +165,9 @@ populate: `maxOutputTokens`, `modalities`, `knowledgeCutoff`, `releaseDate`,
 ## Review workflow
 
 1. `npm run regen` (set whatever API keys you have).
-2. Read `pipeline/out/diff-report.txt` — check ADD/REMOVE/CHANGE and any `⚠ conflict`.
+2. Read `pipeline/out/diff-report.txt` — check ADD/REMOVE/CHANGE and any `⚠ conflict`
+   (an entry whose fields did not move but whose sources disagree is listed as
+   `! CONFLICT` and counted under `conflicts`, never `changed` — T91).
 3. Wrong upstream value? Pin the correct one in `pipeline/overrides.json` and re-run.
 4. Satisfied → `npm run regen -- --apply`, then `npm run emit` to republish.
 5. Commit `catalog/model-catalog.json` (+ any `overrides.json` change). `pipeline/sources/`

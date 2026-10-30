@@ -141,9 +141,11 @@ export function diffReport(existing, proposed, meta = {}, skipped = []) {
         }
       }
       const conflicts = meta[`${vendor}::${id}`]?.conflicts || [];
+      // Only a moved field counts as a change (T91); a standing source conflict is
+      // listed under its own header so a no-op re-run reads `changed: 0`.
+      if (changes.length) stats.changed++;
       if (changes.length || conflicts.length) {
-        stats.changed++;
-        section.push(`  ~ CHANGE ${id}`);
+        section.push(changes.length ? `  ~ CHANGE ${id}` : `  ! CONFLICT ${id}`);
         section.push(...changes);
         for (const c of conflicts) {
           stats.conflicts++;

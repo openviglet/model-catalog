@@ -163,8 +163,6 @@
 > Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
 > only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
 
-- 📋 **T91** (deps: —) **The regen diff report counts conflict-only entries as changed** — A no-op re-run reads changed: 204 because standing source conflicts bump the counter, so the header cannot tell a no-op run from a real one. → §T91
-
 ## Non-goals
 
 - **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal
