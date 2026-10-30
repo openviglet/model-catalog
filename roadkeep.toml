@@ -11,6 +11,7 @@ priority = []
 roadmap = "docs/ROADMAP.md"
 changelog = "docs/CHANGELOG.md"
 improvements = "docs/IMPROVEMENTS.md"
+deferred = "docs/DEFERRED.md"
 
 [limits]
 # characters, counted in UTF-16 code units — the stricter of the two counts, so a
