@@ -156,8 +156,21 @@
 > JSON API stays lean (T81). Paired Turing-side fallbacks: that repo's Block BH
 > (see [CHANGELOG.md](CHANGELOG.md) → Block S).
 
-_No active backlog — the next block starts at letter **T** (see
-[last-task.md](last-task.md))._
+## Block T — Source coverage: first-party creators, media & fresh metadata
+
+> The aggregators (OpenRouter, Ollama) are covered in full, but the model *creators*
+> are thin (xAI 4 ids vs 61 known to LiteLLM, Mistral 5/79, Qwen 5, DeepSeek 2, no
+> Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
+> only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
+
+- 📋 **T82** — Scope positive-evidence removal to the kinds a vendor's live listing covers — Gemini's `models.list` stopped listing Veo/Imagen, so the 2026-10-30 regen dropped `veo-3.1-*` as "removed". deps: — → §T1
+- 📋 **T83** — Idempotent regen: a same-day re-run appends `"committed"` to `sources` on ~207 unchanged entries (churn with no new data). deps: — → §T1
+- 📋 **T84** — `models-dev` enrichment adapter (public `models.dev/api.json`, no key, 233 providers / 8,925 models): fills `releaseDate`, `openWeights`, modalities, context/output limits, and an optional `knowledgeCutoff`, provenance-stamped. deps: — → §T2
+- 💭 **T85** — Let `models-dev` anchor ids in **model-creator** sections only (xai, mistral, moonshotai, alibaba, zai, cohere, minimax, deepseek, meta, stepfun, perplexity) and onboard the missing creator vendors. deps: T84 → §T2
+- 📋 **T86** — Direct live adapters for xAI and DeepSeek (`/v1/models` with key): current ids + removal evidence for two creators with no adapter today. deps: T82 → §T3
+- 📋 **T87** — Source-key coverage report: regen summary of which vendors ran without live evidence (missing key), plus an env-var → source table in `pipeline.md` (Mistral, Cohere, Bedrock, HuggingFace, Ollama keys unset today). deps: — → §T3
+- 📋 **T88** — ElevenLabs adapter (SPEECH/TRANSCRIPTION; `ELEVENLABS_API_KEY` already provisioned). deps: — → §T4
+- 💭 **T89** — Media-generation sources for IMAGE/VIDEO: Stability, Ideogram (key provisioned), fal.ai, ByteDance Seedance, Alibaba Wan — choose anchors vs enrichment per source. deps: T82, T85 → §T4
 
 ## Non-goals
 
