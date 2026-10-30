@@ -163,6 +163,12 @@
 > Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
 > only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
 
+## Block U — What the README promises is what a visitor gets
+
+- 📋 **T93** (deps: owner: registry accounts and secrets) **The README's npm, PyPI and Maven Central install commands fail: none of the three SDKs exists on those registries** — The first command a developer copies fails, and the owner decided the SDKs ship on all three registries. → §T93
+- 📋 **T94** (deps: —) **The README calls the catalog part of Viglet Turing ES and says it never carries price, while entries and site show one** — A reader who checks the README against the site finds a contradiction on the first screen. → §T94
+- 📋 **T95** (deps: T93, T94) **A visitor from a launch post finds no one-line pitch, no three-line example and no answer to why not models.dev** — On Show HN the README is the landing page, and the models.dev question is the predictable first comment. → §T95
+
 ## Non-goals
 
 - **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal

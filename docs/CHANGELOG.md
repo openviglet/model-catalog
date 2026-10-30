@@ -256,3 +256,6 @@
 - ✅ **T89** **IMAGE and VIDEO kinds have almost no sources** — LiteLLM anchors creator media APIs per vendor or kind and maps video/image-edit modes; a dry run lifts IMAGE from 12 to 57 and VIDEO from 8 to 40 (design recorded in `pipeline/adapters/litellm.mjs`).
 - ✅ **T91** **The regen diff report counts conflict-only entries as changed** — The diff report counts only moved fields as changed and lists conflict-only entries apart, so a re-run fell from 204 changed to 2 (design recorded in `pipeline/lib/validate.mjs`).
 - ✅ **T92** **models.dev release dates on moving aliases predate their knowledge cutoff** — The models.dev adapter omits release dates on -latest ids and on records whose cutoff follows their release; a dry run leaves no such entry (design recorded in `pipeline/adapters/models-dev.mjs`).
+
+## Block U — What the README promises is what a visitor gets
+
