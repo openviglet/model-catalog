@@ -350,8 +350,17 @@
         border-radius: .7rem; background: var(--card); color: var(--text);
         resize: none; overflow-y: hidden; max-height: 11rem;
       }
+      #ask-q::placeholder { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       #ask-q:focus { outline: none; border-color: var(--brand);
         box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 20%, transparent); }
+      /* "Powered by Viglet" badge (default backend only), pinned to the
+         box's first line; the textarea reserves room for it on the right. */
+      .ask-powered { position: absolute; right: .9rem; top: .8rem; height: 1.47rem;
+        display: flex; align-items: center; gap: .35rem; font-size: .78rem;
+        color: var(--muted); text-decoration: none; white-space: nowrap; }
+      .ask-powered:hover { color: var(--text); text-decoration: none; }
+      .ask-powered[hidden] { display: none; }
+      .ask-input.has-powered #ask-q { padding-right: 9.5rem; }
       #ask-send { white-space: nowrap; flex: none; }
       #ask-send:disabled { opacity: .6; cursor: progress; }
       .ask-examples { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center;
@@ -436,6 +445,8 @@
       @media (max-width: 560px) {
         .ask-form { flex-direction: column; }
         #ask-send { width: 100%; }
+        .ask-powered-text { display: none; } /* logo only on phones */
+        .ask-input.has-powered #ask-q { padding-right: 2.6rem; }
       }
 
       /* ── Code / API ──────────────────────────────────── */

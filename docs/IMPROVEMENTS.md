@@ -33,16 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T82 Removal evidence scoped by kind
-
-Positive-evidence removal assumes a vendor's live listing is complete. It
-is not: Gemini's `models.list` returns chat, embedding, TTS and Lyria, but no longer
-Veo or Imagen, so the merge read their absence as retirement. Fix: removal evidence
-counts only for the kinds the adapter's listing actually returned for that vendor
-(an id whose kind the live run never emitted is carried forward, not dropped). A
-per-adapter declaration of covered kinds is the alternative if inference proves
-brittle. Restore `veo-3.1-*` once fixed.
-
 ### §T83 Idempotent regen
 
 Re-running regen over its own output stamps `"committed"` into `sources`
@@ -99,3 +89,18 @@ known to LiteLLM (fal.ai alone 210 ids) but blocked by anchoring. Decide per sou
 whether it anchors (a creator's own API) or only enriches (fal.ai is a host, like
 OpenRouter); depends on T82 so media ids are not wrongly removed, and on T85's
 creator-anchor rule.
+
+### §T90 Legacy ledger entries outside the grammar
+
+The roadkeep adoption (a58016d) rewrote Block T in roadkeep's grammar but left the 79
+pre-adoption CHANGELOG bullets in their old shape: no status marker, no symptom field.
+At HEAD `lint` reported this as one `grammar.unreadable`; once the first
+roadkeep-written entry (T82) landed, the same debt reads as 79 `line.unparsed`, and
+`lint --baseline HEAD` does not forgive it because the code changed. So `lint` can no
+longer be a clean gate here, and `show` and `delivered` cannot reach any pre-adoption
+task by id.
+
+Two ways out: rewrite each legacy bullet into the ledger grammar (shipped marker,
+symptom, why) through a roadkeep migration verb, keeping ids and dates from git; or
+declare a legacy section the grammar skips. The first keeps every id queryable and is
+preferred. Hand-editing the file is not an option: it is governed.

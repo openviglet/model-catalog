@@ -319,6 +319,23 @@ test("merge positive-evidence removal: live API omitting an id drops it (unless 
   assert.equal(removed[0].id, "gone");
 });
 
+test("merge removal evidence is scoped to the kinds the live listing covers (T82)", () => {
+  const existing = { version: 1, vendors: { gemini: [
+    { id: "gemini-chat", label: "Chat", kind: "CHAT" },
+    { id: "gemini-old", label: "Old", kind: "CHAT" },
+    { id: "veo-3.1-generate-preview", label: "Veo", kind: "VIDEO" },
+  ] } };
+  const { vendors, removed } = baseMerge({
+    existing,
+    sources: [{ sourceId: "gemini-api", drafts: [{ vendor: "gemini", id: "gemini-chat", kind: "CHAT" }] }],
+    liveIdsByVendor: new Map([["gemini", new Set(["gemini-chat"])]]),
+    liveKindsByVendor: new Map([["gemini", new Set(["CHAT"])]]),
+  });
+  const ids = vendors.gemini.map((e) => e.id).sort();
+  assert.deepEqual(ids, ["gemini-chat", "veo-3.1-generate-preview"], "an uncovered kind is carried forward");
+  assert.deepEqual(removed.map((r) => r.id), ["gemini-old"], "a covered kind still removes on absence");
+});
+
 test("validateEnvelope: flags bad kind, duplicate id, invalid numeric", () => {
   const errs = validateEnvelope({ version: 1, lastUpdated: WHEN, vendors: { openai: [
     { id: "a", label: "A", kind: "NOPE" },

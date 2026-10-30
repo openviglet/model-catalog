@@ -15,7 +15,9 @@
  *    with only some API keys never silently drops the vendors it didn't fetch.
  *  - **Positive-evidence removal.** An id is dropped ONLY when the vendor's *own
  *    live API ran and did not list it* (and it isn't override-pinned). LiteLLM /
- *    a missing key can never cause a removal.
+ *    a missing key can never cause a removal. The evidence covers only the kinds
+ *    that listing returned (T82): a listing with no VIDEO entry says nothing about
+ *    a VIDEO id.
  *
  * **Anchoring rule** — a *new* id (not already in the committed catalog) is
  * admitted only if a live vendor API or an override vouches for it. LiteLLM
@@ -128,10 +130,12 @@ function committedDrafts(existing) {
  * @param existing  committed catalog envelope — carried forward + used for anchoring
  * @param anchoringSources Set of source ids that may introduce new ids
  * @param liveIdsByVendor Map<vendor, Set<id>> ids each live vendor API returned (removal evidence)
+ * @param liveKindsByVendor Map<vendor, Set<kind>> kinds each live listing emitted; when given,
+ *                  removal evidence is scoped to those kinds (T82)
  * @param when      ISO date stamped as lastVerified
  * @returns { vendors, meta, skipped, removed }
  */
-export function merge({ sources, overrides = [], existing, anchoringSources, liveIdsByVendor, when }) {
+export function merge({ sources, overrides = [], existing, anchoringSources, liveIdsByVendor, liveKindsByVendor, when }) {
   const existingIds = new Set();
   for (const [vendor, entries] of Object.entries(existing?.vendors || {})) {
     for (const e of entries) existingIds.add(`${vendor}::${e.id}`);
@@ -170,16 +174,21 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
       continue;
     }
 
-    // Positive-evidence removal: vendor's live API ran but did not list this id.
-    const liveIds = liveIdsByVendor?.get(vendor);
-    if (liveIds && !liveIds.has(id) && !overrideIds.has(key)) {
-      removed.push({ vendor, id, reason: `absent from ${vendor} live API listing` });
-      continue;
-    }
-
     const ranked = group
       .map((g, i) => ({ ...g, prio: priorityOf(g.sourceId, g.pinned), i }))
       .sort((a, b) => b.prio - a.prio || a.i - b.i);
+
+    // Positive-evidence removal: vendor's live API ran but did not list this id —
+    // and only for a kind that listing covers (T82). Gemini's models.list stopped
+    // returning Veo/Imagen, so an id whose kind the run never emitted is carried forward.
+    const liveIds = liveIdsByVendor?.get(vendor);
+    const liveKinds = liveKindsByVendor?.get(vendor);
+    const kind = ranked.find((r) => r.draft.kind)?.draft.kind;
+    const kindCovered = !liveKinds || !kind || liveKinds.has(kind);
+    if (liveIds && !liveIds.has(id) && !overrideIds.has(key) && kindCovered) {
+      removed.push({ vendor, id, reason: `absent from ${vendor} live API listing` });
+      continue;
+    }
 
     const entry = { id };
     const fieldProvenance = {};

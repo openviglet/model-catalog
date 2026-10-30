@@ -3487,6 +3487,63 @@
         "lastVerified": "2026-10-30"
       },
       {
+        "id": "veo-3.1-fast-generate-preview",
+        "label": "Veo 3.1 fast",
+        "kind": "VIDEO",
+        "contextWindow": 480,
+        "maxOutputTokens": 8192,
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "video"
+          ]
+        },
+        "sources": [
+          "gemini-api"
+        ],
+        "lastVerified": "2026-09-26"
+      },
+      {
+        "id": "veo-3.1-generate-preview",
+        "label": "Veo 3.1",
+        "kind": "VIDEO",
+        "contextWindow": 480,
+        "maxOutputTokens": 8192,
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "video"
+          ]
+        },
+        "sources": [
+          "gemini-api"
+        ],
+        "lastVerified": "2026-09-26"
+      },
+      {
+        "id": "veo-3.1-lite-generate-preview",
+        "label": "Veo 3.1 lite",
+        "kind": "VIDEO",
+        "contextWindow": 480,
+        "maxOutputTokens": 8192,
+        "modalities": {
+          "input": [
+            "text"
+          ],
+          "output": [
+            "video"
+          ]
+        },
+        "sources": [
+          "gemini-api"
+        ],
+        "lastVerified": "2026-09-26"
+      },
+      {
         "id": "aqa",
         "label": "Model that performs Attributed Question Answering.",
         "kind": "UNKNOWN",

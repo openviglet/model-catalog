@@ -55,6 +55,8 @@ npm run typecheck           # type-check the page without emitting
 npm run emit                # rebuild public JSON artifacts from the canonical file
 npm run build               # build:page + emit (what CI runs before deploy)
 npm run banner              # re-render public/og-banner*.png from scripts/og-banner.html (needs Chrome/Edge; run after emit)
+npm run serve               # serve public/ at http://127.0.0.1:8765 (zero-dep; run build first)
+run-site.cmd                # Windows: build + serve + open the browser (`/nobuild`, or a port arg)
 update-data.cmd             # Windows: all of the above in order (regen review+apply, test, build, banner) + flag stale plans.json/providers.json
 npm test                    # pipeline unit tests (node:test)
 ```
@@ -65,5 +67,6 @@ npm test                    # pipeline unit tests (node:test)
 
 Turing consumes the published endpoint as its model-picker reference (remote fetch,
 `turing.model-catalog.url`), but does not own the catalog. This repo versions,
-publishes and evolves independently. User-facing text says **Viglet Turing ES**;
+publishes and evolves independently. User-facing text says **Viglet Turing** (never
+"Turing ES");
 the public repo is `openviglet/model-catalog`.

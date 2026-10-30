@@ -246,3 +246,4 @@
 
 ## Block T — Source coverage: first-party creators, media & fresh metadata
 
+- ✅ **T82** **Positive-evidence removal ignores which kinds a vendor listing covers** — Removal evidence now counts only for kinds the vendor's live listing returned, so Gemini's Veo ids survive a regen; veo-3.1-* restored (design recorded in `pipeline/lib/merge.mjs`).

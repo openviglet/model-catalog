@@ -34,6 +34,7 @@ const existing = existsSync(CANONICAL) ? readJson(CANONICAL) : { version: 1, ven
 const sources = [];
 const anchoringSources = new Set(); // live vendor APIs + overrides may introduce new ids
 const liveIdsByVendor = new Map(); // vendor -> Set<id> the live API listed (removal evidence)
+const liveKindsByVendor = new Map(); // vendor -> Set<kind> that listing covers (T82)
 for (const adapter of ADAPTERS) {
   if (args.only && !args.only.includes(adapter.id)) continue;
   // Offline replays cached snapshots — no auth needed, so don't gate on the key.
@@ -56,7 +57,10 @@ for (const adapter of ADAPTERS) {
     // A non-empty listing is the authority for which ids that vendor still serves —
     // but only a FULL listing. A `partial` source (local/region-scoped/bounded)
     // anchors ids without being evidence to remove others (T4).
-    if (drafts.length && !adapter.partial) liveIdsByVendor.set(adapter.vendor, new Set(drafts.map((d) => d.id)));
+    if (drafts.length && !adapter.partial) {
+      liveIdsByVendor.set(adapter.vendor, new Set(drafts.map((d) => d.id)));
+      liveKindsByVendor.set(adapter.vendor, new Set(drafts.map((d) => d.kind).filter(Boolean)));
+    }
   }
   log(`${adapter.id}: ${drafts.length} drafts${result.fromCache ? " (cache)" : ""}`);
 }
@@ -69,7 +73,7 @@ const overrides = existsSync(OVERRIDES_FILE) ? flattenOverrides(readJson(OVERRID
 if (overrides.length) log(`overrides: ${overrides.length} pinned field-set(s)`);
 
 // 3) Merge → proposed envelope (+ provenance/conflict meta).
-const { vendors, meta, skipped, removed } = merge({ sources, overrides, existing, anchoringSources, liveIdsByVendor, when });
+const { vendors, meta, skipped, removed } = merge({ sources, overrides, existing, anchoringSources, liveIdsByVendor, liveKindsByVendor, when });
 if (removed.length) log(`${removed.length} id(s) removed on live-API evidence`);
 const proposed = {
   _comment: existing._comment,

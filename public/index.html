@@ -138,7 +138,12 @@
         <form class="ask-form" id="ask-form">
           <div class="ask-input">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="M14 14l4 4" stroke-linecap="round"/></svg>
-            <textarea id="ask-q" rows="1" placeholder="e.g. lowest-priced embedding model with a big context window" autocomplete="off" aria-label="Ask the catalog a question"></textarea>
+            <textarea id="ask-q" rows="1" placeholder="e.g. lowest-priced embedding model with a long context" autocomplete="off" aria-label="Ask the catalog a question"></textarea>
+            <!-- Shown only for the default backend (ask.ts), like dev.to's "Powered by Algolia". -->
+            <a class="ask-powered" id="ask-powered" href="https://github.com/openviglet/turing" target="_blank" rel="noopener" hidden>
+              <span class="ask-powered-text">Powered by Viglet</span>
+              <img src="viglet-logo.svg" alt="" width="16" height="16" />
+            </a>
           </div>
           <button type="submit" class="btn btn-primary" id="ask-send">Ask</button>
         </form>
