@@ -33,14 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T87 Source-key coverage report
-
-Today five adapters (Mistral, Cohere, Ollama, Bedrock, HuggingFace) skip
-for lack of a key, and the only trace is a WARN line. The regen summary should list
-which vendors ran without live evidence, so a maintainer knows the run carried them
-forward; `pipeline.md` gets the env-var → source table (and `update-data.cmd`
-echoes it).
-
 ### §T88 ElevenLabs adapter
 
 VIDEO has 2 entries and IMAGE 10. ElevenLabs lists its models via API and

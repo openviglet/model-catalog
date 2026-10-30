@@ -172,3 +172,30 @@ export function diffReport(existing, proposed, meta = {}, skipped = []) {
 
   return { text: header + "\n" + (lines.length ? lines.join("\n") : "\n(no differences)") + "\n", stats };
 }
+
+/**
+ * Live-evidence coverage of a run (T87): which vendors a full live listing vouched
+ * for, which were carried forward from the committed catalog without one (so no id
+ * of theirs could be removed), and which vendor sources did not run and why.
+ *
+ * @param vendors  proposed envelope's vendors map
+ * @param liveVendors Set of vendors a full live listing ran for
+ * @param notRun   [{ id, vendor, reason }] vendor sources that did not run
+ * @returns text block (never writes anything)
+ */
+export function evidenceSummary(vendors, liveVendors, notRun) {
+  const counted = (v) => `${v} (${vendors[v].length})`;
+  const all = Object.keys(vendors).sort();
+  const live = all.filter((v) => liveVendors.has(v));
+  const carried = all.filter((v) => !liveVendors.has(v));
+  const lines = [
+    "Live evidence coverage",
+    `  live listing (removal evidence): ${live.map(counted).join(", ") || "none"}`,
+    `  carried forward without live evidence: ${carried.map(counted).join(", ") || "none"}`,
+  ];
+  if (notRun.length) {
+    lines.push("  vendor sources that did not run:");
+    for (const s of notRun) lines.push(`    · ${s.id} (${s.vendor}) — ${s.reason}`);
+  }
+  return lines.join("\n") + "\n";
+}

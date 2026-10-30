@@ -8,7 +8,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { merge } from "./lib/merge.mjs";
-import { validateEnvelope, diffReport } from "./lib/validate.mjs";
+import { validateEnvelope, diffReport, evidenceSummary } from "./lib/validate.mjs";
 import litellm from "./adapters/litellm.mjs";
 import benchmarks from "./adapters/benchmarks.mjs";
 import artificialAnalysis, { buildMatchIndex, resolveTarget } from "./adapters/artificial-analysis.mjs";
@@ -439,6 +439,17 @@ test("xai + deepseek normalize: live ids, kind from the id; vendor-scoped remova
   const d = deepseek.normalize({ data: [{ id: "deepseek-v4-pro" }, { id: "deepseek-v4-flash" }] });
   assert.deepEqual(d.map((e) => [e.vendor, e.id, e.kind]), [["deepseek", "deepseek-v4-pro", "CHAT"], ["deepseek", "deepseek-v4-flash", "CHAT"]]);
   assert.deepEqual(deepseek.normalize({}), [], "a malformed body yields no drafts, not a crash");
+});
+
+test("evidenceSummary lists live vs carried-forward vendors and why a source did not run (T87)", () => {
+  const vendors = { openai: [{}, {}], mistral: [{}], groq: [{}] };
+  const text = evidenceSummary(vendors, new Set(["openai"]), [
+    { id: "mistral-api", vendor: "mistral", reason: "MISTRAL_API_KEY not set" },
+  ]);
+  assert.match(text, /live listing \(removal evidence\): openai \(2\)/);
+  assert.match(text, /carried forward without live evidence: groq \(1\), mistral \(1\)/);
+  assert.match(text, /mistral-api \(mistral\) — MISTRAL_API_KEY not set/);
+  assert.doesNotMatch(evidenceSummary(vendors, new Set(), []), /did not run/);
 });
 
 test("validateEnvelope: flags bad kind, duplicate id, invalid numeric", () => {

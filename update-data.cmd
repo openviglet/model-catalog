@@ -29,6 +29,7 @@ echo == regen (dry-run)
 call npm run regen > pipeline\out\regen.log 2>&1 || (type pipeline\out\regen.log & goto :fail)
 findstr /v /c:"litellm-only" pipeline\out\regen.log
 echo Full report: pipeline\out\diff-report.txt
+echo Vendors "carried forward without live evidence" above had no key set: see the env var table in docs\references\pipeline.md.
 
 if not defined AUTO (
   choice /c SN /m "Apply this diff to catalog\model-catalog.json"

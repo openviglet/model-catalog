@@ -18,7 +18,7 @@ import { existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { ADAPTERS } from "./adapters/index.mjs";
 import { merge } from "./lib/merge.mjs";
-import { validateEnvelope, diffReport } from "./lib/validate.mjs";
+import { validateEnvelope, diffReport, evidenceSummary } from "./lib/validate.mjs";
 import {
   CANONICAL, OUT_DIR, OVERRIDES_FILE,
   fail, log, parseArgs, readJson, today, warn, writeJson,
@@ -35,22 +35,28 @@ const sources = [];
 const anchoringSources = new Set(); // live vendor APIs + overrides may introduce new ids
 const liveIdsByVendor = new Map(); // vendor -> Set<id> the live API listed (removal evidence)
 const liveKindsByVendor = new Map(); // vendor -> Set<kind> that listing covers (T82)
+const notRun = []; // vendor sources that gave no removal evidence, and why (T87)
+const missed = (adapter, reason) => { if (adapter.vendor !== null) notRun.push({ id: adapter.id, vendor: adapter.vendor, reason }); };
 for (const adapter of ADAPTERS) {
   if (args.only && !args.only.includes(adapter.id)) continue;
   // Offline replays cached snapshots — no auth needed, so don't gate on the key.
   if (!args.offline && adapter.envKey && !env[adapter.envKey]) {
     warn(`${adapter.id}: ${adapter.envKey} not set — skipping source`);
+    missed(adapter, `${adapter.envKey} not set`);
     continue;
   }
   const result = await adapter.fetch(env, { offline: args.offline, when });
-  if (!result) continue;
+  if (!result) { missed(adapter, args.offline ? "no cached snapshot" : "fetch failed"); continue; }
   let drafts = [];
   try {
     drafts = adapter.normalize(result.raw) || [];
   } catch (e) {
     warn(`${adapter.id}: normalize failed (${e.message}) — skipping`);
+    missed(adapter, "normalize failed");
     continue;
   }
+  if (adapter.partial) missed(adapter, "partial listing (anchors, never removal evidence)");
+  else if (!drafts.length) missed(adapter, "empty listing");
   sources.push({ sourceId: adapter.id, drafts });
   // An enrichment source may anchor new ids for a curated set of vendors only (T85).
   for (const v of adapter.anchorVendors || []) anchoringSources.add(`${adapter.id}::${v}`);
@@ -97,8 +103,11 @@ const { text, stats } = diffReport(existing, proposed, meta, skipped);
 writeJson(resolve(OUT_DIR, "proposed-catalog.json"), proposed);
 const { writeFileSync, mkdirSync } = await import("node:fs");
 mkdirSync(OUT_DIR, { recursive: true });
-writeFileSync(resolve(OUT_DIR, "diff-report.txt"), text, "utf8");
 console.log("\n" + text);
+// Printed last, so it is the block right above update-data.cmd's apply prompt (T87).
+const evidence = evidenceSummary(vendors, new Set(liveIdsByVendor.keys()), notRun);
+writeFileSync(resolve(OUT_DIR, "diff-report.txt"), text + "\n" + evidence, "utf8");
+console.log(evidence);
 log(`proposed envelope + report written to ${OUT_DIR}`);
 
 // 6) Review gate — only --apply overwrites the canonical file.

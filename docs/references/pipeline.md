@@ -73,6 +73,28 @@ because one credential is absent.** Every live fetch is cached as a raw snapshot
 under `pipeline/sources/<source>.json` (with fetch timestamp + provenance), so a
 merge/normalize change can be re-run offline without re-hitting the network.
 
+### Env var → source
+
+| Env var | Source | Without it |
+|---|---|---|
+| `OPENAI_API_KEY` | `openai-api` | openai carried forward, no removals |
+| `ANTHROPIC_API_KEY` | `anthropic-api` | anthropic carried forward, no removals (`update-data.cmd` falls back to `TUR_ANTHROPIC_API_KEY`) |
+| `GEMINI_API_KEY` | `gemini-api` | gemini carried forward, no removals |
+| `COHERE_API_KEY` | `cohere-api` | cohere carried forward, no removals |
+| `MISTRAL_API_KEY` | `mistral-api` | mistral carried forward, no removals |
+| `XAI_API_KEY` | `xai-api` | xai carried forward, no removals |
+| `DEEPSEEK_API_KEY` | `deepseek-api` | deepseek carried forward, no removals |
+| `OLLAMA_HOST` | `ollama-api` | local pulls not anchored (partial either way) |
+| `AWS_ACCESS_KEY_ID` (+`AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) | `bedrock-api` | bedrock relies on LiteLLM/overrides (partial either way) |
+| `HUGGINGFACE_API_TOKEN` | `huggingface-api` | ONNX embedding ids not anchored (partial either way) |
+| `ARTIFICIAL_ANALYSIS_API_KEY` | `artificial-analysis` | benchmarks come from the curated snapshot only |
+
+Every run ends with a **Live evidence coverage** block (also appended to
+`pipeline/out/diff-report.txt`): the vendors a full live listing vouched for, the
+vendors carried forward without one (none of their ids can be removed this run),
+and each vendor source that did not run and why (key unset, no cached snapshot,
+fetch failed, partial listing) (T87).
+
 ## Precedence & the anchoring rule
 
 Merge folds all drafts per `(vendor, id)`. **Per-field**, the highest-precedence
