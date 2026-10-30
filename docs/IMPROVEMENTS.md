@@ -33,13 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T83 Idempotent regen
-
-Re-running regen over its own output stamps `"committed"` into `sources`
-of entries whose data did not change, producing a 207-entry diff with no
-information. `committed` should only appear when the committed catalog actually
-contributed a field the live sources did not, and a no-op run should be a no-op diff.
-
 ### §T84 models.dev enrichment adapter
 
 `https://models.dev/api.json` is public, needs no key, is maintained by reviewed PRs
@@ -104,3 +97,16 @@ Two ways out: rewrite each legacy bullet into the ledger grammar (shipped marker
 symptom, why) through a roadkeep migration verb, keeping ids and dates from git; or
 declare a legacy section the grammar skips. The first keeps every id queryable and is
 preferred. Hand-editing the file is not an option: it is governed.
+
+### §T91 Changed counts only moved fields
+
+`diffReport` in `pipeline/lib/validate.mjs` bumps `stats.changed` and prints a `~ CHANGE
+<id>` header for any entry that has merge conflicts, even when no compared field moved.
+A standing conflict (LiteLLM disagreeing with a vendor API on `contextWindow`, say) is
+re-reported on every run, so an offline re-run over a catalog it just produced reads
+`changed: 204` while the proposed envelope is identical to the committed one. A reviewer
+cannot tell a no-op run from a real one by the header.
+
+Count an entry as changed only when a compared field differs. Keep the conflicts visible
+under their own heading and counter (`conflicts` already exists), so the header line
+reads `changed: 0  conflicts: 254` for a no-op run.

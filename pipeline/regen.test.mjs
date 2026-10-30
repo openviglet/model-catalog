@@ -336,6 +336,22 @@ test("merge removal evidence is scoped to the kinds the live listing covers (T82
   assert.deepEqual(removed.map((r) => r.id), ["gemini-old"], "a covered kind still removes on absence");
 });
 
+test("merge is idempotent: re-running over its own output does not stamp committed (T83)", () => {
+  const sources = [
+    { sourceId: "gemini-api", drafts: [{ vendor: "gemini", id: "g", label: "G", kind: "CHAT" }] },
+    { sourceId: "litellm", drafts: [{ vendor: "gemini", id: "g", contextWindow: 1000, capabilities: ["TOOLS"],
+      pricing: { inputPerMTok: 1, currency: "USD" } }] },
+  ];
+  const first = baseMerge({ sources });
+  const second = baseMerge({ sources, existing: { version: 1, vendors: first.vendors } });
+  assert.deepEqual(second.vendors, first.vendors, "a same-day re-run is a no-op diff");
+  assert.deepEqual(first.vendors.gemini[0].sources, ["gemini-api", "litellm"]);
+
+  // A value only the committed catalog still carries keeps "committed" in sources.
+  const carried = baseMerge({ sources: [sources[0]], existing: { version: 1, vendors: first.vendors } });
+  assert.ok(carried.vendors.gemini[0].sources.includes("committed"));
+});
+
 test("validateEnvelope: flags bad kind, duplicate id, invalid numeric", () => {
   const errs = validateEnvelope({ version: 1, lastUpdated: WHEN, vendors: { openai: [
     { id: "a", label: "A", kind: "NOPE" },

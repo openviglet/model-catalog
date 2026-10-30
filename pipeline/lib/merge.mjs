@@ -95,6 +95,11 @@ function priorityOf(sourceId, pinned) {
   return PRIORITY[sourceId] ?? 0;
 }
 
+/** A cited object's value without its `lastVerified` stamp, for same-value comparison. */
+function unstamped(obj) {
+  return JSON.stringify({ ...obj, lastVerified: undefined });
+}
+
 function mergeModalities(ranked) {
   const input = new Set();
   const output = new Set();
@@ -194,6 +199,11 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
     const fieldProvenance = {};
     const conflicts = [];
     const contributingSources = new Set();
+    // Idempotent provenance (T83): a value the committed catalog wins with is credited
+    // to the fresh source that supplies the same value, so re-running regen over its
+    // own output doesn't stamp "committed" onto unchanged entries.
+    const credit = (source, same) =>
+      source !== "committed" ? source : ranked.find((r) => r.sourceId !== "committed" && same(r.draft))?.sourceId || source;
 
     for (const field of SCALAR_FIELDS) {
       let winner = null;
@@ -207,7 +217,8 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
       if (winner === null) continue;
       entry[field] = winner.value;
       fieldProvenance[field] = winner.source;
-      contributingSources.add(winner.source);
+      const same = JSON.stringify(winner.value);
+      contributingSources.add(credit(winner.source, (d) => JSON.stringify(d[field]) === same));
       const losers = seen.filter((s) => JSON.stringify(s.value) !== JSON.stringify(winner.value));
       if (losers.length) conflicts.push({ field, winner, losers });
     }
@@ -230,7 +241,11 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
       if (values.length) {
         entry[field] = values;
         fieldProvenance[field] = [...contributors].sort().join("+");
-        for (const c of contributors) contributingSources.add(c);
+        // "committed" is credited only for values no fresh source supplied (T83).
+        const fresh = new Set(ranked.filter((r) => r.sourceId !== "committed").flatMap((r) => r.draft[field] || []));
+        for (const c of contributors) {
+          if (c !== "committed" || values.some((v) => !fresh.has(v))) contributingSources.add(c);
+        }
       }
     }
 
@@ -253,7 +268,8 @@ export function merge({ sources, overrides = [], existing, anchoringSources, liv
         if (obj.lastVerified === undefined) obj.lastVerified = when;
         entry[field] = obj;
         fieldProvenance[field] = r.sourceId;
-        contributingSources.add(r.sourceId);
+        const same = unstamped(obj);
+        contributingSources.add(credit(r.sourceId, (d) => !!d[field] && unstamped(d[field]) === same));
         break; // ranked is highest-priority-first
       }
     }
