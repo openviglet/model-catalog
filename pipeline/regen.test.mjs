@@ -17,6 +17,7 @@ import ollamaLibrary, { parseLibrary } from "./adapters/ollama-library.mjs";
 import openrouter from "./adapters/openrouter.mjs";
 import bedrock from "./adapters/bedrock.mjs";
 import huggingface from "./adapters/huggingface.mjs";
+import modelsDev from "./adapters/models-dev.mjs";
 
 const WHEN = "2026-07-21";
 const ANCHORS = new Set(["openai-api", "anthropic-api", "gemini-api", "cohere-api", "mistral-api", "overrides"]);
@@ -350,6 +351,59 @@ test("merge is idempotent: re-running over its own output does not stamp committ
   // A value only the committed catalog still carries keeps "committed" in sources.
   const carried = baseMerge({ sources: [sources[0]], existing: { version: 1, vendors: first.vendors } });
   assert.ok(carried.vendors.gemini[0].sources.includes("committed"));
+});
+
+test("models-dev normalize: maps provider→vendor, dates, open weights; skips embedding limits (T84)", () => {
+  const drafts = modelsDev.normalize({
+    google: { id: "google", models: {
+      "gemini-x": { id: "gemini-x", tool_call: true, reasoning: true, knowledge: "2025-01", release_date: "2025-06-17",
+        open_weights: false, limit: { context: 1048576, output: 65536 },
+        modalities: { input: ["text", "image"], output: ["text"] }, cost: { input: 1.25, output: 10 } },
+    } },
+    openai: { id: "openai", models: {
+      "text-embedding-3-small": { id: "text-embedding-3-small", type: "embedding", release_date: "2024-01",
+        limit: { context: 8192, output: 1536 }, modalities: { input: ["text"], output: ["text"] }, cost: { input: 0.02, output: 0 } },
+    } },
+    "some-host": { id: "some-host", models: { "m": { id: "m" } } },
+  });
+  const byId = Object.fromEntries(drafts.map((d) => [`${d.vendor}/${d.id}`, d]));
+  assert.equal(drafts.length, 2, "unmapped provider dropped");
+  const g = byId["gemini/gemini-x"];
+  assert.equal(g.releaseDate, "2025-06-17");
+  assert.equal(g.knowledgeCutoff, "2025-01");
+  assert.equal(g.openWeights, false, "a false open_weights is kept, not compacted away");
+  assert.deepEqual(g.capabilities, ["tools", "vision", "reasoning"]);
+  assert.equal(g.pricing.source, "models-dev");
+  assert.equal(g.kind, undefined, "enrichment never sets kind");
+  const e = byId["openai/text-embedding-3-small"];
+  assert.equal(e.releaseDate, undefined, "a non-ISO date is omitted, not guessed");
+  assert.equal(e.maxOutputTokens, undefined, "an embedding's vector size is not a token limit");
+  assert.equal(e.modalities, undefined);
+  assert.deepEqual(e.pricing.outputPer1M, undefined, "a zero cost is omitted");
+});
+
+test("models-dev enriches blanks only: never anchors, never beats LiteLLM or committed (T84)", () => {
+  const existing = { version: 1, vendors: { openai: [{ id: "gpt-x", label: "GPT X", kind: "CHAT", contextWindow: 100 }] } };
+  const { vendors, skipped } = baseMerge({
+    existing,
+    sources: [
+      { sourceId: "litellm", drafts: [{ vendor: "openai", id: "gpt-x", maxOutputTokens: 50, pricing: { inputPer1M: 2, source: "litellm" } }] },
+      { sourceId: "models-dev", drafts: [
+        { vendor: "openai", id: "gpt-x", contextWindow: 999, maxOutputTokens: 99, releaseDate: "2025-01-02",
+          openWeights: false, pricing: { inputPer1M: 3, source: "models-dev" } },
+        { vendor: "openai", id: "brand-new", releaseDate: "2025-01-02" },
+      ] },
+    ],
+  });
+  const e = vendors.openai.find((x) => x.id === "gpt-x");
+  assert.equal(e.contextWindow, 100, "committed wins");
+  assert.equal(e.maxOutputTokens, 50, "LiteLLM wins");
+  assert.equal(e.pricing.source, "litellm", "LiteLLM price kept");
+  assert.equal(e.releaseDate, "2025-01-02", "blank filled");
+  assert.equal(e.openWeights, false);
+  assert.ok(e.sources.includes("models-dev"));
+  assert.ok(!vendors.openai.some((x) => x.id === "brand-new"), "never introduces an id");
+  assert.ok(skipped.some((s) => s.id === "brand-new"));
 });
 
 test("validateEnvelope: flags bad kind, duplicate id, invalid numeric", () => {

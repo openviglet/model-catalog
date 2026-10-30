@@ -248,3 +248,4 @@
 
 - ✅ **T82** **Positive-evidence removal ignores which kinds a vendor listing covers** — Removal evidence now counts only for kinds the vendor's live listing returned, so Gemini's Veo ids survive a regen; veo-3.1-* restored (design recorded in `pipeline/lib/merge.mjs`).
 - ✅ **T83** **A same-day regen re-run churns sources on unchanged entries** — A regen re-run over its own output is a no-op envelope: a value committed wins with is credited to the fresh source that supplies it (design recorded in `pipeline/lib/merge.mjs`).
+- ✅ **T84** **No models-dev enrichment adapter** — A keyless models.dev adapter fills blank releaseDate, cutoff and openWeights below LiteLLM; a dry run lifts releaseDate from 14 to 515 (design recorded in `pipeline/adapters/models-dev.mjs`).

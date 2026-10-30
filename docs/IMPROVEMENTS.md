@@ -33,20 +33,6 @@ Recent releases absent from the catalog (tracker dates, not vendor-confirmed): G
 Voice 3.0, Amazon Nova 2.5 Sonic, Claude Duet (research preview), GPT-6 Pro, Qwen
 Image 2.1 Pro, Kimi K2.8 Preview.
 
-### §T84 models.dev enrichment adapter
-
-`https://models.dev/api.json` is public, needs no key, is maintained by reviewed PRs
-with schema validation, and carries per model: `release_date`, `knowledge`
-(training cutoff), `open_weights`, `modalities`, `reasoning`/`tool_call`, `limit`
-(context/output) and `cost`. It is keyed by *provider*, with the model-creator
-sections (xai, mistral, moonshotai, alibaba, …) separate from inference hosts.
-
-This task adds it as an enrichment source, same footing as LiteLLM: it fills blank
-fields on ids already anchored, never introduces an id, and never overrides a vendor
-API. The main gain is `releaseDate` (14 of 1,028 today) and `openWeights`. A new
-optional `knowledgeCutoff` (ISO month) is additive. Its `cost` is ignored where
-LiteLLM or a pin already priced the entry (committed beats new, as for LiteLLM pricing).
-
 ### §T85 models.dev as anchor for model creators
 
 The design question: models.dev is an aggregator, but its creator

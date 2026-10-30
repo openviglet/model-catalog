@@ -7,6 +7,7 @@
  * Precedence (higher wins per field):
  *   pinned override (100) > live vendor API (50) > override (30)
  *   > self-hosted/aggregator source (20) > committed catalog (15) > LiteLLM (10)
+ *   > models.dev (9)
  *
  * Two safety rules keep a noisy/partial run from poisoning the reference:
  *
@@ -53,6 +54,9 @@ const PRIORITY = {
   "huggingface-api": AGGREGATOR_PRIORITY,
   committed: 15,
   litellm: 10,
+  // models.dev registry (T84): enrichment on LiteLLM's footing, one below it so it
+  // only fills what nobody else supplies (releaseDate, knowledgeCutoff, openWeights).
+  "models-dev": 9,
 };
 const PIN_PRIORITY = 100;
 

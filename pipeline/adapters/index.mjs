@@ -21,7 +21,8 @@ import openrouter from "./openrouter.mjs";
 import bedrock from "./bedrock.mjs";
 import huggingface from "./huggingface.mjs";
 import litellm from "./litellm.mjs";
+import modelsDev from "./models-dev.mjs";
 import benchmarks from "./benchmarks.mjs";
 import artificialAnalysis from "./artificial-analysis.mjs";
 
-export const ADAPTERS = [openai, anthropic, gemini, cohere, mistral, ollama, ollamaLibrary, openrouter, bedrock, huggingface, litellm, benchmarks, artificialAnalysis];
+export const ADAPTERS = [openai, anthropic, gemini, cohere, mistral, ollama, ollamaLibrary, openrouter, bedrock, huggingface, litellm, modelsDev, benchmarks, artificialAnalysis];
