@@ -163,6 +163,8 @@
 > Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
 > only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
 
+- 🛠 **T96** (deps: —) **Artificial Analysis benchmarks never reach models that OpenRouter also lists** — Each such slug matches the creator id and its gateway copy, so the auto-matcher drops it; Claude Opus 5.5, Sonnet 5.5 and Haiku 5.5 show no benchmark. → §T96
+
 ## Block U — What the README promises is what a visitor gets
 
 - 📋 **T93** (deps: owner: registry accounts and secrets) **The README's npm, PyPI and Maven Central install commands fail: none of the three SDKs exists on those registries** — The first command a developer copies fails, and the owner decided the SDKs ship on all three registries. → §T93

@@ -113,28 +113,44 @@ export function buildMatchIndex(catalogIds) {
   }
   return { byExact, byNorm, byTok, target };
 }
-/** A canonical-form lookup that returns a target ONLY when exactly one id matches. */
-function uniqueMatch(index, mapObj, key) {
+// AA `model_creator.slug` → catalog vendor key, where the two differ. Any other
+// creator slug is tried as the vendor key itself (anthropic, openai, xai, …).
+const CREATOR_TO_VENDOR = { google: "gemini", kimi: "moonshot", alibaba: "qwen" };
+
+/**
+ * A canonical-form lookup that returns a target ONLY when exactly one id matches.
+ * Several matches are usually the creator's id plus gateway copies of it
+ * (`claude-opus-5-5` and `openrouter/anthropic/claude-opus-5.5`), so the tie breaks
+ * to the one id under the AA row's creator vendor (T96); anything else still drops.
+ */
+function uniqueMatch(index, mapObj, key, creator) {
   const set = mapObj.get(key);
-  if (!set || set.size !== 1) return undefined; // absent OR ambiguous → skip (never guess)
-  return index.target.get([...set][0]);
+  if (!set) return undefined;
+  let keys = [...set];
+  if (keys.length > 1 && creator) {
+    const vendor = CREATOR_TO_VENDOR[creator] || creator;
+    keys = keys.filter((k) => index.target.get(k).vendor === vendor);
+  }
+  if (keys.length !== 1) return undefined; // absent OR ambiguous → skip (never guess)
+  return index.target.get(keys[0]);
 }
 /**
  * Resolve an AA slug to a catalog `{vendor,id}`:
  *   1. curated map wins — an entry that is `null`/`{skip:true}` explicitly BLOCKS the
  *      slug (suppresses a wrong auto-match); a `{vendor,id}` entry is used as-is.
- *   2. otherwise auto-match: exactKey → normKey → tokenKey, unique-only.
+ *   2. otherwise auto-match: exactKey → normKey → tokenKey, unique-only, a tie broken
+ *      by the row's creator (`creator` = AA `model_creator.slug`, optional).
  * Returns undefined when nothing resolves — the slug is then dropped, as before.
  */
-export function resolveTarget(slug, map, index) {
+export function resolveTarget(slug, map, index, creator) {
   if (Object.hasOwn(map, slug)) {
     const m = map[slug];
     if (!m || m.skip) return undefined; // explicit block
     return m.vendor && m.id ? { vendor: m.vendor, id: m.id } : undefined;
   }
-  return uniqueMatch(index, index.byExact, exactKey(slug))
-    || uniqueMatch(index, index.byNorm, normKey(slug))
-    || uniqueMatch(index, index.byTok, tokenKey(slug));
+  return uniqueMatch(index, index.byExact, exactKey(slug), creator)
+    || uniqueMatch(index, index.byNorm, normKey(slug), creator)
+    || uniqueMatch(index, index.byTok, tokenKey(slug), creator);
 }
 
 /** Extract the models array from AA's response shape (defensive about wrappers). */
@@ -199,7 +215,7 @@ export default {
     for (const item of items) {
       const slug = item && (item.slug || item.id);
       if (!slug) continue;
-      const target = resolveTarget(slug, map, index); // map → auto-match → undefined
+      const target = resolveTarget(slug, map, index, item.model_creator?.slug); // map → auto-match → undefined
       if (!target) continue; // unmapped / ambiguous → dropped
       const draft = benchmarkDraft(toSnapshotModel(item, target), { source: SOURCE });
       if (draft) drafts.push(draft);

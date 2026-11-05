@@ -774,6 +774,30 @@ test("artificial-analysis: normalize() auto-matches an unmapped slug against cat
   assert.equal(byId["openai/gpt-4o"].benchmarks.intelligenceIndex, 50);
 });
 
+test("artificial-analysis: a gateway copy no longer hides the creator's id; the creator breaks the tie (T96)", () => {
+  const catalogIds = [
+    { vendor: "anthropic", id: "claude-opus-5-5" },
+    { vendor: "openrouter", id: "anthropic/claude-opus-5.5" },
+    { vendor: "gemini", id: "gemini-3-pro" },
+    { vendor: "openrouter", id: "google/gemini-3-pro" },
+    { vendor: "openrouter", id: "acme/shared-name" },
+    { vendor: "vercel", id: "acme/shared-name" },
+  ];
+  const drafts = artificialAnalysis.normalize({
+    items: [
+      { slug: "claude-opus-5-5", model_creator: { slug: "anthropic" }, evaluations: { artificial_analysis_intelligence_index: 70 } },
+      { slug: "gemini-3-pro", model_creator: { slug: "google" }, evaluations: { artificial_analysis_intelligence_index: 65 } },
+      { slug: "shared-name", model_creator: { slug: "acme" }, evaluations: { artificial_analysis_intelligence_index: 30 } },
+      { slug: "claude-opus-5-5", evaluations: { artificial_analysis_intelligence_index: 1 } },
+    ],
+    map: {},
+    catalogIds,
+  });
+  assert.deepEqual(drafts.map((d) => `${d.vendor}/${d.id}:${d.benchmarks.intelligenceIndex}`).sort(),
+    ["anthropic/claude-opus-5-5:70", "gemini/gemini-3-pro:65"],
+    "creator vendor wins (google → gemini); no creator match or no creator → still dropped");
+});
+
 test("artificial-analysis: empty map or no items emits nothing (Block J / T45)", () => {
   assert.deepEqual(artificialAnalysis.normalize({ items: [{ slug: "gpt-5", evaluations: { artificial_analysis_intelligence_index: 69 } }], map: {} }), [], "empty matching table → nothing (curated opt-in)");
   assert.deepEqual(artificialAnalysis.normalize({ items: [], map: { "gpt-5": { vendor: "openai", id: "gpt-5" } } }), [], "no feed items → nothing");
