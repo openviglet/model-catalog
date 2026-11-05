@@ -2,8 +2,8 @@
   "_comment": "Provider pricing-source registry (Block H / T35). The authoritative pages to VERIFY the catalog's indicative prices against — URLs only, no prices. Categorized and cross-linked to the catalog vendor key (`catalogVendor`) where the provider's models are in the catalog; null means not yet represented. Hand-curated + review-gated. Keep `apiPricingUrl` = the developer/per-token/usage pricing page; `consumerPlansUrl` = the flat consumer subscription page when one exists (mirrors plans.json).",
   "version": 1,
   "lastUpdated": "2026-10-30",
-  "schema": "https://openviglet.github.io/model-catalog/providers.schema.json",
-  "source": "https://openviglet.github.io/model-catalog",
+  "schema": "https://models.viglet.org/providers.schema.json",
+  "source": "https://models.viglet.org",
   "disclaimer": "Official vendor pricing pages, for verification. The catalog's own per-model prices are INDICATIVE US list references — always confirm against the vendor page linked here before relying on a figure.",
   "providers": [
     { "id": "openai", "name": "OpenAI (GPT)", "category": "model-creator", "catalogVendor": "openai", "apiPricingUrl": "https://openai.com/api/pricing/", "consumerPlansUrl": "https://openai.com/chatgpt/pricing/" },

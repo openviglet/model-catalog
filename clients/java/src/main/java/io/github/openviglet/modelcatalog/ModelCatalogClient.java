@@ -17,7 +17,7 @@ import java.util.function.Supplier;
 
 /**
  * Zero-dependency, read-only client for the open, community catalog of AI models
- * (<a href="https://openviglet.github.io/model-catalog">openviglet/model-catalog</a>):
+ * (<a href="https://models.viglet.org">openviglet/model-catalog</a>):
  * a vendor-neutral, kind-aware list of LLMs, embeddings, rerankers and multimodal
  * models, free for anyone to use.
  *
@@ -40,7 +40,7 @@ import java.util.function.Supplier;
 public final class ModelCatalogClient {
 
     /** Default public endpoint (GitHub Pages, CORS-open). */
-    public static final String DEFAULT_BASE_URL = "https://openviglet.github.io/model-catalog";
+    public static final String DEFAULT_BASE_URL = "https://models.viglet.org";
 
     private static final String USER_AGENT =
             "openviglet-model-catalog-client/1.0 (+https://github.com/openviglet/model-catalog)";

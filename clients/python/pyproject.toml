@@ -14,7 +14,7 @@ authors = [{ name = "Viglet" }]
 dependencies = []
 
 [project.urls]
-Homepage = "https://openviglet.github.io/model-catalog"
+Homepage = "https://models.viglet.org"
 Repository = "https://github.com/openviglet/model-catalog"
 
 [tool.setuptools]

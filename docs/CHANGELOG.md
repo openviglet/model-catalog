@@ -261,3 +261,4 @@
 
 ## Block U — What the README promises is what a visitor gets
 
+- ✅ **T99** **The site, SDK defaults and every emitted URL still point at openviglet.github.io/model-catalog** — The site, emitted artifacts, schema ids, SDK default base URLs and the OG banner now point at https://models.viglet.org; the old Pages address redirects there.

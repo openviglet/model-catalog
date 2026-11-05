@@ -4,5 +4,5 @@ contact_links:
     url: https://github.com/openviglet/model-catalog/blob/main/CONTRIBUTING.md
     about: The propose-and-review path — overrides.json → regen --apply → PR. Read this before opening a data issue.
   - name: Browse the catalog
-    url: https://openviglet.github.io/model-catalog/
+    url: https://models.viglet.org/
     about: Check whether the model (or the field you'd correct) is already there.

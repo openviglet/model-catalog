@@ -14,9 +14,9 @@
       content="Which model ids exist per vendor, and for each: its kind, context window and capabilities. Free, unauthenticated, versioned JSON."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://openviglet.github.io/model-catalog/" />
+    <meta property="og:url" content="https://models.viglet.org/" />
     <meta property="og:site_name" content="Viglet — Model Catalog" />
-    <meta property="og:image" content="https://openviglet.github.io/model-catalog/og-banner.png" />
+    <meta property="og:image" content="https://models.viglet.org/og-banner.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="2400" />
     <meta property="og:image:height" content="1260" />
@@ -30,7 +30,7 @@
       name="twitter:description"
       content="A vendor-neutral, kind-aware catalog of LLM / embedding / rerank / media models. Free, unauthenticated, versioned JSON."
     />
-    <meta name="twitter:image" content="https://openviglet.github.io/model-catalog/og-banner.png" />
+    <meta name="twitter:image" content="https://models.viglet.org/og-banner.png" />
     <link rel="icon" type="image/svg+xml" href="viglet-logo.svg" />
     <!-- Fonts are self-hosted (see public/fonts/) via @font-face in styles.css —
          no runtime request to a third-party font host. T75. -->
@@ -335,11 +335,11 @@
             <div class="codeblock">
               <button class="copy" data-copy>Copy</button>
               <pre><code><span class="cm"># every embedding model, from the pre-filtered slice</span>
-curl -s https://openviglet.github.io/model-catalog/<span class="tk">by-kind/EMBEDDING.json</span> \
+curl -s https://models.viglet.org/<span class="tk">by-kind/EMBEDDING.json</span> \
   | jq <span class="tk">'.vendors | to_entries[].value[].id'</span>
 
 <span class="cm"># discover the whole surface</span>
-curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.json</span> | jq</code></pre>
+curl -s https://models.viglet.org/<span class="tk">endpoints.json</span> | jq</code></pre>
             </div>
           </div>
         </div>
@@ -347,11 +347,11 @@ curl -s https://openviglet.github.io/model-catalog/<span class="tk">endpoints.js
           <div class="card-body">
             <h3>Embed a live badge</h3>
             <p class="meta" style="margin-bottom:.9rem">A <a href="https://shields.io/badges/endpoint-badge" target="_blank" rel="noopener">shields.io endpoint</a> that always reflects the current totals. Drop it in any README:</p>
-            <p style="margin:0 0 .9rem"><img src="https://img.shields.io/endpoint?url=https://openviglet.github.io/model-catalog/badge.json" alt="Model Catalog — live model and vendor count" /></p>
+            <p style="margin:0 0 .9rem"><img src="https://img.shields.io/endpoint?url=https://models.viglet.org/badge.json" alt="Model Catalog — live model and vendor count" /></p>
             <div class="codeblock">
               <button class="copy" data-copy>Copy</button>
               <pre><code><span class="cm">&lt;!-- Markdown --&gt;</span>
-![Model Catalog](https://img.shields.io/endpoint?url=<span class="tk">https://openviglet.github.io/model-catalog/badge.json</span>)</code></pre>
+![Model Catalog](https://img.shields.io/endpoint?url=<span class="tk">https://models.viglet.org/badge.json</span>)</code></pre>
             </div>
           </div>
         </div>

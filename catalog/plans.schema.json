@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openviglet.github.io/model-catalog/plans.schema.json",
+  "$id": "https://models.viglet.org/plans.schema.json",
   "title": "Model Catalog — Consumer Subscription Plans",
   "description": "A SEPARATE dataset from the model catalog (Block F / T33): vendor consumer subscription plans (e.g. Claude Pro/Max, ChatGPT Plus/Pro, Gemini / Google AI Pro/Ultra). Plans are NOT models, so they do not live in ModelEntry. US-only. Every price is an INDICATIVE US list price — a reference only, NOT authoritative (verify with the vendor); provenance-gated (source + lastVerified) and never invented. The source file keys plans by consumer brand / company (lower-case) and omits the redundant per-entry 'vendor' (it is the map key); the published artifact adds 'vendor' to each plan for consumer convenience.",
   "type": "object",

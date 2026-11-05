@@ -72,9 +72,7 @@
 > `ModelEntry` fields (T46), aggregate/registry accessors (stats/coverage/providers/plans/
 > aliases, T47), faceted-slice + change-feed accessors + a refreshed endpoints manifest
 > (T48), and the shared derived `classify()` use-case-tag + price-tier helper (T49) (see
-> [CHANGELOG.md](CHANGELOG.md) → Block K). The endpoint intentionally stays on its public
-> GitHub Pages URL (`openviglet.github.io/model-catalog`) — an unbranded, community-owned
-> home signals a public resource, not a brand asset.
+> [CHANGELOG.md](CHANGELOG.md) → Block K).
 >
 > **Block L — Explore & decide: catalog data experience** shipped in full — the site
 > became a cross-vendor **decision tool** and the reference consumer of the JS SDK: the

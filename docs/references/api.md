@@ -2,10 +2,10 @@
 
 > The catalog is published as an open, CORS-enabled, versioned JSON artifact via
 > GitHub Pages from this repo (`.github/workflows/publish.yml`). Base URL:
-> `https://openviglet.github.io/model-catalog` — the endpoint intentionally stays on
-> its public GitHub Pages host, so it reads as a community-owned resource rather than a
-> brand asset. (The emitted URLs are still overridable via `CATALOG_SOURCE_URL` at emit
-> time if a deployment ever needs a different host.)
+> `https://models.viglet.org` — a custom domain on GitHub Pages. The former address
+> `https://openviglet.github.io/model-catalog` redirects there, so old links and pinned
+> SDK versions keep working. (The emitted URLs are still overridable via
+> `CATALOG_SOURCE_URL` at emit time if a deployment ever needs a different host.)
 
 ## What it is
 
@@ -72,10 +72,10 @@ are regenerated deterministically from the canonical source
 
 ```jsonc
 {
-  "$schema": "https://openviglet.github.io/model-catalog/catalog.schema.json",
+  "$schema": "https://models.viglet.org/catalog.schema.json",
   "version": 1,                 // schema major version (integer)
   "lastUpdated": "2026-07-21",  // ISO-8601 date the catalog was regenerated
-  "source": "https://openviglet.github.io/model-catalog",
+  "source": "https://models.viglet.org",
   "vendors": {
     "openai":    [ /* ModelEntry, ... */ ],
     "anthropic": [ /* ModelEntry, ... */ ],
@@ -185,14 +185,14 @@ intelligence index ÷ input list price) — a derived view, never a stored field
 
 ```bash
 # every embedding model across all vendors
-curl -s https://openviglet.github.io/model-catalog/catalog-v1.json \
+curl -s https://models.viglet.org/catalog-v1.json \
   | jq '.vendors | to_entries[].value[] | select(.kind=="EMBEDDING") | .id'
 ```
 
 ```js
 // browser / Node — kind lookup for an arbitrary id
 const { vendors } = await (await fetch(
-  "https://openviglet.github.io/model-catalog/catalog-v1.json",
+  "https://models.viglet.org/catalog-v1.json",
 )).json()
 const all = Object.values(vendors).flat()
 const kindOf = (id) => all.find((m) => m.id === id)?.kind ?? "UNKNOWN"
@@ -209,7 +209,7 @@ descending count; `coverage.fields.<field>` is `{ filled, rate }` over all model
 {
   "version": 1,
   "lastUpdated": "2026-07-21",
-  "source": "https://openviglet.github.io/model-catalog",
+  "source": "https://models.viglet.org",
   "totals": { "models": 194, "vendors": 14, "kinds": 8, "capabilities": 4 },
   "byVendor":         { "openai": 129, "gemini": 8, /* … */ },
   "byKind":           { "CHAT": 136, "SPEECH": 22, /* … */ },
@@ -236,7 +236,7 @@ explicit, low-friction invitation to [contribute](../../CONTRIBUTING.md). Its ow
 {
   "version": 1,
   "lastUpdated": "2026-07-21",
-  "source": "https://openviglet.github.io/model-catalog",
+  "source": "https://models.viglet.org",
   "fields": ["contextWindow", "maxOutputTokens", "embeddingDimensions", /* … */],
   "overall": { "total": 194, "fields": { "contextWindow": { "filled": 165, "rate": 0.8505 }, /* … */ } },
   "byVendor": {
@@ -260,7 +260,7 @@ each id's effective status (`status`, falling back to `deprecated → DEPRECATED
 {
   "version": 1,
   "lastUpdated": "2026-07-21",
-  "source": "https://openviglet.github.io/model-catalog",
+  "source": "https://models.viglet.org",
   "previousLastUpdated": "2026-07-14",       // null on first publish
   "baseline": "present",                      // "present" | "none"
   "counts": { "added": 2, "removed": 0, "changed": 1 },
@@ -344,11 +344,11 @@ one JSON object per line (the flattened `ModelEntry`, including `vendor`), newli
 
 ```bash
 # every reasoning-capable chat model, as a table
-curl -s https://openviglet.github.io/model-catalog/catalog.csv \
+curl -s https://models.viglet.org/catalog.csv \
   | awk -F, 'NR==1 || ($4=="CHAT" && $8 ~ /reasoning/)'
 
 # stream every embedding model's id + dimensions
-curl -s https://openviglet.github.io/model-catalog/catalog.ndjson \
+curl -s https://models.viglet.org/catalog.ndjson \
   | jq -c 'select(.kind=="EMBEDDING") | {id, embeddingDimensions}'
 ```
 
@@ -359,7 +359,7 @@ so any README can render a live badge that always reflects the current totals (r
 the same numbers as `stats.json`, computed at emit):
 
 ```markdown
-![Model Catalog](https://img.shields.io/endpoint?url=https://openviglet.github.io/model-catalog/badge.json)
+![Model Catalog](https://img.shields.io/endpoint?url=https://models.viglet.org/badge.json)
 ```
 
 ```jsonc

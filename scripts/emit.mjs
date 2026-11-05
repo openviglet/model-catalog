@@ -31,7 +31,7 @@ const OUT_DIR = resolve(REPO_ROOT, "public");
 // Public base URL — the GitHub Pages site for this repo. The endpoint intentionally
 // stays on this public host (a community-owned home, not a brand asset); the
 // CATALOG_SOURCE_URL env only exists so an alternate deployment can override it.
-const SOURCE_URL = process.env.CATALOG_SOURCE_URL || "https://openviglet.github.io/model-catalog";
+const SOURCE_URL = process.env.CATALOG_SOURCE_URL || "https://models.viglet.org";
 const SOURCE_URL_REPO = process.env.CATALOG_REPO_URL || "https://github.com/openviglet/model-catalog";
 
 const KINDS = new Set([

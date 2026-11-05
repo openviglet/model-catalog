@@ -14,16 +14,16 @@ Published as a free, unauthenticated, CORS-open, versioned JSON artifact. Part o
 
 | URL | Meaning |
 |---|---|
-| `https://openviglet.github.io/model-catalog/catalog.json` | Rolling latest |
-| `https://openviglet.github.io/model-catalog/catalog-v1.json` | Pinned to schema v1 |
-| `https://openviglet.github.io/model-catalog/catalog.schema.json` | JSON Schema (Draft 2020-12) |
-| `https://openviglet.github.io/model-catalog/` | Browsable reference page |
+| `https://models.viglet.org/catalog.json` | Rolling latest |
+| `https://models.viglet.org/catalog-v1.json` | Pinned to schema v1 |
+| `https://models.viglet.org/catalog.schema.json` | JSON Schema (Draft 2020-12) |
+| `https://models.viglet.org/` | Browsable reference page |
 
 Full contract → [docs/references/api.md](docs/references/api.md).
 
 ```bash
 # every embedding model across all vendors
-curl -s https://openviglet.github.io/model-catalog/catalog-v1.json \
+curl -s https://models.viglet.org/catalog-v1.json \
   | jq '.vendors | to_entries[].value[] | select(.kind=="EMBEDDING") | .id'
 ```
 

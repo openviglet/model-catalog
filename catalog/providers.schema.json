@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://openviglet.github.io/model-catalog/providers.schema.json",
+  "$id": "https://models.viglet.org/providers.schema.json",
   "title": "Model Catalog — Provider Pricing-Source Registry",
   "description": "A registry (Block H / T35) of AI model providers and their OFFICIAL pricing pages, so every 'indicative — verify with the vendor' caveat in the catalog has a canonical link to check. Categorized (model creators, hyperscalers, inference providers, aggregators) and cross-linked to the catalog vendor key where one exists. Carries URLs only — no prices (the catalog's own per-model `pricing` is the indicative reference; these are the authoritative places to confirm it).",
   "type": "object",

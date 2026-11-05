@@ -1,7 +1,7 @@
 # openviglet-model-catalog-client (Python)
 
 Zero-dependency, read-only Python client for the
-[open model catalog](https://openviglet.github.io/model-catalog) — a free,
+[open model catalog](https://models.viglet.org) — a free,
 community-maintained, vendor-neutral list of AI models (LLMs, embeddings, rerankers
 and multimodal), with each model's kind, context window, capabilities and more.
 

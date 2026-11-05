@@ -86,7 +86,7 @@ export default {
 
   async fetch(_env, ctx) {
     return fetchTextOrReplay(this.id, URL, {
-      headers: { "User-Agent": "Mozilla/5.0 (model-catalog regen; +https://openviglet.github.io)" },
+      headers: { "User-Agent": "Mozilla/5.0 (model-catalog regen; +https://models.viglet.org)" },
       offline: ctx.offline,
       when: ctx.when,
     });

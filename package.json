@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Vendor-neutral, kind-aware public catalog of LLM / embedding / rerank / media models + a zero-dep multi-source regeneration pipeline. Part of Viglet Turing ES.",
   "license": "Apache-2.0",
-  "homepage": "https://openviglet.github.io/model-catalog",
+  "homepage": "https://models.viglet.org",
   "repository": { "type": "git", "url": "https://github.com/openviglet/model-catalog.git" },
   "engines": { "node": ">=20" },
   "scripts": {

@@ -2,8 +2,8 @@
   "_comment": "Consumer subscription plans dataset (Block F / T33) — a SEPARATE dataset from model-catalog.json. Plans are NOT models. US-only. Every price is an INDICATIVE US list price (a reference only — verify with the vendor); provenance-gated (source + lastVerified) and never invented. Keyed by consumer brand / company (lower-case). Hand-curated + reviewed, like overrides.json — there is no upstream API for consumer plans. Prices exclude tax and may be stale; confirm on the vendor's pricing page before relying on them.",
   "version": 1,
   "lastUpdated": "2026-10-30",
-  "schema": "https://openviglet.github.io/model-catalog/plans.schema.json",
-  "source": "https://openviglet.github.io/model-catalog",
+  "schema": "https://models.viglet.org/plans.schema.json",
+  "source": "https://models.viglet.org",
   "disclaimer": "Indicative US consumer subscription plans — a reference only, not authoritative. Prices are US list, in USD, exclude tax, may be stale, and can vary by region. Always verify on the vendor's pricing page.",
   "plans": {
     "anthropic": [

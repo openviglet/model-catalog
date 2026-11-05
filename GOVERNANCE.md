@@ -8,9 +8,8 @@ maintains the Model Catalog, and how decisions are made.
 The Model Catalog is a **vendor-neutral, community-owned reference** — a public,
 unbranded resource that anyone can read, reuse (data under
 [CC-BY 4.0](LICENSE-DATA); code under [Apache-2.0](LICENSE)), and contribute to.
-It deliberately lives at a neutral URL (`openviglet.github.io/model-catalog`)
-rather than under a product brand, so it reads as a shared resource and not a
-marketing asset.
+It lives at its own address (`models.viglet.org`), not under a product's
+page, so it reads as a shared resource and not a marketing asset.
 
 ## Who maintains it
 
