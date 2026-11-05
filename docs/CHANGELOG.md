@@ -257,6 +257,7 @@
 - ✅ **T91** **The regen diff report counts conflict-only entries as changed** — The diff report counts only moved fields as changed and lists conflict-only entries apart, so a re-run fell from 204 changed to 2 (design recorded in `pipeline/lib/validate.mjs`).
 - ✅ **T92** **models.dev release dates on moving aliases predate their knowledge cutoff** — The models.dev adapter omits release dates on -latest ids and on records whose cutoff follows their release; a dry run leaves no such entry (design recorded in `pipeline/adapters/models-dev.mjs`).
 - ✅ **T96** **Artificial Analysis benchmarks never reach models that OpenRouter also lists** — The benchmark matcher breaks creator-versus-gateway ties by AA's creator, so Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1 get an index (design recorded in `pipeline/adapters/artificial-analysis.mjs`).
+- ✅ **T97** **The Artificial Analysis source answers 410 Gone since 2026-11-04** — The benchmark source reads the free V2 language-models endpoint across all pages, so online regens fetch live scores (151 matched) (design recorded in `pipeline/adapters/artificial-analysis.mjs`).
 
 ## Block U — What the README promises is what a visitor gets
 

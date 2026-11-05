@@ -11,7 +11,7 @@ import { merge } from "./lib/merge.mjs";
 import { validateEnvelope, diffReport, evidenceSummary } from "./lib/validate.mjs";
 import litellm from "./adapters/litellm.mjs";
 import benchmarks from "./adapters/benchmarks.mjs";
-import artificialAnalysis, { buildMatchIndex, resolveTarget } from "./adapters/artificial-analysis.mjs";
+import artificialAnalysis, { buildMatchIndex, resolveTarget, creatorOf } from "./adapters/artificial-analysis.mjs";
 import ollama from "./adapters/ollama.mjs";
 import ollamaLibrary, { parseLibrary } from "./adapters/ollama-library.mjs";
 import openrouter from "./adapters/openrouter.mjs";
@@ -796,6 +796,28 @@ test("artificial-analysis: a gateway copy no longer hides the creator's id; the 
   assert.deepEqual(drafts.map((d) => `${d.vendor}/${d.id}:${d.benchmarks.intelligenceIndex}`).sort(),
     ["anthropic/claude-opus-5-5:70", "gemini/gemini-3-pro:65"],
     "creator vendor wins (google → gemini); no creator match or no creator → still dropped");
+});
+
+test("artificial-analysis: V2 rows resolve the creator from its name and read nested speed (T97)", () => {
+  assert.equal(creatorOf({ model_creator: { name: "Z AI" } }), "zai");
+  assert.equal(creatorOf({ model_creator: { slug: "google", name: "Google" } }), "google", "a legacy slug still wins");
+  const drafts = artificialAnalysis.normalize({
+    items: [
+      { slug: "claude-opus-5-5", model_creator: { name: "Anthropic" },
+        evaluations: { artificial_analysis_intelligence_index: 59.1 },
+        performance: { median_output_tokens_per_second: 94.62, median_time_to_first_token_seconds: 6.5 } },
+      { slug: "grok-4-6", model_creator: { name: "SpaceXAI" }, evaluations: { artificial_analysis_intelligence_index: 60 } },
+    ],
+    map: {},
+    catalogIds: [
+      { vendor: "anthropic", id: "claude-opus-5-5" }, { vendor: "openrouter", id: "anthropic/claude-opus-5.5" },
+      { vendor: "xai", id: "grok-4.6" }, { vendor: "openrouter", id: "x-ai/grok-4.6" },
+    ],
+  });
+  const byId = Object.fromEntries(drafts.map((d) => [`${d.vendor}/${d.id}`, d]));
+  assert.equal(byId["anthropic/claude-opus-5-5"].benchmarks.intelligenceIndex, 59.1);
+  assert.equal(byId["anthropic/claude-opus-5-5"].performance.throughputTps, 94.62, "speed read from performance{}");
+  assert.equal(byId["xai/grok-4.6"].benchmarks.intelligenceIndex, 60, "SpaceXAI is the xai vendor");
 });
 
 test("artificial-analysis: empty map or no items emits nothing (Block J / T45)", () => {

@@ -27,13 +27,15 @@
  * @since 2026.3.x (T45)
  */
 import { existsSync } from "node:fs";
-import { AA_MAP_FILE, CANONICAL, fetchOrReplay, readJson } from "../lib/util.mjs";
+import { AA_MAP_FILE, CANONICAL, loadSnapshot, readJson, saveSnapshot, warn } from "../lib/util.mjs";
 import { benchmarkDraft } from "./benchmarks.mjs";
 
-// Artificial Analysis public data API (v2). The response carries a `data[]` array
-// of models; each model's `evaluations{}` holds the cited indices and the top-level
-// `median_*` fields hold the speed metrics.
-const API_URL = "https://artificialanalysis.ai/api/v2/data/llms/models";
+// Artificial Analysis V2 language-models API, free tier (T97: the legacy
+// `/api/v2/data/llms/models` answers 410 Gone since 2026-11-04; the Pro path needs a
+// subscription). Pages of `data[]` with `pagination.has_more`; each model's
+// `evaluations{}` holds the cited indices and `performance{}` the speed metrics.
+const API_URL = "https://artificialanalysis.ai/api/v2/language/models/free";
+const MAX_PAGES = 50; // a runaway `has_more` guard, far above the 4 pages served today
 
 // Cited source string — kept identical to the T41 snapshot's `source` so the live
 // and curated paths never churn the field against each other.
@@ -113,9 +115,18 @@ export function buildMatchIndex(catalogIds) {
   }
   return { byExact, byNorm, byTok, target };
 }
-// AA `model_creator.slug` → catalog vendor key, where the two differ. Any other
-// creator slug is tried as the vendor key itself (anthropic, openai, xai, …).
-const CREATOR_TO_VENDOR = { google: "gemini", kimi: "moonshot", alibaba: "qwen" };
+// AA creator → catalog vendor key, where the two differ. The creator is the legacy
+// `model_creator.slug`, or the V2 `model_creator.name` lower-cased with non-alphanumerics
+// dropped ("Z AI" → "zai"); any other creator is tried as the vendor key itself.
+const CREATOR_TO_VENDOR = { google: "gemini", kimi: "moonshot", alibaba: "qwen", spacexai: "xai" };
+
+/** The row's creator key: legacy slug, else the V2 name squeezed to [a-z0-9]. */
+export function creatorOf(item) {
+  const c = item?.model_creator;
+  if (!c) return undefined;
+  if (typeof c.slug === "string" && c.slug) return c.slug;
+  return typeof c.name === "string" ? c.name.toLowerCase().replace(/[^a-z0-9]+/g, "") || undefined : undefined;
+}
 
 /**
  * A canonical-form lookup that returns a target ONLY when exactly one id matches.
@@ -177,9 +188,40 @@ function toSnapshotModel(item, target) {
     id: target.id,
     intelligenceIndex: posNum(ev[INTELLIGENCE_KEY]),
     scores: Object.keys(scores).length ? scores : undefined,
-    throughputTps: posNum(item.median_output_tokens_per_second),
-    latencyTtftSec: posNum(item.median_time_to_first_token_seconds),
+    // V2 nests speed under `performance{}`; a legacy snapshot keeps it top-level.
+    throughputTps: posNum(item.performance?.median_output_tokens_per_second ?? item.median_output_tokens_per_second),
+    latencyTtftSec: posNum(item.performance?.median_time_to_first_token_seconds ?? item.median_time_to_first_token_seconds),
   };
+}
+
+/**
+ * Walk every V2 page into one `{ data: [...] }` snapshot (T97). Offline replays it;
+ * any failed page falls back to the cached snapshot, the same fail-soft contract as
+ * `fetchOrReplay`. Returns { raw, fetchedAt, fromCache } or null.
+ */
+async function fetchAllPages(sourceId, headers, { offline, when }) {
+  const cached = () => {
+    const snap = loadSnapshot(sourceId);
+    if (!snap) { warn(`${sourceId}: no cached snapshot; skipping`); return null; }
+    return { raw: snap.raw, fetchedAt: snap.fetchedAt, fromCache: true };
+  };
+  if (offline) return cached();
+  const data = [];
+  try {
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const res = await fetch(`${API_URL}?page=${page}`, { headers });
+      if (!res.ok) { warn(`${sourceId}: ${API_URL} page ${page} -> HTTP ${res.status}; using cached snapshot`); return cached(); }
+      const body = await res.json();
+      data.push(...itemsOf(body));
+      if (!body?.pagination?.has_more) break;
+    }
+  } catch (e) {
+    warn(`${sourceId}: fetch failed (${e.message}); using cached snapshot`);
+    return cached();
+  }
+  const raw = { data };
+  saveSnapshot(sourceId, API_URL, raw, when);
+  return { raw, fetchedAt: when, fromCache: false };
 }
 
 export default {
@@ -193,11 +235,7 @@ export default {
   // stays a pure function of `raw` (and thus unit-testable without touching the fs).
   async fetch(env, ctx) {
     const key = env.ARTIFICIAL_ANALYSIS_API_KEY;
-    const res = await fetchOrReplay(this.id, API_URL, {
-      headers: key ? { "x-api-key": key } : {},
-      offline: ctx.offline,
-      when: ctx.when,
-    });
+    const res = await fetchAllPages(this.id, key ? { "x-api-key": key } : {}, ctx);
     if (!res) return null;
     return { ...res, raw: { items: itemsOf(res.raw), map: loadMap(), catalogIds: loadCatalogIds() } };
   },
@@ -215,7 +253,7 @@ export default {
     for (const item of items) {
       const slug = item && (item.slug || item.id);
       if (!slug) continue;
-      const target = resolveTarget(slug, map, index, item.model_creator?.slug); // map → auto-match → undefined
+      const target = resolveTarget(slug, map, index, creatorOf(item)); // map → auto-match → undefined
       if (!target) continue; // unmapped / ambiguous → dropped
       const draft = benchmarkDraft(toSnapshotModel(item, target), { source: SOURCE });
       if (draft) drafts.push(draft);
