@@ -86,6 +86,14 @@
       .brand:hover { text-decoration: none; }
       .brand .brand-logo { width: 1.9rem; height: 1.9rem; display: block; flex-shrink: 0; }
       .brand .sub { color: var(--muted); font-weight: 500; font-size: .82rem; font-family: var(--sans); }
+      .brand-wrap { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
+      .viglet-pill {
+        display: inline-flex; align-items: center; gap: .25rem; white-space: nowrap;
+        padding: .12rem .55rem; border: 1px solid var(--border-strong); border-radius: 999px;
+        color: var(--muted); font-size: .69rem; font-weight: 600;
+        transition: color .15s, border-color .15s;
+      }
+      .viglet-pill:hover { color: var(--text); border-color: var(--muted); text-decoration: none; }
       .nav-links { display: flex; align-items: center; gap: .35rem; margin-left: auto; }
       .nav-links a {
         color: var(--muted); font-weight: 500; font-size: .9rem; padding: .4rem .7rem;
@@ -118,6 +126,7 @@
       @media (min-width: 721px) { .nav-menu { display: none !important; } }
       .nav-menu a { color: var(--text); font-weight: 600; font-size: .95rem; padding: .6rem .2rem; border-bottom: 1px solid var(--border); }
       .nav-menu a:last-child { border-bottom: none; }
+      .nav-menu a.nav-menu-viglet { color: var(--muted); font-size: .8rem; font-weight: 600; }
       .nav-menu a:hover { color: var(--brand-3); text-decoration: none; }
 
       /* ── Hero ────────────────────────────────────────── */
