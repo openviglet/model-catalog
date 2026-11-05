@@ -163,6 +163,8 @@
 > Moonshot/Perplexity/StepFun vendor), media is near-empty (VIDEO 2, IMAGE 10), and
 > only 14 of 1,028 entries carry `releaseDate`. Gap analysis of 2026-10-30 → IMPROVEMENTS §T.
 
+- 📋 **T98** (deps: Turing: on-demand structured-feed ingest endpoint) **A catalog deploy reaches the Turing copilot up to an hour late** — Turing re-reads catalog.ndjson only on its hourly timer, and publish.yml has no way to tell it the feed changed. → §T98
+
 ## Block U — What the README promises is what a visitor gets
 
 - 📋 **T93** (deps: owner: registry accounts and secrets) **The README's npm, PyPI and Maven Central install commands fail: none of the three SDKs exists on those registries** — The first command a developer copies fails, and the owner decided the SDKs ship on all three registries. → §T93

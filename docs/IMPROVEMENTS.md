@@ -48,6 +48,21 @@ symptom, why) through a roadkeep migration verb, keeping ids and dates from git;
 declare a legacy section the grammar skips. The first keeps every id queryable and is
 preferred. Hand-editing the file is not an option: it is governed.
 
+### §T98 Refresh the copilot after each deploy
+
+The catalog copilot on turing-demo.viglet.org reads this repo's `catalog.ndjson` through
+Turing's structured-feed pull ingester, which only re-reads the feed on an hourly timer.
+On 2026-11-05 Pages served the new catalog at 14:59 UTC while the `model-catalog` SN
+site still answered with the 2026-10-30 rows, so every release reaches the copilot up to
+an hour late, and nothing in `publish.yml` can shorten that.
+
+Waits on Turing's on-demand structured-feed ingest (its roadmap line 1227, block CO: an
+authenticated endpoint that pulls one feed now). Once it ships, add a final step to
+`.github/workflows/publish.yml`, after `deploy-pages`, that calls it for the
+`model-catalog` source with a key held as a repository secret, and fails soft: a Turing
+outage must never fail the Pages deploy. Then verify one changed field through
+`/api/sn/model-catalog/search` in the step's log.
+
 ## Block U — What the README promises is what a visitor gets
 
 ### §T93 The SDKs are on npm, PyPI and Maven Central
