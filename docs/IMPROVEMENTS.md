@@ -48,23 +48,6 @@ symptom, why) through a roadkeep migration verb, keeping ids and dates from git;
 declare a legacy section the grammar skips. The first keeps every id queryable and is
 preferred. Hand-editing the file is not an option: it is governed.
 
-### §T96 Creator tie-break for benchmark matching
-
-The Artificial Analysis auto-matcher resolves a leaderboard slug only when its canonical
-form matches exactly one catalog id. Since OpenRouter was ingested in full, almost every
-creator model also exists as a gateway copy: `claude-opus-5-5` and
-`openrouter/anthropic/claude-opus-5.5` share the form `claudeopus55`, so the slug is
-ambiguous and dropped. Only 36 of 718 AA rows produce drafts, and every model released
-since July (Claude Opus 5, Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1) carries no
-benchmark or speed data, so the page's Price x intelligence chart leaves them out; older
-models keep theirs only because the committed catalog carries it.
-
-Fix in `pipeline/adapters/artificial-analysis.mjs`: each AA row names its
-`model_creator.slug`. When a canonical form matches several ids, keep the ones under the
-creator's own catalog vendor (a small creator-to-vendor table: google to gemini, kimi to
-moonshot, alibaba to qwen, the rest by name). Exactly one survivor resolves; anything
-else still drops, so the never-guess guarantee holds. The curated map keeps precedence.
-
 ## Block U — What the README promises is what a visitor gets
 
 ### §T93 The SDKs are on npm, PyPI and Maven Central
