@@ -169,6 +169,10 @@
 - 📋 **T94** (deps: —) **The README calls the catalog part of Viglet Turing ES and says it never carries price, while entries and site show one** — A reader who checks the README against the site finds a contradiction on the first screen. → §T94
 - 📋 **T95** (deps: T93, T94) **A visitor from a launch post finds no one-line pitch, no three-line example and no answer to why not models.dev** — On Show HN the README is the landing page, and the models.dev question is the predictable first comment. → §T95
 
+## Block B — Client libraries / SDKs
+
+- 📋 **T101** (deps: —) **The Java client does not follow redirects, so 1.0.5 fails on the old catalog URL, which now answers 301** — HttpFetcher uses HttpClient.newHttpClient(), whose policy is NEVER; no release carries the T99 default, so Turing lost its catalog. → §T101
+
 ## Non-goals
 
 - **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal

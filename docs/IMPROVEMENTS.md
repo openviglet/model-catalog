@@ -124,3 +124,24 @@ then a short "How it differs" paragraph: kinds beyond chat (embedding, rerank, m
 provenance per field, and the sources it merges, models.dev and LiteLLM among them. The
 current detail moves below. The launch post itself is drafted in the visibility repo,
 not here.
+
+## Block B — Client libraries / SDKs
+
+### §T101 The Java client follows redirects, released as 1.0.6
+
+**What broke.** T99 moved the catalog to models.viglet.org on 2026-11-05, and
+openviglet.github.io/model-catalog now answers `301`. The Java client's default
+transport (`HttpFetcher` in `ModelCatalogClient`) builds `HttpClient.newHttpClient()`,
+whose redirect policy is `NEVER`, and throws on any non-2xx. So every consumer of 1.0.5,
+whose `DEFAULT_BASE_URL` is still the old address, gets an `IOException` instead of the
+catalog. Turing is one: its released builds lost the model picker's catalog (filed in
+Turing's roadmap, Block CQ). The JS client (`fetch`) and the Python client (`urllib`)
+follow redirects by default and are not affected.
+
+**What to do.**
+1. Build the client with `followRedirects(HttpClient.Redirect.NORMAL)`, so the next move of the endpoint does not break consumers again. `NORMAL` refuses an https-to-http downgrade, which is right now that models.viglet.org enforces HTTPS.
+2. Release the Java client as 1.0.6 to Maven Central, carrying this and the new `DEFAULT_BASE_URL` from T99, which no release has yet.
+3. A test with a fetcher stub, or a local server, that answers `301` and then the catalog.
+
+**Done when** 1.0.6 is on Maven Central, it reads the catalog through the old
+openviglet.github.io address, and Turing can bump to it.

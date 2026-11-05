@@ -6,3 +6,5 @@
 
 ## Block U — What the README promises is what a visitor gets
 
+## Block B — Client libraries / SDKs
+
