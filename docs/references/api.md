@@ -386,7 +386,7 @@ the catalog doesn't.
 
 ## How consumers use it
 
-Any tool can fetch the endpoint directly. **Viglet Turing ES** fetches
+Any tool can fetch the endpoint directly. **Viglet Turing**, its first consumer, fetches
 `turing.model-catalog.url` (default the rolling endpoint) with an ETag/TTL cache
 as its model-picker catalog. The live per-vendor `/v1/models` listing path and
 Turing's metadata-first kind classification are unchanged — the public catalog only

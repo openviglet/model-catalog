@@ -8,8 +8,8 @@
  * consumer would otherwise re-invent — URL selection (rolling vs pinned
  * `catalog-vN.json`, or the compact `index.json`), flattening the `vendors` map into
  * entries that carry their `vendor`, `byKind`/`byVendor`/`get` filtering, and
- * in-memory caching with an optional TTL. It carries no pricing — identity, kind and
- * capability only.
+ * in-memory caching with an optional TTL. Any `pricing` it passes through is an
+ * indicative US list price, a reference to verify with the vendor.
  *
  * Runs unchanged in the browser and in Node (>= 18) on the global `fetch`; pass a
  * custom `fetch` for older Node or for tests. Unknown ModelEntry fields are tolerated

@@ -263,6 +263,7 @@
 
 - ✅ **T99** **The site, SDK defaults and every emitted URL still point at openviglet.github.io/model-catalog** — The site, emitted artifacts, schema ids, SDK default base URLs and the OG banner now point at https://models.viglet.org; the old Pages address redirects there.
 - ✅ **T100** **The site header gives no path back to viglet.org, unlike the Turing, Shio and Dumont sites** — The header carries the same part of viglet.org pill as the Turing, Shio and Dumont sites, and the mobile menu repeats it.
+- ✅ **T94** **The README calls the catalog part of Viglet Turing ES and says it never carries price, while entries and site show one** — README, CONTRIBUTING, references and SDK docstrings now say Viglet maintains the catalog and an entry may carry an indicative US list price.
 
 ## Block V — What a consumer indexes: the feed artifacts carry every model once
 

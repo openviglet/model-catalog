@@ -4,11 +4,13 @@ A **vendor-neutral, kind-aware public catalog of LLM / embedding / rerank / medi
 models** — which model ids exist per vendor and, for each, its *kind* (chat,
 embedding, rerank, image, transcription, speech, video, moderation), context
 window, max output tokens, embedding dimensions, modalities and capability hints.
-Published as a free, unauthenticated, CORS-open, versioned JSON artifact. Part of
-**Viglet Turing ES**.
+Published as a free, unauthenticated, CORS-open, versioned JSON artifact.
+Maintained by Viglet; **Viglet Turing** is its first consumer.
 
-> **Identity + kind, not pricing.** The catalog never carries cost/price — see
-> [docs/STRATEGY.md](docs/STRATEGY.md) §I.
+> **Identity and kind first; price is a reference.** An entry may carry an optional
+> **indicative US list price** (`pricing`), sourced and dated (`source`,
+> `lastVerified`). It is never authoritative and never per-contract or regional:
+> verify it with the vendor. See [docs/STRATEGY.md](docs/STRATEGY.md) §I.
 
 ## Public API
 

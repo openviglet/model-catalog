@@ -166,8 +166,7 @@
 ## Block U — What the README promises is what a visitor gets
 
 - 📋 **T93** (deps: owner: registry accounts and secrets) **The README's npm, PyPI and Maven Central install commands fail: none of the three SDKs exists on those registries** — The first command a developer copies fails, and the owner decided the SDKs ship on all three registries. → §T93
-- 📋 **T94** (deps: —) **The README calls the catalog part of Viglet Turing ES and says it never carries price, while entries and site show one** — A reader who checks the README against the site finds a contradiction on the first screen. → §T94
-- 📋 **T95** (deps: T93, T94) **A visitor from a launch post finds no one-line pitch, no three-line example and no answer to why not models.dev** — On Show HN the README is the landing page, and the models.dev question is the predictable first comment. → §T95
+- 📋 **T95** (deps: T93, T94 ✅) **A visitor from a launch post finds no one-line pitch, no three-line example and no answer to why not models.dev** — On Show HN the README is the landing page, and the models.dev question is the predictable first comment. → §T95
 
 ## Block B — Client libraries / SDKs
 

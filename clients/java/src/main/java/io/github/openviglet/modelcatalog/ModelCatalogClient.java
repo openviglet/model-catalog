@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * {@code catalog-vN.json}, or the compact {@code index.json}), flattening the
  * {@code vendors} map into {@link ModelEntry} records that carry their {@code vendor},
  * {@code byKind}/{@code byVendor}/{@code get} filtering, and in-memory caching with an
- * optional TTL. It carries no pricing — identity, kind and capability only.
+ * optional TTL. Any {@code pricing} is an indicative US list price, not authoritative.
  *
  * <p>Fetches over the JDK {@link HttpClient} (no HTTP framework) and parses with a tiny
  * built-in reader (no JSON framework). Build via {@link #builder()} or {@link #create()};

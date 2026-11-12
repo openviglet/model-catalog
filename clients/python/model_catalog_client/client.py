@@ -35,8 +35,8 @@ class ModelCatalogClient:
     The catalog is just JSON over HTTPS; this client removes the boilerplate — URL
     selection (rolling vs pinned ``catalog-vN.json``, or the compact ``index.json``),
     flattening the ``vendors`` map, ``by_kind``/``by_vendor``/``get`` filtering, and
-    in-memory caching with an optional TTL. It carries no pricing — identity, kind and
-    capability only.
+    in-memory caching with an optional TTL. Any ``pricing`` it passes through is an
+    indicative US list price, a reference to verify with the vendor.
 
     Args:
         base_url: Endpoint base (default :data:`DEFAULT_BASE_URL`).

@@ -175,7 +175,7 @@ populate: `maxOutputTokens`, `modalities`, `knowledgeCutoff`, `releaseDate`,
 
 ## Non-goals
 
-No pricing (STRATEGY §I — enrichment is non-pricing only). No runtime dependency —
+No pricing beyond an indicative US list price (STRATEGY §I). No runtime dependency —
 this is a local maintenance tool; consumers read the published/bundled catalog. No
 auto-overwrite / no CI auto-merge — the review gate is mandatory. No envelope-shape
 break (`version` stays 1, additive only).

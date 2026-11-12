@@ -2,7 +2,7 @@
 
 A vendor-neutral, kind-aware list of LLMs, embeddings, rerankers and multimodal models,
 published as open JSON over HTTPS (https://models.viglet.org). Stdlib
-only — no ``requests``. Carries no pricing: identity, kind and capability only.
+only — no ``requests``. Any ``pricing`` is an indicative US list price, not authoritative.
 
     from model_catalog_client import ModelCatalogClient
     catalog = ModelCatalogClient()

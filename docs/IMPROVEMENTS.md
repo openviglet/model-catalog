@@ -87,25 +87,6 @@ secrets each file's header names. Then one run of each workflow, and the README 
 states the version each registry holds. Until a registry has the package, its row shows
 the working fallback instead of the registry command.
 
-### §T94 The README says what the catalog carries and who keeps it
-
-**Where it showed.** The README's first paragraph ends "Part of **Viglet Turing ES**",
-and its callout says "The catalog never carries cost/price". Block F reversed that bet:
-entries carry an optional, indicative US list price (the `pricing` field, Block F), and
-the site charts price against intelligence.
-
-**Why it costs.** A reader who checks the README against the site sees a contradiction
-in the first screen, which undercuts the provenance claim the product rests on. And the
-product names dropped their acronyms on 2026-10-17, so "Turing ES" reads as an old or
-other product (visibility repo, produtos/model-catalog.md, 2026-10-30).
-
-**Design.** Replace the attribution with "Maintained by Viglet; Viglet Turing is its
-first consumer", and rewrite the callout to what is true: identity and kind first, with
-an optional indicative list price, sourced and dated, never authoritative. Sweep the SDK
-READMEs and `docs/references/api.md` for the same two phrases. This stays inside the
-non-goal "Pricing is bounded to an indicative US list price.": the README states that
-bound and does not widen it.
-
 ### §T95 A README that works as the landing page
 
 **Where it showed.** The README opens with a dense paragraph, then a URL table and a

@@ -20,9 +20,10 @@ a model"** link that pre-fills the form with that model's vendor and id.
 
 A few rules that keep the catalog trustworthy:
 
-- **Identity + kind + capability only — never pricing.** Cost/price is deliberately
-  out of scope ([STRATEGY.md](docs/STRATEGY.md) §I); the pipeline strips every
-  `*cost*`/`*price*` key. Proposals with pricing get the pricing dropped.
+- **Price is an indicative US list price, nothing more.** An entry may carry an
+  optional `pricing` (per-1M-token US list price, sourced and dated), never a
+  per-contract, regional or negotiated one ([STRATEGY.md](docs/STRATEGY.md) §I).
+  A price correction must cite the vendor's public pricing page.
 - **A missing field beats a wrong one.** Leave a field blank rather than guessing —
   wrong metadata poisons a reference. Cite a source for anything non-obvious.
 - **Vendor key is lower-case** (`openai`, `anthropic`, `gemini`, `mistral`, …), and
