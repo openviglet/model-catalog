@@ -8,5 +8,7 @@
 
 ## Block B — Client libraries / SDKs
 
+- ⏸ **T101** (deps: —) **The Java client does not follow redirects, so 1.0.5 fails on the old catalog URL, which now answers 301** — set aside (Owner pushes main, runs publish-java-client.yml (Central secrets).): Release the Java client to Maven Central (publish-java-client.yml) and let Turing bump to it. → §T101
+
 ## Block V — What a consumer indexes: the feed artifacts carry every model once
 

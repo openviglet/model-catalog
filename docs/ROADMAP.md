@@ -170,8 +170,6 @@
 
 ## Block B — Client libraries / SDKs
 
-- 📋 **T101** (deps: —) **The Java client does not follow redirects, so 1.0.5 fails on the old catalog URL, which now answers 301** — HttpFetcher uses HttpClient.newHttpClient(), whose policy is NEVER; no release carries the T99 default, so Turing lost its catalog. → §T101
-
 ## Block V — What a consumer indexes: the feed artifacts carry every model once
 
 - 📋 **T102** (deps: —) **The query manifest names id as the document key, though 32 ids repeat across vendors, so consumers drop models** — turing-demo keys by it and holds 1137 of 1238 models; ref is already the unique key, but the manifest never moved to it. → §T102

@@ -291,9 +291,15 @@ public final class ModelCatalogClient {
     private record Cache(long fetchedAt, Catalog catalog) {
     }
 
-    /** Default transport over the JDK {@link HttpClient}. */
-    private static final class HttpFetcher implements Fetcher {
-        private final HttpClient http = HttpClient.newHttpClient();
+    /**
+     * Default transport over the JDK {@link HttpClient}. Follows redirects
+     * ({@code NORMAL}: never https to http), so a moved endpoint answering 301 keeps
+     * working; {@code newHttpClient()} alone would use {@code NEVER}.
+     */
+    static final class HttpFetcher implements Fetcher {
+        private final HttpClient http = HttpClient.newBuilder()
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build();
         private final Duration timeout;
 
         HttpFetcher(Duration timeout) {
