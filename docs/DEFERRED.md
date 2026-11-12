@@ -8,3 +8,5 @@
 
 ## Block B — Client libraries / SDKs
 
+## Block V — What a consumer indexes: the feed artifacts carry every model once
+

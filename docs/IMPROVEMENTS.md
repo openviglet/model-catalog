@@ -145,3 +145,27 @@ follow redirects by default and are not affected.
 
 **Done when** 1.0.6 is on Maven Central, it reads the catalog through the old
 openviglet.github.io address, and Turing can bump to it.
+
+## Block V — What a consumer indexes: the feed artifacts carry every model once
+
+### §T102 The query manifest keys documents by a non-unique id
+
+**What is wrong.** `query-manifest.json` declares `"idField": "id"`
+(`scripts/query-manifest.mjs`, default `opts.idField || "id"`). The globally-unique key
+change found that `id` is not unique across vendors and added `ref` (`<vendor>/<id>`) as
+the key to index on, but the manifest still names `id`. On the 2026-11-05 emit,
+`catalog.ndjson` has 1238 records, 1206 distinct `id`s and 1238 distinct `ref`s.
+
+**What it costs.** A consumer that keys documents by the manifest's `idField` keeps one
+document per `id`: the second vendor sharing an id overwrites or is skipped. The
+turing-demo `model-catalog` SN site, fed from this manifest and feed, held 1137
+documents on 2026-11-12, and `vendor:openai` matched 95 of the feed's 100 OpenAI models,
+`capabilities:vision` 595 of 614.
+
+**What to do.**
+1. Emit `"idField": "ref"`, and keep `id` out of the facet fields as it is today.
+2. Update `scripts/query-manifest.test.mjs`, which asserts `idField === "id"`.
+3. `docs/references/api.md`: the manifest section names `ref` as the key.
+
+**Done when** the published manifest says `ref`, and after Turing's next hourly ingest
+the turing-demo index count equals the feed's record count.
