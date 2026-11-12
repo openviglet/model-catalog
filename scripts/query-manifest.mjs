@@ -20,9 +20,10 @@
 
 /** Provenance/metadata leaves that are not useful query fields. */
 const NOISE_SUFFIXES = ["_note", "_source", "_lastVerified", "_indicative", "_unit"];
-// `ref` is the "<vendor>/<id>" identity key (the emit-added document key, T79) — like
-// the excluded `id`, it is identity, not a queryable content facet, so it stays out.
-const NOISE_EXACT = new Set(["lastVerified", "sources", "ref"]);
+// `ref` is the "<vendor>/<id>" identity key (the emit-added document key, T79) and the
+// manifest's `idField` (T102: the bare `id` repeats across vendors). Both are identity,
+// not queryable content facets, so both stay out of `fields`.
+const NOISE_EXACT = new Set(["lastVerified", "sources", "ref", "id"]);
 /** Fields treated as full-text rather than exact/faceted. */
 const TEXT_FIELDS = new Set(["label"]);
 /** Max distinct string values before a field stops being a facet (and its enum is dropped). */
@@ -86,7 +87,7 @@ function isNoise(key) {
  * @param {object} opts    { source, schemaVersion, generatedAt, idField }
  */
 export function buildQueryManifest(flat, opts = {}) {
-  const idField = opts.idField || "id";
+  const idField = opts.idField || "ref";
   const agg = new Map();
   for (const entry of flat) {
     const record = flattenRecord(entry);

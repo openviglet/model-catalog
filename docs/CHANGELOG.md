@@ -269,3 +269,4 @@
 
 ## Block V — What a consumer indexes: the feed artifacts carry every model once
 
+- ✅ **T102** **The query manifest names id as the document key, though 32 ids repeat across vendors, so consumers drop models** — query-manifest.json now names ref as idField, so a consumer keying by it keeps one document per vendor/id pair.

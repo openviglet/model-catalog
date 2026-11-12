@@ -42,11 +42,13 @@ test("flattenRecord expands nested objects and drops noise-free scalars", () => 
 test("buildQueryManifest infers types, enums and numeric ranges", () => {
   const m = buildQueryManifest(SAMPLE, { source: "https://x", schemaVersion: "1", generatedAt: "2026-07-22" });
   assert.equal(m.recordCount, 2);
-  assert.equal(m.idField, "id");
+  // T102: `ref` (<vendor>/<id>) is the document key; the bare `id` repeats across vendors
+  assert.equal(m.idField, "ref");
   const byName = Object.fromEntries(m.fields.map((f) => [f.name, f]));
 
-  // id is excluded (it is the identifier, not a query field)
+  // neither identity key is a query field
   assert.equal(byName.id, undefined);
+  assert.equal(byName.ref, undefined);
   // provenance noise excluded
   assert.equal(byName.pricing_note, undefined);
   assert.equal(byName.pricing_source, undefined);

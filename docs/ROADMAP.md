@@ -172,8 +172,6 @@
 
 ## Block V — What a consumer indexes: the feed artifacts carry every model once
 
-- 📋 **T102** (deps: —) **The query manifest names id as the document key, though 32 ids repeat across vendors, so consumers drop models** — turing-demo keys by it and holds 1137 of 1238 models; ref is already the unique key, but the manifest never moved to it. → §T102
-
 ## Non-goals
 
 - **Pricing is bounded to an indicative US list price.** As of the STRATEGY §I reversal
